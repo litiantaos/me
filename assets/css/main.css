@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('remixicon/fonts/remixicon.css');
+@import 'tailwindcss';
+@import './html.css';
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  @apply text-sm text-gray-600 dark:bg-gray-900 dark:text-gray-200;
+}
+
+button:not(:disabled),
+[role='button']:not(:disabled) {
+  cursor: pointer;
+}
+
+input,
+textarea,
+select,
+[role='button'] {
+  @apply outline-hidden;
+}
+
+button {
+  @apply transition-transform! active:scale-95;
+}
+
+.link-color {
+  @apply relative bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-gray-600 to-50% bg-[length:200%_100%] bg-clip-text bg-[position:100%] font-bold text-transparent transition-[background-position] duration-300 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-blue-400 sm:hover:bg-[position:0_100%] sm:hover:after:h-0.5;
+}
+
+.btn-base {
+  @apply flex h-10 items-center justify-center gap-2 rounded-md bg-slate-100 px-3 transition-colors sm:hover:bg-slate-200/60;
+}
+
+.input-base {
+  @apply block h-10 rounded-md border border-gray-300 px-3 focus:ring-2 focus:ring-blue-500;
+}
+
+/* Transition */
+.move-up-enter-active,
+.move-up-leave-active {
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
+}
+
+.move-up-enter-from,
+.move-up-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
