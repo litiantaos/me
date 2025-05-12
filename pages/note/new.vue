@@ -72,8 +72,8 @@
 
 <script setup>
 import { marked } from 'marked'
-import WidgetMdDoc from '@/components/widget/MdDoc.vue'
-import WidgetLibrary from '@/components/widget/Library.vue'
+import NoteMarkdownDoc from '@/components/note/MarkdownDoc.vue'
+import NoteFileLibrary from '@/components/note/FileLibrary.vue'
 
 const input = ref('')
 const textareaRef = ref(null)
@@ -85,6 +85,8 @@ const client = useSupabaseClient()
 const user = useSupabaseUser()
 const route = useRoute()
 const router = useRouter()
+
+const { refreshNotes } = useNotes()
 
 const isSaving = ref(false)
 const isLoading = ref(false)
@@ -131,13 +133,13 @@ onMounted(async () => {
 
 const handleDoc = () => {
   isShowModal.value = true
-  modalComponent.value = markRaw(WidgetMdDoc)
+  modalComponent.value = markRaw(NoteMarkdownDoc)
   modalTitle.value = 'Markdown Doc'
 }
 
 const handleLibrary = () => {
   isShowModal.value = true
-  modalComponent.value = markRaw(WidgetLibrary)
+  modalComponent.value = markRaw(NoteFileLibrary)
   modalTitle.value = '资源'
 }
 
@@ -177,6 +179,8 @@ const handleSubmit = throttle(async () => {
         .select()
 
       if (error) throw error
+
+      await refreshNotes()
 
       router.push(`/note`)
     }

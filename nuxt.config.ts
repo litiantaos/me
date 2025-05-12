@@ -6,7 +6,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'TaosLife 李天涛',
+      title: 'TaosLife｜李天涛',
       meta: [
         {
           name: 'viewport',
@@ -15,7 +15,7 @@ export default defineNuxtConfig({
         },
         {
           name: 'description',
-          content: 'TaosLife 李天涛',
+          content: '李天涛的个人网站，记录生活与想法。',
         },
       ],
     },

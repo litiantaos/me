@@ -1,24 +1,26 @@
 <template>
   <UiLayout>
     <div v-if="note">
-      <UiNote :note="note" />
+      <NoteMain :note="note" is-page />
 
-      <div v-if="user && user.id === note.user_id" class="mt-6">
-        <div
-          class="flex h-7 w-fit items-center gap-4 rounded-md bg-gray-100 px-3"
-        >
+      <div
+        v-if="user && user.id === note.user_id"
+        class="mt-6 h-7 overflow-hidden rounded-md bg-gray-100 transition-[width] duration-200"
+        :class="isOpen ? 'w-30' : 'w-10'"
+      >
+        <div class="flex h-full w-30">
           <button
-            class="ri-more-line h-full"
-            @click="isOpen = !isOpen"
+            class="ri-more-line h-full flex-1"
+            @click="handleBtnOpen"
           ></button>
-
-          <div v-if="isOpen" class="h-full space-x-4">
-            <button class="ri-edit-line h-full" @click="handleEdit"></button>
-            <button
-              class="ri-delete-bin-7-line h-full text-red-600"
-              @click="handleDelete"
-            ></button>
-          </div>
+          <button
+            class="ri-edit-line h-full flex-1"
+            @click="handleEdit"
+          ></button>
+          <button
+            class="ri-delete-bin-7-line h-full flex-1 text-red-600"
+            @click="handleDelete"
+          ></button>
         </div>
       </div>
     </div>
@@ -35,13 +37,15 @@ const user = useSupabaseUser()
 const route = useRoute()
 const router = useRouter()
 
+const { refreshNotes } = useNotes()
+
 const isLoading = ref(false)
 const isDeleting = ref(false)
 
 const isOpen = ref(false)
 
 // 获取笔记
-const { data: note } = await useAsyncData(async () => {
+const { data: note } = await useLazyAsyncData(async () => {
   isLoading.value = true
 
   try {
@@ -76,6 +80,8 @@ const handleDelete = async () => {
 
     if (deleteError) throw new Error(deleteError.message)
 
+    await refreshNotes()
+
     router.push('/note')
   } catch (err) {
     console.error('删除失败', err)
@@ -89,8 +95,29 @@ const handleEdit = () => {
   router.push(`/note/new?id=${route.params.id}`)
 }
 
+// 打开更多按钮
+const handleBtnOpen = () => {
+  isOpen.value = !isOpen.value
+
+  if (isOpen.value) {
+    setTimeout(() => {
+      isOpen.value = false
+    }, 3000)
+  }
+}
+
+// SEO
+const title = computed(() => {
+  if (!note.value?.content) return null
+  if (note.value.content.startsWith('#')) {
+    const match = note.value.content.match(/^# (.+)$/m)
+    return match ? match[1] : null
+  }
+  return note.value.content.substring(0, 50)
+})
+
 useSeoMeta({
-  title: note.value.content,
-  description: note.value.content,
+  title: title.value,
+  description: note.value?.content,
 })
 </script>

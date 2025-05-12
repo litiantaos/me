@@ -21,7 +21,7 @@
     <table class="w-full table-fixed border-collapse">
       <tbody>
         <tr v-for="(year, index) in years" :key="year">
-          <td class="text-gray-400">{{ year }}</td>
+          <td class="w-[42px] text-gray-400">{{ year }}</td>
           <td v-for="month in 12" :key="`${year}-${month}`" class="py-3">
             <div
               class="ml-auto h-4 w-4 rounded-sm"

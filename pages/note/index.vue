@@ -5,15 +5,11 @@
         <NuxtLink to="/note/new" class="link-color">New</NuxtLink>
       </div>
 
-      <template v-if="!isLoading && notes.length > 0">
-        <div v-for="note in notes" :key="note.id">
-          <NuxtLink :to="`/note/${note.id}`">
-            <UiNote :note="note" />
-          </NuxtLink>
-        </div>
+      <template v-if="notes.length > 0">
+        <NoteMain v-for="note in notes" :key="note.id" :note="note" />
       </template>
 
-      <template v-else>
+      <template v-if="isLoading">
         <UiLoader />
       </template>
     </div>
@@ -21,31 +17,31 @@
 </template>
 
 <script setup>
-const client = useSupabaseClient()
 const user = useSupabaseUser()
-const router = useRouter()
 
-const notes = ref([])
-const isLoading = ref(false)
+const { notes, isLoading, hasMoreNotes, fetchNotes } = useNotes()
 
-const fetchNotes = async () => {
-  isLoading.value = true
+// 监听滚动事件，实现触底加载
+const handleScroll = () => {
+  // 如果正在加载或没有更多数据，则不处理
+  if (isLoading.value || !hasMoreNotes.value) return
 
-  try {
-    const { data, error } = await client
-      .from('notes')
-      .select('*')
-      .order('created_at', { ascending: false })
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
 
-    if (error) throw error
-
-    notes.value = data
-  } catch (error) {
-    console.error('获取笔记失败', error)
-  } finally {
-    isLoading.value = false
+  // 当距离底部指定距离时触发加载
+  if (windowHeight + scrollTop >= documentHeight - 50) {
+    fetchNotes()
   }
 }
 
-fetchNotes()
+onMounted(() => {
+  fetchNotes()
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>

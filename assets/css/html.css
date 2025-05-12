@@ -1,27 +1,27 @@
 .html-style {
   h1 {
-    @apply mt-10 text-2xl font-bold;
+    @apply mt-10 mb-8 text-2xl font-bold;
   }
 
   h2 {
-    @apply mt-8 text-xl font-bold;
+    @apply mt-8 mb-6 text-xl font-bold;
   }
 
   h3 {
-    @apply mt-6 text-lg font-bold;
+    @apply mt-6 mb-4 text-lg font-bold;
   }
 
   p {
-    @apply mt-4 leading-7;
+    @apply my-2 text-justify leading-7;
   }
 
   a {
-    @apply text-blue-600 underline sm:hover:text-blue-800;
+    @apply text-blue-500 underline underline-offset-4 sm:hover:text-blue-600;
   }
 
   ul,
   ol {
-    @apply mt-4 ml-6;
+    @apply my-6 ml-6;
   }
 
   ul {
@@ -33,11 +33,15 @@
   }
 
   li {
-    @apply mt-2;
+    @apply my-2 text-justify leading-7;
+
+    &::marker {
+      @apply text-gray-400;
+    }
   }
 
   blockquote {
-    @apply mt-4 border-l-4 border-gray-300 bg-gray-50 px-4 py-1 italic;
+    @apply mt-4 border-l-4 border-gray-300 bg-gray-50 px-4 py-1;
   }
 
   code {
@@ -45,7 +49,7 @@
   }
 
   pre {
-    @apply mt-4 overflow-x-auto rounded bg-gray-100 p-4 font-mono text-xs;
+    @apply my-4 overflow-x-auto rounded bg-gray-100 p-4 font-mono text-xs;
   }
 
   pre code {
@@ -53,7 +57,7 @@
   }
 
   table {
-    @apply mt-4 w-full border-collapse;
+    @apply my-4 w-full border-collapse;
   }
 
   th,
@@ -66,11 +70,11 @@
   }
 
   img {
-    @apply mx-auto mt-4 max-w-full;
+    @apply mx-auto my-4 rounded-sm;
   }
 
   hr {
-    @apply mt-6 border-t border-gray-300;
+    @apply my-6 border-t border-gray-300;
   }
 
   strong {
