@@ -59,3 +59,21 @@ button {
 .fade-leave-to {
   opacity: 0;
 }
+
+.list-move-up-move,
+.list-move-up-enter-active,
+.list-move-up-leave-active {
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
+}
+
+.list-move-up-enter-from,
+.list-move-up-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.list-move-up-leave-active {
+  position: absolute;
+}

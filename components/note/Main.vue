@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="flex items-center gap-3 text-gray-400">
       <div>{{ formatDate(note.created_at) }}</div>
       <NuxtLink
@@ -9,8 +9,8 @@
       ></NuxtLink>
     </div>
 
-    <div v-if="title && !isPage" class="mt-2 space-y-2">
-      <h1 class="text-base font-bold">{{ title }}</h1>
+    <div v-if="title && !isPage" class="mt-3 space-y-2">
+      <p class="text-lg font-bold">{{ title }}</p>
       <p class="line-clamp-3 text-justify leading-7">{{ excerpt }}</p>
     </div>
 

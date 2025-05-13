@@ -1,5 +1,6 @@
 <template>
   <NuxtPage />
+
   <Analytics />
   <SpeedInsights />
 </template>

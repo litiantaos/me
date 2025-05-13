@@ -1,33 +1,35 @@
 <template>
   <UiLayout>
-    <div v-if="note">
-      <NoteMain :note="note" is-page />
+    <TransitionGroup name="list-move-up">
+      <div v-if="note" class="space-y-6">
+        <NoteMain :note="note" is-page />
 
-      <div
-        v-if="user && user.id === note.user_id"
-        class="mt-6 h-7 overflow-hidden rounded-md bg-gray-100 transition-[width] duration-200"
-        :class="isOpen ? 'w-30' : 'w-10'"
-      >
-        <div class="flex h-full w-30">
-          <button
-            class="ri-more-line h-full flex-1"
-            @click="handleBtnOpen"
-          ></button>
-          <button
-            class="ri-edit-line h-full flex-1"
-            @click="handleEdit"
-          ></button>
-          <button
-            class="ri-delete-bin-7-line h-full flex-1 text-red-600"
-            @click="handleDelete"
-          ></button>
+        <div
+          v-if="user && user.id === note.user_id"
+          class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80"
+          :class="isOpen ? 'w-30' : 'w-10'"
+        >
+          <div class="flex h-full w-30">
+            <button
+              class="ri-more-line h-full flex-1"
+              @click="handleBtnOpen"
+            ></button>
+            <button
+              class="ri-edit-line h-full flex-1"
+              @click="handleEdit"
+            ></button>
+            <button
+              class="ri-delete-bin-7-line h-full flex-1 text-red-600"
+              @click="handleDelete"
+            ></button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-else class="flex items-center">
-      <UiLoader />
-    </div>
+      <div v-else class="flex items-center">
+        <UiLoader />
+      </div>
+    </TransitionGroup>
   </UiLayout>
 </template>
 

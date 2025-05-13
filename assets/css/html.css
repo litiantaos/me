@@ -69,8 +69,9 @@
     @apply text-left font-bold;
   }
 
-  img {
-    @apply mx-auto my-4 rounded-sm;
+  img,
+  video {
+    @apply mx-auto my-4 w-full rounded-sm;
   }
 
   hr {

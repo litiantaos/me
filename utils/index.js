@@ -41,3 +41,7 @@ export function formatFileSize(bytes, decimals = 2) {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i]
 }
+
+export function copyText(text) {
+  navigator.clipboard.writeText(text)
+}

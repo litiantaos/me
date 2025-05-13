@@ -5,13 +5,11 @@
         <NuxtLink to="/note/new" class="link-color">New</NuxtLink>
       </div>
 
-      <template v-if="notes.length > 0">
+      <TransitionGroup name="list-move-up">
         <NoteMain v-for="note in notes" :key="note.id" :note="note" />
-      </template>
 
-      <template v-if="isLoading">
-        <UiLoader />
-      </template>
+        <UiLoader v-if="isLoading" key="loader" />
+      </TransitionGroup>
     </div>
   </UiLayout>
 </template>
@@ -37,7 +35,10 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
-  fetchNotes()
+  if (notes.value.length === 0) {
+    fetchNotes()
+  }
+
   window.addEventListener('scroll', handleScroll)
 })
 

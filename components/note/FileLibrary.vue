@@ -45,7 +45,7 @@
           </p>
           <button
             class="ri-clipboard-line text-base text-gray-400 sm:hover:text-blue-500"
-            @click="copyFileUrl(file.url)"
+            @click="copyText(file.url)"
           ></button>
         </div>
 
@@ -84,6 +84,7 @@
 
 <script setup>
 const client = useSupabaseClient()
+const config = useRuntimeConfig()
 
 const isLoading = ref(false)
 const files = ref([])
@@ -103,7 +104,7 @@ const fetchFiles = async () => {
     files.value = data.map((file) => {
       return {
         ...file,
-        url: `https://cziemihwekwsjimvxnwj.supabase.co/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
+        url: `${config.public.supabaseUrl}/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
       }
     })
   } catch (err) {
@@ -116,11 +117,6 @@ const fetchFiles = async () => {
 // 切换预览显示状态
 const togglePreview = async (file) => {
   file.showPreview = !file.showPreview
-}
-
-// 复制文件 URL 到剪贴板
-const copyFileUrl = (url) => {
-  navigator.clipboard.writeText(url)
 }
 
 // 打开文件上传对话框

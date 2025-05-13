@@ -33,8 +33,14 @@ export default defineNuxtConfig({
   supabase: {
     redirectOptions: {
       login: '/login',
-      callback: '/',
+      callback: '/welcome',
       include: ['/note/new(/*)?'],
+    },
+  },
+
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL,
     },
   },
 })
