@@ -4,6 +4,8 @@
       <div v-if="note" class="space-y-6">
         <NoteContent :note="note" is-page />
 
+        <UiMediaPreview />
+
         <div
           v-if="user && user.id === note.user_id"
           class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80"

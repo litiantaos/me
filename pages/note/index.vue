@@ -8,6 +8,8 @@
       <TransitionGroup name="list">
         <NoteContent v-for="note in notes" :key="note.id" :note="note" />
       </TransitionGroup>
+
+      <UiMediaPreview />
     </div>
   </UiLayout>
 </template>

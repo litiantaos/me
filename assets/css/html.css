@@ -74,6 +74,10 @@
     @apply mx-auto my-4 w-full rounded-sm border border-gray-100;
   }
 
+  img {
+    @apply cursor-zoom-in;
+  }
+
   hr {
     @apply my-6 border-t border-gray-300;
   }
