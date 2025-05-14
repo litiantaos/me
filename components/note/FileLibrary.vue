@@ -17,9 +17,7 @@
       </div>
 
       <div class="flex-1">
-        <template v-if="isLoading">
-          <UiLoader />
-        </template>
+        <UiLoader v-if="isLoading" />
       </div>
 
       <div class="flex">

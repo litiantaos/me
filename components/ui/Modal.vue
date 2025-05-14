@@ -2,7 +2,7 @@
   <Teleport to="body">
     <Transition name="move-up">
       <div v-if="isShow" class="fixed inset-0 z-[100] overflow-y-auto bg-white">
-        <UiLayout :uiTitle="uiTitle" :title="title">
+        <UiLayout :uiTitle="uiTitle" :title="title" :hasBack="false">
           <div class="flex items-center">
             <button
               class="ri-arrow-left-s-line -ml-1.5 text-lg"

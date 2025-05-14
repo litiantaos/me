@@ -6,11 +6,8 @@
         isPreview ? '-translate-y-[80vh]' : 'translate-y-0',
         'transition-transform duration-300',
       ]"
+      :isLoading="isLoading"
     >
-      <template #header>
-        <UiLoader v-if="isLoading" />
-      </template>
-
       <div class="flex h-[calc(100vh-144px-128px)] flex-col space-y-4">
         <textarea
           class="w-full flex-1 resize-none leading-7"
@@ -71,7 +68,7 @@
 </template>
 
 <script setup>
-import { marked } from 'marked'
+import marked from '~/utils/marked'
 import NoteMarkdownDoc from '@/components/note/MarkdownDoc.vue'
 import NoteFileLibrary from '@/components/note/FileLibrary.vue'
 

@@ -71,7 +71,7 @@
 
   img,
   video {
-    @apply mx-auto my-4 w-full rounded-sm;
+    @apply mx-auto my-4 w-full rounded-sm border border-gray-100;
   }
 
   hr {

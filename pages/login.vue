@@ -1,5 +1,5 @@
 <template>
-  <UiLayout :hasHeader="false">
+  <UiLayout :hasHeader="false" :isLoading="isLoading">
     <div class="mt-64 space-y-10">
       <div class="flex items-center gap-4">
         <NuxtLink to="/">
@@ -44,10 +44,7 @@
           class="btn-base w-full bg-blue-500! text-white sm:hover:bg-blue-500/90!"
           :disabled="isLoading"
         >
-          <template v-if="isLoading">
-            <UiLoader />
-          </template>
-          <span v-else>{{ isLogin ? '登录' : '注册' }}</span>
+          {{ isLogin ? '登录' : '注册' }}
         </button>
 
         <div class="text-center text-sm">

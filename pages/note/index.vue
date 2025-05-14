@@ -1,14 +1,12 @@
 <template>
-  <UiLayout>
+  <UiLayout :isLoading="isLoading">
     <div class="space-y-10">
       <div v-if="user">
         <NuxtLink to="/note/new" class="link-color">New</NuxtLink>
       </div>
 
-      <TransitionGroup name="list-move-up">
-        <NoteMain v-for="note in notes" :key="note.id" :note="note" />
-
-        <UiLoader v-if="isLoading" key="loader" />
+      <TransitionGroup name="list">
+        <NoteContent v-for="note in notes" :key="note.id" :note="note" />
       </TransitionGroup>
     </div>
   </UiLayout>

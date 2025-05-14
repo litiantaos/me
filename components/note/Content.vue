@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { marked } from 'marked'
+import marked from '~/utils/marked'
 
 const props = defineProps({
   note: Object,

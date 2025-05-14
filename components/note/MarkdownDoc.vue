@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { marked } from 'marked'
+import marked from '~/utils/marked'
 
 const mdDocHTML = ref('')
 

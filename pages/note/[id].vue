@@ -1,8 +1,8 @@
 <template>
-  <UiLayout>
-    <TransitionGroup name="list-move-up">
+  <UiLayout :isLoading="isLoading">
+    <Transition name="fade">
       <div v-if="note" class="space-y-6">
-        <NoteMain :note="note" is-page />
+        <NoteContent :note="note" is-page />
 
         <div
           v-if="user && user.id === note.user_id"
@@ -25,11 +25,7 @@
           </div>
         </div>
       </div>
-
-      <div v-else class="flex items-center">
-        <UiLoader />
-      </div>
-    </TransitionGroup>
+    </Transition>
   </UiLayout>
 </template>
 
@@ -121,5 +117,9 @@ const title = computed(() => {
 useSeoMeta({
   title: title.value,
   description: note.value?.content,
+})
+
+definePageMeta({
+  scrollToTop: false,
 })
 </script>
