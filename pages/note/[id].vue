@@ -9,9 +9,14 @@
         <div
           v-if="user && user.id === note.user_id"
           class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
-          :class="isOpen ? 'w-30' : 'w-10'"
+          :class="isBtnsOpen ? 'w-30' : 'w-10'"
+          @mouseenter="onBtnsMouseEnter"
+          @mouseleave="resetBtnsTimeout"
         >
-          <div class="flex h-full w-30">
+          <div
+            class="flex h-full w-40 transition-transform duration-200"
+            :class="{ '-translate-x-10': isDeleteConfirm }"
+          >
             <button
               class="ri-more-line h-full flex-1"
               @click="handleBtnOpen"
@@ -22,6 +27,10 @@
             ></button>
             <button
               class="ri-delete-bin-7-line h-full flex-1 text-red-600"
+              @click="handleDeleteConfirm"
+            ></button>
+            <button
+              class="ri-check-line h-full flex-1 text-blue-500"
               @click="handleDelete"
             ></button>
           </div>
@@ -40,9 +49,11 @@ const router = useRouter()
 const { refreshNotes } = useNotes()
 
 const isLoading = ref(false)
+const isDeleteConfirm = ref(false)
 const isDeleting = ref(false)
 
-const isOpen = ref(false)
+const isBtnsOpen = ref(false)
+const btnsCloseTimer = ref(null)
 
 // 获取笔记
 const { data: note } = await useLazyAsyncData(async () => {
@@ -66,9 +77,11 @@ const { data: note } = await useLazyAsyncData(async () => {
 })
 
 // 删除笔记
-const handleDelete = async () => {
-  if (!confirm('确定要删除吗？')) return
+const handleDeleteConfirm = () => {
+  isDeleteConfirm.value = !isDeleteConfirm.value
+}
 
+const handleDelete = async () => {
   isDeleting.value = true
 
   try {
@@ -97,13 +110,20 @@ const handleEdit = () => {
 
 // 打开更多按钮
 const handleBtnOpen = () => {
-  isOpen.value = !isOpen.value
+  isBtnsOpen.value = !isBtnsOpen.value
+}
 
-  if (isOpen.value) {
-    setTimeout(() => {
-      isOpen.value = false
-    }, 3000)
-  }
+const onBtnsMouseEnter = () => {
+  clearTimeout(btnsCloseTimer.value)
+}
+
+const resetBtnsTimeout = () => {
+  clearTimeout(btnsCloseTimer.value)
+
+  btnsCloseTimer.value = setTimeout(() => {
+    isBtnsOpen.value = false
+    isDeleteConfirm.value = false
+  }, 3000)
 }
 
 // SEO

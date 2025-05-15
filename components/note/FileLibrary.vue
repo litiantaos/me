@@ -54,7 +54,7 @@
 
           <button
             v-if="file.showPreview"
-            class="ri-close-line text-base"
+            class="ri-delete-bin-7-line ml-2 sm:hover:text-red-600"
             @click="deleteFile(file)"
           ></button>
         </div>

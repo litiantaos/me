@@ -2,20 +2,20 @@
   <Teleport to="body">
     <div
       v-if="isPreviewActive"
-      class="fixed inset-0 z-[60] flex cursor-zoom-out items-center justify-center"
+      class="fixed inset-0 z-[60] cursor-zoom-out"
       @click="closePreview"
     >
       <div
-        class="absolute top-0 left-0 h-full w-full transition-colors duration-300"
+        class="absolute inset-0 transition-colors duration-300"
         :class="isZoomActive ? 'bg-white dark:bg-zinc-800' : 'bg-transparent'"
       ></div>
       <img
         :src="previewSrc"
-        class="absolute object-contain transition-all duration-300 will-change-[top,left,width,height]"
+        class="absolute top-1/2 left-1/2 h-full w-full object-contain transition-all duration-300 will-change-[transform,border-radius,opacity]"
         :class="
           isZoomActive ? 'rounded-none opacity-100' : 'rounded-md opacity-0'
         "
-        :style="rectStyle"
+        :style="transformStyle"
       />
     </div>
   </Teleport>
@@ -25,22 +25,37 @@
 const isPreviewActive = ref(false)
 const isZoomActive = ref(false)
 const previewSrc = ref('')
-const rect = ref({})
+const originalRect = ref({})
 
-const rectStyle = computed(() => ({
-  top: isZoomActive.value ? '0' : `${rect.value.top || 0}px`,
-  left: isZoomActive.value ? '0' : `${rect.value.left || 0}px`,
-  width: isZoomActive.value ? '100%' : `${rect.value.width || 0}px`,
-  height: isZoomActive.value ? '100%' : `${rect.value.height || 0}px`,
-}))
+const transformStyle = computed(() => {
+  if (!isPreviewActive.value) return {}
+
+  const { top, left, width, height } = originalRect.value
+
+  const viewportCenterX = window.innerWidth / 2
+  const viewportCenterY = window.innerHeight / 2
+
+  const imageCenterX = left + width / 2
+  const imageCenterY = top + height / 2
+
+  const translateX = imageCenterX - viewportCenterX
+  const translateY = imageCenterY - viewportCenterY
+
+  const scale = width / window.innerWidth
+
+  return {
+    transform: isZoomActive.value
+      ? 'translate(-50%, -50%) scale(1)'
+      : `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`,
+  }
+})
 
 const openPreview = (event) => {
-  if (isPreviewActive.value) return
-  if (event.target.tagName !== 'IMG') return
+  if (isPreviewActive.value || event.target.tagName !== 'IMG') return
 
   const img = event.target
   previewSrc.value = img.src
-  rect.value = img.getBoundingClientRect()
+  originalRect.value = img.getBoundingClientRect()
   isPreviewActive.value = true
 
   setTimeout(() => {
@@ -51,7 +66,6 @@ const openPreview = (event) => {
 
 const closePreview = (event) => {
   event?.stopPropagation()
-
   isZoomActive.value = false
 
   setTimeout(() => {
@@ -75,10 +89,5 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('click', openPreview)
   window.removeEventListener('keydown', handleEsc)
-})
-
-defineExpose({
-  openPreview,
-  closePreview,
 })
 </script>
