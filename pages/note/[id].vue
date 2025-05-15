@@ -8,7 +8,7 @@
 
         <div
           v-if="user && user.id === note.user_id"
-          class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80"
+          class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
           :class="isOpen ? 'w-30' : 'w-10'"
         >
           <div class="flex h-full w-30">

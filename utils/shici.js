@@ -1,13 +1,3 @@
-<template>
-  <p>
-    <span v-if="sentenceData">{{ sentenceData.content }}</span>
-    <span v-else>^_^</span>
-  </p>
-</template>
-
-<script setup>
-const sentenceData = ref(null)
-
 const getShiciToken = async () => {
   try {
     const localToken = localStorage.getItem('shici_token')
@@ -26,7 +16,7 @@ const getShiciToken = async () => {
   }
 }
 
-const getSentence = async () => {
+export const getShici = async () => {
   try {
     const token = await getShiciToken()
 
@@ -35,15 +25,8 @@ const getSentence = async () => {
     )
     const data = await response.json()
 
-    // console.log(data)
-
-    sentenceData.value = data.data
+    return data.data
   } catch (error) {
-    console.error('Failed to fetch sentence:', error)
+    console.error('Failed to fetch shici:', error)
   }
 }
-
-onMounted(() => {
-  getSentence()
-})
-</script>

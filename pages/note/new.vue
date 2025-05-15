@@ -33,7 +33,7 @@
           ></button>
 
           <button
-            class="btn-base bg-slate-200! px-8! sm:hover:bg-slate-300/80!"
+            class="btn-base bg-slate-200! px-8! sm:hover:bg-slate-300/60! dark:bg-zinc-600! dark:hover:bg-zinc-500!"
             :disabled="isSaving"
             @click="handleSubmit"
           >
@@ -53,15 +53,15 @@
     <Transition name="fade">
       <div
         v-if="isPreview"
-        class="fixed top-0 right-0 left-0 z-10 h-32 cursor-pointer bg-linear-to-b from-white to-transparent"
+        class="fixed top-0 right-0 left-0 z-10 h-32 cursor-pointer bg-linear-to-b from-white to-transparent dark:from-zinc-800"
         @click="handlePreview"
       ></div>
     </Transition>
 
     <UiModal
-      v-model:isShow="isShowModal"
+      v-model:isShow="isModalShow"
       :component="modalComponent"
-      :uiTitle="false"
+      :hasUiTitle="false"
       :title="modalTitle"
     />
   </div>
@@ -129,13 +129,13 @@ onMounted(async () => {
 })
 
 const handleDoc = () => {
-  isShowModal.value = true
+  isModalShow.value = true
   modalComponent.value = markRaw(NoteMarkdownDoc)
   modalTitle.value = 'Markdown Doc'
 }
 
 const handleLibrary = () => {
-  isShowModal.value = true
+  isModalShow.value = true
   modalComponent.value = markRaw(NoteFileLibrary)
   modalTitle.value = '资源'
 }
@@ -189,7 +189,7 @@ const handleSubmit = throttle(async () => {
 })
 
 // MdDoc 模态框
-const isShowModal = ref(false)
+const isModalShow = ref(false)
 const modalComponent = ref(null)
 const modalTitle = ref('')
 

@@ -1,6 +1,6 @@
 <template>
   <h1 class="flex items-center gap-4 font-bold">
-    <span v-if="uiTitle" class="text-2xl">
+    <span v-if="hasUiTitle" class="text-2xl">
       <span class="text-blue-500 italic">Taos</span>
       <span>Life</span>
     </span>
@@ -11,7 +11,7 @@
 
 <script setup>
 const props = defineProps({
-  uiTitle: {
+  hasUiTitle: {
     type: Boolean,
     default: true,
   },

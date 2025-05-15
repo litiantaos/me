@@ -1,4 +1,4 @@
-export function formatDate(date, format = 'YYYY-MM-DD HH:mm') {
+export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
   if (!date) return ''
 
   const d = date instanceof Date ? date : new Date(date)
@@ -19,7 +19,7 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm') {
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => formats[match])
 }
 
-export function throttle(fn, delay = 2000) {
+export const throttle = (fn, delay = 2000) => {
   let lastTime = 0
 
   return function (...args) {
@@ -32,7 +32,7 @@ export function throttle(fn, delay = 2000) {
   }
 }
 
-export function formatFileSize(bytes, decimals = 2) {
+export const formatFileSize = (bytes, decimals = 2) => {
   if (bytes === 0) return '0 B'
 
   const k = 1024
@@ -42,6 +42,6 @@ export function formatFileSize(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i]
 }
 
-export function copyText(text) {
+export const copyText = (text) => {
   navigator.clipboard.writeText(text)
 }

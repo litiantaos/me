@@ -98,14 +98,6 @@ const handleSubmit = async () => {
       })
 
       if (error) throw error
-
-      message.value = {
-        type: 'success',
-        text: '登录成功！',
-      }
-
-      // 登录成功后重定向
-      router.push('/')
     } else {
       // 注册
       const { error } = await client.auth.signUp({

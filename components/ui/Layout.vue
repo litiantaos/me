@@ -2,11 +2,11 @@
   <div class="mx-auto max-w-2xl p-4">
     <header
       v-if="hasHeader"
-      class="sticky top-0 z-50 mb-4 flex h-24 items-center gap-4 bg-linear-to-b from-white to-transparent"
+      class="sticky top-0 z-50 mb-4 flex h-24 items-center gap-4 bg-linear-to-b from-white to-transparent dark:from-zinc-800"
     >
       <UiTitle
         :class="{ 'cursor-pointer': hasBack }"
-        :uiTitle="uiTitle"
+        :hasUiTitle="hasUiTitle"
         :title="title"
         @click="handleBack"
       />
@@ -28,7 +28,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  uiTitle: {
+  hasUiTitle: {
     type: Boolean,
     default: true,
   },

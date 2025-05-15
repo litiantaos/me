@@ -7,13 +7,15 @@
     >
       <div
         class="absolute top-0 left-0 h-full w-full transition-colors duration-300"
-        :class="isZoomActive ? 'bg-white' : 'bg-transparent'"
+        :class="isZoomActive ? 'bg-white dark:bg-zinc-800' : 'bg-transparent'"
       ></div>
       <img
         :src="previewSrc"
-        class="absolute object-contain transition-all duration-300"
-        :class="isZoomActive ? 'opacity-100' : 'opacity-0'"
-        :style="containerStyle"
+        class="absolute object-contain transition-all duration-300 will-change-[top,left,width,height]"
+        :class="
+          isZoomActive ? 'rounded-none opacity-100' : 'rounded-md opacity-0'
+        "
+        :style="rectStyle"
       />
     </div>
   </Teleport>
@@ -25,8 +27,7 @@ const isZoomActive = ref(false)
 const previewSrc = ref('')
 const rect = ref({})
 
-// 计算容器样式
-const containerStyle = computed(() => ({
+const rectStyle = computed(() => ({
   top: isZoomActive.value ? '0' : `${rect.value.top || 0}px`,
   left: isZoomActive.value ? '0' : `${rect.value.left || 0}px`,
   width: isZoomActive.value ? '100%' : `${rect.value.width || 0}px`,
@@ -59,12 +60,21 @@ const closePreview = (event) => {
   }, 350)
 }
 
+// 按下 ESC 键关闭模态框
+const handleEsc = (event) => {
+  if (event.key === 'Escape' || event.keyCode === 27) {
+    closePreview()
+  }
+}
+
 onMounted(() => {
-  document.body.addEventListener('click', openPreview)
+  window.addEventListener('click', openPreview)
+  window.addEventListener('keydown', handleEsc)
 })
 
 onUnmounted(() => {
-  document.body.removeEventListener('click', openPreview)
+  window.removeEventListener('click', openPreview)
+  window.removeEventListener('keydown', handleEsc)
 })
 
 defineExpose({

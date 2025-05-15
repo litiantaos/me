@@ -6,6 +6,15 @@
       </div>
 
       <TransitionGroup name="list">
+        <div v-if="shiciData">
+          <NuxtLink to="/poetry" class="text-gray-400 sm:hover:text-blue-500"
+            >有诗有词</NuxtLink
+          >
+          <div class="html-style">
+            <p>{{ shiciData.content }}</p>
+          </div>
+        </div>
+
         <NoteContent v-for="note in notes" :key="note.id" :note="note" />
       </TransitionGroup>
 
@@ -16,8 +25,9 @@
 
 <script setup>
 const user = useSupabaseUser()
-
 const { notes, isLoading, hasMoreNotes, fetchNotes } = useNotes()
+
+const shiciData = ref(null)
 
 // 监听滚动事件，实现触底加载
 const handleScroll = () => {
@@ -34,10 +44,12 @@ const handleScroll = () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (notes.value.length === 0) {
     fetchNotes()
   }
+
+  shiciData.value = await getShici()
 
   window.addEventListener('scroll', handleScroll)
 })

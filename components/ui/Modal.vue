@@ -1,14 +1,19 @@
 <template>
   <Teleport to="body">
     <Transition name="move-up">
-      <div v-if="isShow" class="fixed inset-0 z-[100] overflow-y-auto bg-white">
-        <UiLayout :uiTitle="uiTitle" :title="title" :hasBack="false">
-          <div class="flex items-center">
-            <button
-              class="ri-arrow-left-s-line -ml-1.5 text-lg"
-              @click="close"
-            ></button>
-          </div>
+      <div
+        v-if="isShow"
+        class="fixed inset-0 z-[100] overflow-y-auto bg-white dark:bg-zinc-800"
+      >
+        <UiLayout :hasUiTitle="hasUiTitle" :title="title" :hasBack="false">
+          <template #header>
+            <div class="flex flex-1 items-center justify-end">
+              <button
+                class="ri-arrow-down-s-line text-lg"
+                @click="close"
+              ></button>
+            </div>
+          </template>
 
           <template v-if="isSlot">
             <slot></slot>
@@ -34,7 +39,7 @@ const props = defineProps([
   'component',
   'componentData',
   'isSlot',
-  'uiTitle',
+  'hasUiTitle',
   'title',
 ])
 const emit = defineEmits(['close', 'confirm'])

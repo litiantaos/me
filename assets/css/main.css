@@ -5,7 +5,7 @@
 
 body {
   font-family: 'Noto Sans', sans-serif;
-  @apply text-sm text-gray-600 dark:bg-gray-900 dark:text-gray-200;
+  @apply text-sm text-gray-600 dark:bg-zinc-800 dark:text-gray-200;
 }
 
 button:not(:disabled),
@@ -17,23 +17,35 @@ input,
 textarea,
 select,
 [role='button'] {
-  @apply outline-hidden;
+  @apply bg-transparent outline-hidden;
+}
+
+input {
+  &:-webkit-autofill,
+  &:focus:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset;
+
+    @media (prefers-color-scheme: dark) {
+      -webkit-box-shadow: 0 0 0 30px rgb(39, 39, 42) inset;
+      -webkit-text-fill-color: rgb(229, 231, 235);
+    }
+  }
 }
 
 button {
-  @apply transition-transform! active:scale-95;
+  @apply transition-all! active:scale-95;
 }
 
 .link-color {
-  @apply relative bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-gray-600 to-50% bg-[length:200%_100%] bg-clip-text bg-[position:100%] font-bold text-transparent transition-[background-position] duration-300 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-blue-400 sm:hover:bg-[position:0_100%] sm:hover:after:h-0.5;
+  @apply relative bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-gray-600 to-50% bg-[length:200%_100%] bg-clip-text bg-[position:100%] font-bold text-transparent transition-[background-position] duration-300 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-blue-400 sm:hover:bg-[position:0_100%] sm:hover:after:h-0.5 dark:to-gray-400 dark:after:bg-blue-200;
 }
 
 .btn-base {
-  @apply flex h-10 items-center justify-center gap-2 rounded-md bg-slate-100 px-3 transition-colors sm:hover:bg-slate-200/60;
+  @apply flex h-10 items-center justify-center gap-2 rounded-md bg-slate-100 px-3 sm:hover:bg-slate-200/60 dark:bg-zinc-700 dark:hover:bg-zinc-600;
 }
 
 .input-base {
-  @apply block h-10 rounded-md border border-gray-300 px-3 focus:ring-2 focus:ring-blue-500;
+  @apply block h-10 rounded-md border border-gray-300 px-3 focus:ring-2 focus:ring-blue-500 dark:border-zinc-600;
 }
 
 /* Transition */
@@ -63,7 +75,7 @@ button {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: opacity 0.3s;
+  transition: all 0.3s;
 }
 
 .list-enter-from,
