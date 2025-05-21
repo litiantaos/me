@@ -17,6 +17,21 @@ export default defineNuxtConfig({
           name: 'description',
           content: '李天涛的个人网站，记录生活与想法。',
         },
+        {
+          name: 'robots',
+          content: 'index, follow',
+        },
+      ],
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/favicon.ico',
+        },
+        {
+          rel: 'canonical',
+          href: process.env.SITE_URL,
+        },
       ],
     },
     pageTransition: { name: 'move-up', mode: 'out-in' },
@@ -41,6 +56,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
+      siteUrl: process.env.SITE_URL,
     },
   },
 })
