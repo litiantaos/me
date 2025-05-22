@@ -51,7 +51,7 @@ export default defineEventHandler((event) => {
       </head>
       <body>
         <h1>Sitemap - TaosLife</h1>
-        <p>此文件包含网站上所有可索引的页面，供搜索引擎抓取使用。</p>
+        <p>此文件包含网站上所有可索引的页面，总计 <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/> 个，供搜索引擎抓取使用。</p>
         <table>
           <tr>
             <th class="url">网址</th>

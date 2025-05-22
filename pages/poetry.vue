@@ -1,10 +1,11 @@
 <template>
-  <div class="min-h-screen p-4 text-center">
-    <template v-if="shici">
-      <div
-        class="transition-all duration-300"
-        :class="isShiciShow ? 'mt-[30vh]' : 'mt-[40vh]'"
-      >
+  <div class="p-4 text-center">
+    <div
+      v-if="shici"
+      class="mt-[40vh] transition-transform duration-300"
+      :class="{ '-translate-y-20': isShiciShow }"
+    >
+      <div>
         <p class="text-5xl font-bold">
           {{ shici.content }}
         </p>
@@ -27,7 +28,7 @@
           </template>
         </div>
       </Transition>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -51,4 +52,9 @@ const toggleShiciShow = () => {
 
   isShiciShow.value = !isShiciShow.value
 }
+
+useSeoMeta({
+  title: '有诗有词',
+  description: '随机诗词，随机感受。',
+})
 </script>

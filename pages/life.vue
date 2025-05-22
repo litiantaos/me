@@ -98,4 +98,9 @@ const passedDays = computed(() => {
 
   return diffDays
 })
+
+useSeoMeta({
+  title: '人生',
+  description: '人生时间格，我会努力灿烂的活到88岁，看看那时世界的样子。',
+})
 </script>

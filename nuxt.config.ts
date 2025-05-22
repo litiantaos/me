@@ -6,7 +6,6 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'TaosLife｜李天涛',
       meta: [
         {
           name: 'viewport',

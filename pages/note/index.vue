@@ -57,4 +57,9 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
+
+useSeoMeta({
+  title: '随写，我的精神角落',
+  description: '记录生活，记录想法。',
+})
 </script>

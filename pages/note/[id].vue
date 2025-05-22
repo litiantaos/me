@@ -137,8 +137,8 @@ const title = computed(() => {
 })
 
 useSeoMeta({
-  title: title.value,
-  description: note.value?.content,
+  title: () => title.value,
+  description: () => note.value?.content,
 })
 
 definePageMeta({

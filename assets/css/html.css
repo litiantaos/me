@@ -41,7 +41,7 @@
   }
 
   blockquote {
-    @apply mt-4 border-l-4 border-gray-300 bg-gray-50 px-4 py-1 dark:border-zinc-600 dark:bg-zinc-700;
+    @apply my-4 border-l-4 border-gray-300 bg-gray-50 px-4 py-1 dark:border-zinc-600 dark:bg-zinc-700;
   }
 
   code {
