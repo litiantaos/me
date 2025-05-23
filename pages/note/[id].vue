@@ -76,6 +76,14 @@ const { data: note } = await useLazyAsyncData(async () => {
   }
 })
 
+// 检查笔记是否存在
+if (!note.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page Not Found',
+  })
+}
+
 // 删除笔记
 const handleDeleteConfirm = () => {
   isDeleteConfirm.value = !isDeleteConfirm.value
