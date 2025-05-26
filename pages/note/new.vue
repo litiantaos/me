@@ -37,7 +37,7 @@
             :disabled="isSaving"
             @click="handleSubmit"
           >
-            <UiLoader v-if="isSaving" size="text-sm" />
+            <UiLoader v-if="isSaving" size="w-4 h-4" />
             <i v-else class="ri-arrow-right-line"></i>
           </button>
         </div>

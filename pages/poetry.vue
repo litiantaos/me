@@ -2,7 +2,7 @@
   <div class="p-4 text-center">
     <div
       v-if="shici"
-      class="mt-[40vh] transition-transform duration-300"
+      class="mt-[40vh] transition-transform duration-500"
       :class="{ '-translate-y-20': isShiciShow }"
     >
       <div>

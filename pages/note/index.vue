@@ -1,8 +1,13 @@
 <template>
   <UiLayout :isLoading="isLoading">
     <div class="space-y-10">
-      <div v-if="user">
+      <div v-if="user" class="flex gap-6">
         <NuxtLink to="/note/new" class="link-color">New</NuxtLink>
+
+        <NuxtLink
+          to="/note/search"
+          class="link-color ri-search-line"
+        ></NuxtLink>
       </div>
 
       <TransitionGroup name="list">
