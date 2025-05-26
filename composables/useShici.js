@@ -1,5 +1,5 @@
 export const useShici = () => {
-  const shici = useState('shici', () => {})
+  const shici = useState('shici', () => null)
 
   const fetchShiciToken = async () => {
     try {
@@ -33,6 +33,7 @@ export const useShici = () => {
       console.error('Failed to fetch shici:', error)
     }
   }
+
   return {
     shici,
     fetchShici,

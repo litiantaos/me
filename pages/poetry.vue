@@ -36,11 +36,11 @@
 const { shici, fetchShici } = useShici()
 const isShiciShow = ref(false)
 
-if (!shici.value) {
-  useLazyAsyncData(async () => {
+onMounted(async () => {
+  if (!shici.value) {
     await fetchShici()
-  })
-}
+  }
+})
 
 const toggleShiciShow = () => {
   if (window.scrollY > 0) {

@@ -48,7 +48,6 @@ const router = useRouter()
 
 const { refreshNotes } = useNotes()
 
-const isLoading = ref(false)
 const isDeleteConfirm = ref(false)
 const isDeleting = ref(false)
 
@@ -56,31 +55,23 @@ const isBtnsOpen = ref(false)
 const btnsCloseTimer = ref(null)
 
 // 获取笔记
-const { data: note } = await useLazyAsyncData(async () => {
-  isLoading.value = true
+const { data: note, pending: isLoading } = await useLazyAsyncData(async () => {
+  const { data, error } = await client
+    .from('notes')
+    .select('*')
+    .eq('id', route.params.id)
+    .single()
 
-  try {
-    const { data, error } = await client
-      .from('notes')
-      .select('*')
-      .eq('id', route.params.id)
-      .single()
+  if (error) throw error
 
-    if (error) throw error
-
-    return data
-  } catch (error) {
-    console.error('获取笔记失败', error)
-  } finally {
-    isLoading.value = false
-  }
+  return data
 })
 
 // 检查笔记是否存在
-if (!note.value) {
-  throw createError({
+if (!note.value && !isLoading.value) {
+  showError({
     statusCode: 404,
-    statusMessage: 'Page Not Found',
+    statusMessage: '页面不存在',
   })
 }
 
