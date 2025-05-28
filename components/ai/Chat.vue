@@ -13,8 +13,8 @@
         :class="[
           'rounded-md px-3',
           message.role === 'user'
-            ? 'max-w-4/5 self-end bg-blue-50'
-            : 'self-start bg-gray-100',
+            ? 'max-w-4/5 self-end bg-blue-50 dark:bg-gray-700'
+            : 'self-start bg-gray-100 dark:bg-zinc-700',
         ]"
       >
         <div v-html="parseMarkdown(message.content)" class="html-style"></div>
@@ -32,7 +32,7 @@
         @keydown="handleKeydown"
         placeholder="今天也要开心呀！"
         :disabled="isLoading"
-        class="input-base h-24! w-full resize-none px-3! py-2 leading-7 focus:border-purple-400! focus:ring-3 focus:ring-orange-400/30"
+        class="input-base h-24! w-full resize-none px-3! py-2 leading-7 focus:border-purple-400! focus:ring-3 focus:ring-orange-400/30 dark:bg-zinc-700/30!"
       ></textarea>
     </div>
   </div>
