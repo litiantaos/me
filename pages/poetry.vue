@@ -6,7 +6,7 @@
       :class="{ '-translate-y-20': isShiciShow }"
     >
       <div>
-        <p class="text-5xl font-bold">
+        <p class="text-2xl font-bold sm:text-5xl">
           {{ shici.content }}
         </p>
 

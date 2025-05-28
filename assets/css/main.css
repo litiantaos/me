@@ -45,7 +45,7 @@ button {
 }
 
 .input-base {
-  @apply block h-10 rounded-md border border-gray-300 px-3 focus:ring-2 focus:ring-blue-500 dark:border-zinc-600;
+  @apply block h-10 rounded-md border border-gray-300 px-3 transition-all duration-300 focus:border-blue-500 dark:border-zinc-600;
 }
 
 /* Transition */

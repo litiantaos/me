@@ -22,6 +22,8 @@
             @click="handleDoc"
           ></button>
 
+          <button class="ri-ai-generate btn-base" @click="handleChat"></button>
+
           <button
             class="ri-folder-line btn-base"
             @click="handleLibrary"
@@ -71,6 +73,7 @@
 import marked from '~/utils/marked'
 import NoteMarkdownDoc from '@/components/note/MarkdownDoc.vue'
 import NoteFileLibrary from '@/components/note/FileLibrary.vue'
+import AiChat from '@/components/ai/Chat.vue'
 
 const input = ref('')
 const textareaRef = ref(null)
@@ -132,6 +135,12 @@ const handleDoc = () => {
   isModalShow.value = true
   modalComponent.value = markRaw(NoteMarkdownDoc)
   modalTitle.value = 'Markdown Doc'
+}
+
+const handleChat = () => {
+  isModalShow.value = true
+  modalComponent.value = markRaw(AiChat)
+  modalTitle.value = 'Chat'
 }
 
 const handleLibrary = () => {
@@ -206,5 +215,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEsc)
+})
+
+useSeoMeta({
+  title: () => (isEditMode.value ? '编辑想法' : '新想法'),
 })
 </script>

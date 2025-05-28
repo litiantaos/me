@@ -56,6 +56,7 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       siteUrl: process.env.SITE_URL,
+      deepseekApiKey: process.env.DEEPSEEK_API_KEY,
     },
   },
 })

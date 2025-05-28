@@ -85,4 +85,8 @@ const updateSearchParam = (query) => {
     },
   })
 }
+
+useSeoMeta({
+  title: '搜索',
+})
 </script>
