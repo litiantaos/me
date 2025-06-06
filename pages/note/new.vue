@@ -1,14 +1,15 @@
 <template>
-  <div class="h-screen overflow-hidden">
+  <div class="h-screen">
     <UiLayout
       :title="isEditMode ? '编辑' : '想法'"
       :class="[
-        isPreview ? '-translate-y-[80vh]' : 'translate-y-0',
+        isPreview ? '-translate-y-[calc(80vh+60px)]' : 'translate-y-0',
         'transition-transform duration-300',
       ]"
       :isLoading="isLoading"
+      isHScreen
     >
-      <div class="flex h-[calc(100vh-144px-128px)] flex-col space-y-4">
+      <div class="flex h-[80vh] flex-col space-y-4">
         <textarea
           class="w-full flex-1 resize-none leading-7"
           placeholder="心有从容，向阳而生"
@@ -39,7 +40,7 @@
             :disabled="isSaving"
             @click="handleSubmit"
           >
-            <UiLoader v-if="isSaving" size="w-4 h-4" />
+            <UiLoader v-if="isSaving" />
             <i v-else class="ri-arrow-right-line"></i>
           </button>
         </div>

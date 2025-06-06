@@ -17,7 +17,7 @@
 const props = defineProps({
   size: {
     type: String,
-    default: 'w-5 h-5',
+    default: 'w-4 h-4',
   },
 })
 </script>

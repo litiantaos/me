@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="flex w-full flex-col gap-4 transition-[height] duration-300"
-    :class="messages.length > 0 ? 'h-[calc(100vh-96px-48px)]' : 'h-[30vh]'"
-  >
+  <div class="w-full">
     <div
       class="flex flex-1 flex-col gap-4 overflow-y-auto"
       ref="messagesContainer"
@@ -21,7 +18,9 @@
       </div>
     </div>
 
-    <div class="space-y-2">
+    <div
+      class="sticky bottom-0 space-y-2 bg-linear-to-t from-white via-white via-80% to-transparent py-4 dark:from-zinc-800! dark:via-zinc-800!"
+    >
       <div v-if="error" class="text-red-500">
         {{ error }}
       </div>
@@ -32,7 +31,7 @@
         @keydown="handleKeydown"
         placeholder="今天也要开心呀！"
         :disabled="isLoading"
-        class="input-base h-24! w-full resize-none px-3! py-2 leading-7 focus:border-purple-400! focus:ring-3 focus:ring-orange-400/30 dark:bg-zinc-700/30!"
+        class="input-base h-24! w-full resize-none bg-white! px-3! py-2 leading-7 focus:border-purple-400! focus:shadow-md focus:ring-3 focus:shadow-indigo-500/30 focus:ring-orange-400/30 disabled:cursor-not-allowed dark:bg-zinc-800!"
       ></textarea>
     </div>
   </div>

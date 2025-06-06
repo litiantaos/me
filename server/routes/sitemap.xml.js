@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   for (const route of routes) {
     xml += '  <url>\n'
     xml += `    <loc>${baseUrl}${route}</loc>\n`
-    xml += '    <changefreq>monthly</changefreq>\n'
+    xml += '    <changefreq>weekly</changefreq>\n'
     xml += '    <priority>0.8</priority>\n'
     xml += '  </url>\n'
   }
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
       xml += '  <url>\n'
       xml += `    <loc>${baseUrl}/note/${note.id}</loc>\n`
       xml += `    <lastmod>${lastmod}</lastmod>\n`
-      xml += '    <changefreq>monthly</changefreq>\n'
+      xml += '    <changefreq>weekly</changefreq>\n'
       xml += '    <priority>0.6</priority>\n'
       xml += '  </url>\n'
     }
