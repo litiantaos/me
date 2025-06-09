@@ -11,6 +11,7 @@ Allow: /
 Allow: /note/
 Allow: /life/
 Allow: /poetry/
+Allow: /chat/
 Disallow: /login/
 Disallow: /note/new/
 

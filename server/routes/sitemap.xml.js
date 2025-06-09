@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const baseUrl = config.public.siteUrl
 
   // 静态路由列表
-  const routes = ['', '/life', '/poetry', '/note']
+  const routes = ['', '/life', '/poetry', '/note', '/chat']
 
   // 生成sitemap XML内容
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'

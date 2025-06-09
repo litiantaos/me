@@ -1,12 +1,8 @@
 <template>
-  <div
-    class="mx-auto max-w-2xl p-4"
-    :class="{ 'flex h-screen flex-col': isHScreen }"
-  >
+  <div class="mx-auto max-w-2xl p-4">
     <header
       v-if="hasHeader"
       class="sticky top-0 z-50 mb-4 flex h-24 items-center gap-4 bg-linear-to-b from-white to-transparent dark:from-zinc-800"
-      :class="{ 'flex-none': isHScreen }"
     >
       <UiTitle
         :class="{ 'cursor-pointer': hasBack }"
@@ -22,9 +18,7 @@
       <slot name="header" />
     </header>
 
-    <div :class="{ 'flex-1': isHScreen }">
-      <slot />
-    </div>
+    <slot />
   </div>
 </template>
 
@@ -49,10 +43,6 @@ const props = defineProps({
   hasBack: {
     type: Boolean,
     default: true,
-  },
-  isHScreen: {
-    type: Boolean,
-    default: false,
   },
 })
 

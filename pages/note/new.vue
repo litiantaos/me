@@ -1,86 +1,58 @@
 <template>
-  <div class="h-screen">
-    <UiLayout
-      :title="isEditMode ? '编辑' : '想法'"
-      :class="[
-        isPreview ? '-translate-y-[calc(80vh+60px)]' : 'translate-y-0',
-        'transition-transform duration-300',
-      ]"
-      :isLoading="isLoading"
-      isHScreen
-    >
-      <div class="flex h-[80vh] flex-col space-y-4">
-        <textarea
-          class="w-full flex-1 resize-none leading-7"
-          placeholder="心有从容，向阳而生"
-          v-model="input"
-          ref="textareaRef"
-        ></textarea>
+  <div>
+    <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isLoading">
+      <textarea
+        class="min-h-[60vh] w-full resize-none leading-7"
+        placeholder="心有从容，向阳而生"
+        v-model="input"
+        ref="textareaRef"
+        @input="adjustTextareaHeight"
+      ></textarea>
 
-        <div class="flex gap-4">
-          <button
-            class="ri-sticky-note-line btn-base"
-            @click="handleDoc"
-          ></button>
+      <div class="sticky bottom-0 flex gap-4 bg-white py-4 dark:bg-zinc-800">
+        <button
+          class="ri-sticky-note-line btn-base"
+          @click="handleDoc"
+        ></button>
 
-          <button class="ri-ai-generate btn-base" @click="handleChat"></button>
+        <button class="ri-ai-generate btn-base" @click="handleChat"></button>
 
-          <button
-            class="ri-folder-line btn-base"
-            @click="handleLibrary"
-          ></button>
+        <button class="ri-folder-line btn-base" @click="handleLibrary"></button>
 
-          <button
-            class="ri-stacked-view btn-base"
-            @click="handlePreview"
-          ></button>
+        <button
+          class="ri-stacked-view btn-base"
+          @click="handlePreview"
+        ></button>
 
-          <button
-            class="btn-base bg-slate-200! px-8! sm:hover:bg-slate-300/60! dark:bg-zinc-600! dark:hover:bg-zinc-500!"
-            :disabled="isSaving"
-            @click="handleSubmit"
-          >
-            <UiLoader v-if="isSaving" />
-            <i v-else class="ri-arrow-right-line"></i>
-          </button>
-        </div>
+        <button
+          class="btn-base bg-slate-200! px-8! sm:hover:bg-slate-300/60! dark:bg-zinc-600! dark:hover:bg-zinc-500!"
+          :disabled="isSaving"
+          @click="handleSubmit"
+        >
+          <UiLoader v-if="isSaving" />
+          <i v-else class="ri-arrow-right-line"></i>
+        </button>
       </div>
-
-      <Transition name="fade">
-        <div v-if="isPreview" class="mt-8 h-[80vh] overflow-y-auto">
-          <div v-html="output" class="html-style"></div>
-        </div>
-      </Transition>
     </UiLayout>
-
-    <Transition name="fade">
-      <div
-        v-if="isPreview"
-        class="fixed top-0 right-0 left-0 z-10 h-32 cursor-pointer bg-linear-to-b from-white to-transparent dark:from-zinc-800"
-        @click="handlePreview"
-      ></div>
-    </Transition>
 
     <UiModal
       v-model:isShow="isModalShow"
       :component="modalComponent"
+      :componentData="modalComponentData"
       :hasUiTitle="false"
       :title="modalTitle"
+      @close="handleModalClose"
     />
   </div>
 </template>
 
 <script setup>
-import marked from '~/utils/marked'
-import NoteMarkdownDoc from '@/components/note/MarkdownDoc.vue'
-import NoteFileLibrary from '@/components/note/FileLibrary.vue'
+import MdPreview from '@/components/note/MdPreview.vue'
+import FileLibrary from '@/components/note/FileLibrary.vue'
 import AiChat from '@/components/ai/Chat.vue'
 
 const input = ref('')
 const textareaRef = ref(null)
-const output = computed(() => marked(input.value))
-
-const isPreview = ref(false)
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
@@ -121,6 +93,20 @@ const fetchNote = async () => {
   }
 }
 
+// 调整 textarea 高度
+const adjustTextareaHeight = () => {
+  const textarea = textareaRef.value
+  if (!textarea) return
+
+  textarea.style.height = 'auto'
+  textarea.style.height = `${textarea.scrollHeight}px`
+}
+
+// 监听输入变化
+watch(input, () => {
+  nextTick(adjustTextareaHeight)
+})
+
 onMounted(async () => {
   // 如果是编辑模式，获取笔记内容
   if (isEditMode.value) {
@@ -129,12 +115,25 @@ onMounted(async () => {
 
   nextTick(() => {
     textareaRef.value?.focus()
+    adjustTextareaHeight() // 初始化时调整高度
   })
 })
 
-const handleDoc = () => {
+// 模态框
+const isModalShow = ref(false)
+const modalComponent = ref(null)
+const modalComponentData = ref({})
+const modalTitle = ref('')
+
+const handleDoc = async () => {
+  const res = await fetch('/docs/md.md')
+  const mdDoc = await res.text()
+
   isModalShow.value = true
-  modalComponent.value = markRaw(NoteMarkdownDoc)
+  modalComponent.value = markRaw(MdPreview)
+  modalComponentData.value = {
+    content: mdDoc,
+  }
   modalTitle.value = 'Markdown Doc'
 }
 
@@ -146,12 +145,25 @@ const handleChat = () => {
 
 const handleLibrary = () => {
   isModalShow.value = true
-  modalComponent.value = markRaw(NoteFileLibrary)
+  modalComponent.value = markRaw(FileLibrary)
   modalTitle.value = '资源'
 }
 
 const handlePreview = () => {
-  isPreview.value = !isPreview.value
+  isModalShow.value = true
+  modalComponent.value = markRaw(MdPreview)
+  modalComponentData.value = {
+    content: input.value,
+  }
+  modalTitle.value = '预览'
+}
+
+const handleModalClose = () => {
+  console.log('handleModalClose')
+
+  modalComponent.value = null
+  modalComponentData.value = {}
+  modalTitle.value = ''
 }
 
 const handleSubmit = throttle(async () => {
@@ -196,26 +208,6 @@ const handleSubmit = throttle(async () => {
   } finally {
     isSaving.value = false
   }
-})
-
-// MdDoc 模态框
-const isModalShow = ref(false)
-const modalComponent = ref(null)
-const modalTitle = ref('')
-
-// 按下 ESC 键关闭预览
-const handleEsc = (event) => {
-  if (event.key === 'Escape' || event.keyCode === 27) {
-    isPreview.value = false
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('keydown', handleEsc)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleEsc)
 })
 
 useSeoMeta({

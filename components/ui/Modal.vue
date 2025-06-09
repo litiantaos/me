@@ -22,7 +22,7 @@
           <template v-else>
             <component
               :is="component"
-              :data="componentData"
+              v-bind="componentData"
               @close="close"
               @confirm="handleComponentConfirm"
             ></component>
@@ -43,6 +43,15 @@ const props = defineProps([
   'title',
 ])
 const emit = defineEmits(['close', 'confirm'])
+
+// 控制页面滚动
+const toggleBodyScroll = (isLock) => {
+  document.body.style.overflow = isLock ? 'hidden' : ''
+}
+
+watch(isShow, (newVal) => {
+  toggleBodyScroll(newVal)
+})
 
 const close = () => {
   isShow.value = false
@@ -67,5 +76,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEsc)
+
+  toggleBodyScroll(false)
 })
 </script>

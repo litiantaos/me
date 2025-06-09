@@ -10,7 +10,7 @@ export default defineEventHandler((event) => {
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
-        <title>Sitemap - TaosLife</title>
+        <title>Sitemap｜TaosLife</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <style type="text/css">
           body {
@@ -50,7 +50,7 @@ export default defineEventHandler((event) => {
         </style>
       </head>
       <body>
-        <h1>Sitemap - TaosLife</h1>
+        <h1>Sitemap｜TaosLife</h1>
         <p>此文件包含网站上所有可索引的页面，总计 <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/> 个，供搜索引擎抓取使用。</p>
         <table>
           <tr>
