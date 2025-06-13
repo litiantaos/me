@@ -1,8 +1,12 @@
 <template>
-  <div class="p-4 text-center">
+  <div>
+    <div class="fixed inset-0">
+      <UiRainLines />
+    </div>
+
     <div
       v-if="shici"
-      class="mt-[40vh] transition-transform duration-500"
+      class="mt-[40vh] p-4 text-center transition-transform duration-500"
       :class="{ '-translate-y-20': isShiciShow }"
     >
       <div>
