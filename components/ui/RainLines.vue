@@ -1,9 +1,11 @@
 <template>
-  <div class="rain-container">
+  <div
+    class="absolute -top-[50vh] left-1/2 h-[200vh] w-[200vw] -translate-x-1/2 rotate-[15deg] overflow-hidden"
+  >
     <div
       v-for="n in 50"
       :key="n"
-      class="rain-line"
+      class="rain-line bg-black dark:bg-white"
       :style="getRandomStyle()"
     ></div>
   </div>
@@ -11,7 +13,7 @@
 
 <script setup>
 const getRandomStyle = () => {
-  const duration = 2 + Math.random() * 2 // 2-4秒的随机持续时间
+  const duration = 3 + Math.random() * 2 // 随机持续时间
   const delay = Math.random() * 2 // 0-2秒的随机延迟
   const left = Math.random() * 100 // 0-100%的随机水平位置
   const height = 40 + Math.random() * 60 // 40-100px的随机高度
@@ -28,23 +30,12 @@ const getRandomStyle = () => {
 </script>
 
 <style scoped>
-.rain-container {
-  position: absolute;
-  top: calc(-100vh * 0.3);
-  width: 130vw;
-  height: 130vh;
-  overflow: hidden;
-  transform: rotate(15deg);
-  transform-origin: top left;
-}
-
 .rain-line {
   position: absolute;
   top: -100px;
   left: var(--left);
   width: 1px;
   height: var(--height);
-  background: black;
   opacity: var(--opacity);
   animation: rain var(--duration) linear var(--delay) infinite;
 }
@@ -61,7 +52,7 @@ const getRandomStyle = () => {
     opacity: var(--opacity);
   }
   100% {
-    transform: translateY(130vh);
+    transform: translateY(200vh);
     opacity: 0;
   }
 }

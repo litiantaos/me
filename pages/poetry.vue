@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="fixed inset-0">
+    <div class="fixed inset-0 z-[-1]">
       <UiRainLines />
     </div>
 
     <div
       v-if="shici"
-      class="mt-[40vh] p-4 text-center transition-transform duration-500"
-      :class="{ '-translate-y-20': isShiciShow }"
+      class="p-4 text-center transition-transform duration-500 select-none"
+      :class="isShiciShow ? 'translate-y-[30vh]' : 'translate-y-[40vh]'"
     >
       <div>
         <p class="text-2xl font-bold sm:text-5xl">

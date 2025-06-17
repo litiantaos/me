@@ -1,3 +1,11 @@
+@media (prefers-color-scheme: light) {
+  @import 'highlight.js/styles/github.css';
+}
+
+@media (prefers-color-scheme: dark) {
+  @import 'highlight.js/styles/github-dark.css';
+}
+
 .html-style {
   h1 {
     @apply mt-10 mb-8 text-2xl font-bold;
@@ -53,7 +61,7 @@
   }
 
   pre code {
-    @apply bg-transparent p-0;
+    @apply bg-transparent p-0 leading-6;
   }
 
   table {

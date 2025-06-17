@@ -98,8 +98,14 @@ const adjustTextareaHeight = () => {
   const textarea = textareaRef.value
   if (!textarea) return
 
+  // 保存当前滚动位置
+  const scrollTop = window.scrollY
+
   textarea.style.height = 'auto'
   textarea.style.height = `${textarea.scrollHeight}px`
+
+  // 恢复滚动位置
+  window.scrollTo(0, scrollTop)
 }
 
 // 监听输入变化
