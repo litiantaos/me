@@ -2,7 +2,7 @@
   <UiLayout :isLoading="isLoading">
     <Transition name="fade">
       <div v-if="note" class="space-y-6">
-        <NoteContent :note="note" is-page />
+        <NoteContent :note="note" isPage />
 
         <UiMediaPreview />
 

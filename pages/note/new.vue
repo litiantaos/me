@@ -2,11 +2,10 @@
   <div>
     <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isLoading">
       <textarea
-        class="min-h-[60vh] w-full resize-none leading-7"
+        class="field-sizing-content min-h-[60vh] w-full resize-none leading-7"
         placeholder="心有从容，向阳而生"
         v-model="input"
         ref="textareaRef"
-        @input="adjustTextareaHeight"
       ></textarea>
 
       <div class="sticky bottom-0 flex gap-4 bg-white py-4 dark:bg-zinc-800">
@@ -93,26 +92,6 @@ const fetchNote = async () => {
   }
 }
 
-// 调整 textarea 高度
-const adjustTextareaHeight = () => {
-  const textarea = textareaRef.value
-  if (!textarea) return
-
-  // 保存当前滚动位置
-  const scrollTop = window.scrollY
-
-  textarea.style.height = 'auto'
-  textarea.style.height = `${textarea.scrollHeight}px`
-
-  // 恢复滚动位置
-  window.scrollTo(0, scrollTop)
-}
-
-// 监听输入变化
-watch(input, () => {
-  nextTick(adjustTextareaHeight)
-})
-
 onMounted(async () => {
   // 如果是编辑模式，获取笔记内容
   if (isEditMode.value) {
@@ -121,7 +100,6 @@ onMounted(async () => {
 
   nextTick(() => {
     textareaRef.value?.focus()
-    adjustTextareaHeight() // 初始化时调整高度
   })
 })
 
