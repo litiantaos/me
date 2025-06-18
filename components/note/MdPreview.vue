@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-html="htmlContent" class="html-style"></div>
+    <div v-html="contentHTML" class="html-style"></div>
   </div>
 </template>
 
@@ -14,5 +14,5 @@ const props = defineProps({
   },
 })
 
-const htmlContent = computed(() => marked(props.content))
+const contentHTML = computed(() => marked(props.content))
 </script>

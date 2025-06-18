@@ -1,13 +1,15 @@
 <template>
   <div>
-    <div class="flex items-center gap-3 text-gray-400">
-      <div>{{ formatDate(note.created_at) }}</div>
-      <NuxtLink
-        v-if="!isPage"
-        :to="`/note/${note.id}`"
-        class="ri-arrow-right-line sm:hover:text-blue-500"
-      ></NuxtLink>
-    </div>
+    <ClientOnly>
+      <div class="flex items-center gap-3 text-gray-400">
+        <div>{{ formatDate(note.created_at) }}</div>
+        <NuxtLink
+          v-if="!isPage"
+          :to="`/note/${note.id}`"
+          class="ri-arrow-right-line sm:hover:text-blue-500"
+        ></NuxtLink>
+      </div>
+    </ClientOnly>
 
     <div v-if="title && !isPage" class="mt-3 space-y-2">
       <p class="text-lg font-bold">{{ title }}</p>

@@ -6,35 +6,37 @@
 
         <UiMediaPreview />
 
-        <div
-          v-if="user && user.id === note.user_id"
-          class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
-          :class="isBtnsOpen ? 'w-30' : 'w-10'"
-          @mouseenter="onBtnsMouseEnter"
-          @mouseleave="resetBtnsTimeout"
-        >
+        <ClientOnly>
           <div
-            class="flex h-full w-40 transition-transform duration-200"
-            :class="{ '-translate-x-10': isDeleteConfirm }"
+            v-if="user && user.id === note.user_id"
+            class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
+            :class="isBtnsOpen ? 'w-30' : 'w-10'"
+            @mouseenter="onBtnsMouseEnter"
+            @mouseleave="resetBtnsTimeout"
           >
-            <button
-              class="ri-more-line h-full flex-1"
-              @click="handleBtnOpen"
-            ></button>
-            <button
-              class="ri-edit-line h-full flex-1"
-              @click="handleEdit"
-            ></button>
-            <button
-              class="ri-delete-bin-7-line h-full flex-1 text-red-600"
-              @click="handleDeleteConfirm"
-            ></button>
-            <button
-              class="ri-check-line h-full flex-1 text-blue-500"
-              @click="handleDelete"
-            ></button>
+            <div
+              class="flex h-full w-40 transition-transform duration-200"
+              :class="{ '-translate-x-10': isDeleteConfirm }"
+            >
+              <button
+                class="ri-more-line h-full flex-1"
+                @click="handleBtnOpen"
+              ></button>
+              <button
+                class="ri-edit-line h-full flex-1"
+                @click="handleEdit"
+              ></button>
+              <button
+                class="ri-delete-bin-7-line h-full flex-1 text-red-600"
+                @click="handleDeleteConfirm"
+              ></button>
+              <button
+                class="ri-check-line h-full flex-1 text-blue-500"
+                @click="handleDelete"
+              ></button>
+            </div>
           </div>
-        </div>
+        </ClientOnly>
       </div>
     </Transition>
   </UiLayout>
