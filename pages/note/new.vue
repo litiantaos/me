@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import MdPreview from '@/components/note/MdPreview.vue'
+import MdRenderer from '@/components/md/Renderer.vue'
 import FileLibrary from '@/components/note/FileLibrary.vue'
 import AiChat from '@/components/ai/Chat.vue'
 
@@ -114,9 +114,9 @@ const handleDoc = async () => {
   const mdDoc = await res.text()
 
   isModalShow.value = true
-  modalComponent.value = markRaw(MdPreview)
+  modalComponent.value = markRaw(MdRenderer)
   modalComponentData.value = {
-    content: mdDoc,
+    md: mdDoc,
   }
   modalTitle.value = 'Markdown Doc'
 }
@@ -135,9 +135,9 @@ const handleLibrary = () => {
 
 const handlePreview = () => {
   isModalShow.value = true
-  modalComponent.value = markRaw(MdPreview)
+  modalComponent.value = markRaw(MdRenderer)
   modalComponentData.value = {
-    content: input.value,
+    md: input.value,
   }
   modalTitle.value = '预览'
 }

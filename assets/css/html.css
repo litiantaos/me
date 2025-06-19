@@ -57,11 +57,11 @@
   }
 
   pre {
-    @apply my-4 overflow-x-auto rounded-md bg-gray-100 p-4 font-mono text-xs dark:bg-zinc-700;
+    @apply my-4;
   }
 
   pre code {
-    @apply bg-transparent p-0 leading-6;
+    @apply block overflow-x-auto rounded-md px-4 py-4 leading-6;
   }
 
   table {

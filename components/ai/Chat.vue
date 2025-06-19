@@ -14,7 +14,7 @@
             : 'self-start bg-gray-100 dark:bg-zinc-700',
         ]"
       >
-        <div v-html="parseMarkdown(message.content)" class="html-style"></div>
+        <MdRenderer :md="message.content" />
       </div>
     </div>
 
@@ -38,8 +38,6 @@
 </template>
 
 <script setup>
-import marked from '~/utils/marked'
-
 const props = defineProps({
   defaultPrompt: {
     type: String,
@@ -52,11 +50,6 @@ const inputMessage = ref('')
 const messagesContainer = ref(null)
 
 const { messages, isLoading, error, sendMessage } = useChat(props.defaultPrompt)
-
-// 解析 Markdown
-const parseMarkdown = (content) => {
-  return marked(content)
-}
 
 // 监听消息变化，自动滚动到底部
 watch(messages, () => {
