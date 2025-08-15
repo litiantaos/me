@@ -26,7 +26,7 @@
           type="file"
           ref="fileInput"
           @change="handleFileUpload"
-          class="hidden"
+          class="hidden!"
           :accept="activeTab === 'images' ? 'image/*' : 'video/*'"
         />
       </div>

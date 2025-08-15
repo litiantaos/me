@@ -1,5 +1,5 @@
 <template>
-  <UiLayout>
+  <UiLayout title="聊天">
     <AiChat />
   </UiLayout>
 </template>

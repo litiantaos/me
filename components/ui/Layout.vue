@@ -1,24 +1,28 @@
 <template>
-  <div class="mx-auto max-w-2xl p-4">
+  <div>
     <header
       v-if="hasHeader"
-      class="sticky top-0 z-50 mb-4 flex h-24 items-center gap-4 bg-linear-to-b from-white to-transparent dark:from-zinc-800"
+      class="sticky top-0 z-50 h-24 bg-linear-to-b from-white to-transparent dark:from-zinc-800"
     >
-      <UiTitle
-        :class="{ 'cursor-pointer': hasBack }"
-        :hasUiTitle="hasUiTitle"
-        :title="title"
-        @click="handleBack"
-      />
+      <div class="mx-auto flex h-full max-w-2xl items-center gap-4 p-4">
+        <UiTitle
+          :class="{ 'cursor-pointer': hasBack }"
+          :hasUiTitle="hasUiTitle"
+          :title="title"
+          @click="handleBack"
+        />
 
-      <Transition name="fade">
-        <UiLoader v-if="isLoading" />
-      </Transition>
+        <Transition name="fade">
+          <UiLoader v-if="isLoading" />
+        </Transition>
 
-      <slot name="header" />
+        <slot name="header" />
+      </div>
     </header>
 
-    <slot />
+    <div class="mx-auto max-w-2xl p-4">
+      <slot />
+    </div>
   </div>
 </template>
 

@@ -17,7 +17,7 @@ input,
 textarea,
 select,
 [role='button'] {
-  @apply bg-transparent outline-hidden;
+  @apply block bg-transparent outline-hidden;
 }
 
 input {
@@ -45,7 +45,7 @@ button {
 }
 
 .input-base {
-  @apply block h-10 rounded-md border border-gray-300 px-3 transition-all duration-300 focus:border-blue-500 dark:border-zinc-600;
+  @apply h-10 rounded-md border border-gray-300 px-3 transition-all duration-300 focus:border-blue-500 dark:border-zinc-600;
 }
 
 /* Transition */
