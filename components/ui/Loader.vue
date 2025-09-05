@@ -1,14 +1,18 @@
 <template>
-  <div>
-    <svg
-      :class="['animate-spin', size]"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-    >
-      <path
-        d="M18.364 5.63604L16.9497 7.05025C15.683 5.7835 13.933 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C15.866 19 19 15.866 19 12H21C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C14.4853 3 16.7353 4.00736 18.364 5.63604Z"
-      ></path>
+  <div class="svg-loader" :class="sizeClass">
+    <svg width="100%" height="100%" viewBox="0 0 50 50">
+      <circle
+        cx="25"
+        cy="25"
+        r="20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="5"
+        stroke-linecap="round"
+        stroke-dasharray="31.416"
+        stroke-dashoffset="31.416"
+        class="circle-path"
+      />
     </svg>
   </div>
 </template>
@@ -16,8 +20,43 @@
 <script setup>
 const props = defineProps({
   size: {
-    type: String,
-    default: 'w-4 h-4',
+    type: Number,
+    default: 4,
   },
 })
+
+const sizeClass = computed(() => {
+  return `w-${props.size} h-${props.size}`
+})
 </script>
+
+<style scoped>
+.svg-loader {
+  animation: rotate 2s linear infinite;
+}
+
+.circle-path {
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+</style>

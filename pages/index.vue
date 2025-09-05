@@ -31,7 +31,7 @@
 
         <p>
           我今年
-          <NuxtLink to="/life" class="link-color">{{ age }}岁</NuxtLink>
+          <NuxtLink to="/life" class="link-color">{{ currentAge }}岁</NuxtLink>
           ，性格内敛，不喜社交，很少在网络上发表内容或与人互动，往后的日子里，我会尽量在这个独特的
           <NuxtLink to="/note" class="link-color">精神角落</NuxtLink>
           中记录自己的想法和生活，幸运的话，也许可以让你了解我。
@@ -48,17 +48,5 @@
 </template>
 
 <script setup>
-const age = computed(() => {
-  const [y, m, d] = [1998, 3, 29]
-  const today = new Date()
-  let age = today.getFullYear() - y
-  // 如果还没到当年生日，减 1
-  if (
-    today.getMonth() + 1 < m ||
-    (today.getMonth() + 1 === m && today.getDate() < d)
-  ) {
-    age--
-  }
-  return age
-})
+const { currentAge } = useAge()
 </script>
