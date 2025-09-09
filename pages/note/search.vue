@@ -3,11 +3,11 @@
     <div class="space-y-10">
       <form @submit.prevent="handleSearch">
         <input
+          ref="searchInput"
           type="text"
           v-model="searchQuery"
           placeholder="搜索"
-          class="w-full border-b border-b-gray-200 py-2 transition-colors focus:border-blue-500 dark:border-zinc-600"
-          autofocus
+          class="w-full border-b border-zinc-200 py-2 transition-colors focus:border-blue-500 dark:border-zinc-600"
         />
       </form>
 
@@ -21,7 +21,7 @@
 
       <div
         v-if="searchResults?.length === 0"
-        class="ri-cloudy-2-line text-center text-2xl text-gray-300 dark:text-zinc-600"
+        class="ri-cloudy-2-line text-center text-2xl text-zinc-300 dark:text-zinc-600"
       ></div>
     </div>
   </UiLayout>
@@ -32,6 +32,7 @@ const client = useSupabaseClient()
 const route = useRoute()
 const router = useRouter()
 
+const searchInput = ref(null)
 const searchQuery = ref('')
 const searchResults = ref(null)
 const isLoading = ref(false)
@@ -42,6 +43,8 @@ onMounted(() => {
   if (q) {
     searchQuery.value = q
     handleSearch()
+  } else {
+    searchInput.value?.focus()
   }
 })
 

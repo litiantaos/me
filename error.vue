@@ -4,9 +4,7 @@
       <UiTitle />
     </NuxtLink>
 
-    <h2
-      class="text-stroke text-stroke-gray text-3xl font-bold text-transparent"
-    >
+    <h2 class="text-stroke text-3xl font-bold text-transparent">
       {{ error.statusCode }}
     </h2>
 
@@ -21,9 +19,6 @@ defineProps(['error'])
 <style scoped>
 .text-stroke {
   -webkit-text-stroke-width: 1px;
-}
-
-.text-stroke-gray {
   -webkit-text-stroke-color: #aaa;
 }
 </style>

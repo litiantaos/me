@@ -44,16 +44,16 @@
     @apply my-2 text-justify leading-7;
 
     &::marker {
-      @apply text-gray-400;
+      @apply text-zinc-400;
     }
   }
 
   blockquote {
-    @apply my-4 border-l-4 border-gray-200 bg-gray-50 px-4 py-1 dark:border-zinc-600 dark:bg-zinc-700;
+    @apply my-4 border-l-4 border-zinc-200 bg-zinc-50 px-4 py-1 dark:border-zinc-600 dark:bg-zinc-700;
   }
 
   code {
-    @apply rounded-sm bg-gray-100 px-1 py-0.5 font-mono text-xs dark:bg-zinc-700;
+    @apply rounded-sm bg-zinc-100 px-1 py-0.5 font-mono text-xs dark:bg-zinc-700;
   }
 
   pre {
@@ -65,33 +65,50 @@
   }
 
   table {
-    @apply my-4 w-full border-collapse;
-  }
-
-  tr {
-    @apply border-gray-200 dark:border-zinc-600;
-  }
-
-  thead tr {
-    @apply border-b-2;
-  }
-
-  tbody tr {
-    @apply not-last:border-b;
+    @apply my-4 w-full border-separate border-spacing-0;
   }
 
   th,
   td {
-    @apply py-4 not-last:pr-4;
+    @apply border-r border-b border-zinc-200 p-4 dark:border-zinc-600;
   }
 
   th {
     @apply text-left font-bold;
   }
 
+  thead th {
+    @apply border-t border-zinc-200 dark:border-zinc-600;
+  }
+
+  thead tr {
+    @apply bg-zinc-50 dark:bg-zinc-700/50;
+  }
+
+  th:first-child,
+  td:first-child {
+    @apply border-l border-zinc-200 dark:border-zinc-600;
+  }
+
+  thead th:first-child {
+    @apply rounded-tl-md;
+  }
+
+  thead th:last-child {
+    @apply rounded-tr-md;
+  }
+
+  tbody tr:last-child td:first-child {
+    @apply rounded-bl-md;
+  }
+
+  tbody tr:last-child td:last-child {
+    @apply rounded-br-md;
+  }
+
   img,
   video {
-    @apply mx-auto my-4 w-full rounded-md border border-gray-100 dark:border-zinc-700;
+    @apply mx-auto my-4 w-full rounded-md border border-zinc-100 dark:border-zinc-600;
   }
 
   img {
@@ -99,7 +116,7 @@
   }
 
   hr {
-    @apply my-6 border-t border-gray-200 dark:border-zinc-600;
+    @apply my-6 border-t border-zinc-200 dark:border-zinc-600;
   }
 
   strong {

@@ -108,8 +108,6 @@ export const useChat = (defaultPrompt = '') => {
         role: 'model',
         content: aiResponse,
       })
-
-      console.log(messages.value)
     } catch (err) {
       error.value = err.message
     } finally {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex h-6 items-center gap-3 text-gray-400">
+    <div class="flex h-6 items-center gap-3 text-zinc-400">
       <ClientOnly>
         <div>{{ formatDate(note.created_at) }}</div>
         <NuxtLink

@@ -12,7 +12,7 @@
 
       <TransitionGroup name="list">
         <div v-if="shici">
-          <NuxtLink to="/poetry" class="text-gray-400 sm:hover:text-blue-500"
+          <NuxtLink to="/poetry" class="text-zinc-400 sm:hover:text-blue-500"
             >有诗有词</NuxtLink
           >
           <div class="html-style">

@@ -41,7 +41,7 @@
 
         <button
           type="submit"
-          class="btn-base w-full bg-blue-500! text-white sm:hover:bg-blue-500/90!"
+          class="btn-base w-full! bg-blue-500! text-white sm:hover:bg-blue-500/80!"
           :disabled="isLoading"
         >
           {{ isLogin ? '登录' : '注册' }}

@@ -9,10 +9,8 @@
         <ClientOnly>
           <div
             v-if="user && user.id === note.user_id"
-            class="h-7 overflow-hidden rounded-md bg-gray-100 transition-[width,background-color] duration-200 sm:hover:bg-gray-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
+            class="h-7 overflow-hidden rounded-md bg-zinc-100 transition-all duration-200 sm:hover:bg-zinc-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600/80"
             :class="isBtnsOpen ? 'w-30' : 'w-10'"
-            @mouseenter="onBtnsMouseEnter"
-            @mouseleave="resetBtnsTimeout"
           >
             <div
               class="flex h-full w-40 transition-transform duration-200"
@@ -77,9 +75,21 @@ if (!note.value && !isLoading.value) {
   })
 }
 
+const resetCloseTimer = () => {
+  clearTimeout(btnsCloseTimer.value)
+
+  btnsCloseTimer.value = setTimeout(() => {
+    isBtnsOpen.value = false
+    isDeleteConfirm.value = false
+  }, 3000)
+}
+
 // 删除笔记
 const handleDeleteConfirm = () => {
   isDeleteConfirm.value = !isDeleteConfirm.value
+  if (isBtnsOpen.value) {
+    resetCloseTimer()
+  }
 }
 
 const handleDelete = async () => {
@@ -112,19 +122,11 @@ const handleEdit = () => {
 // 打开更多按钮
 const handleBtnOpen = () => {
   isBtnsOpen.value = !isBtnsOpen.value
-}
-
-const onBtnsMouseEnter = () => {
-  clearTimeout(btnsCloseTimer.value)
-}
-
-const resetBtnsTimeout = () => {
-  clearTimeout(btnsCloseTimer.value)
-
-  btnsCloseTimer.value = setTimeout(() => {
-    isBtnsOpen.value = false
-    isDeleteConfirm.value = false
-  }, 3000)
+  if (isBtnsOpen.value) {
+    resetCloseTimer()
+  } else {
+    clearTimeout(btnsCloseTimer.value)
+  }
 }
 
 // SEO

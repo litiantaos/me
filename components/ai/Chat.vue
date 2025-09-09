@@ -7,12 +7,11 @@
       <div
         v-for="(message, index) in messages"
         :key="index"
-        :class="[
-          'rounded-md px-3',
+        :class="
           message.role === 'user'
-            ? 'max-w-4/5 self-end bg-blue-50 dark:bg-gray-700'
-            : 'self-start bg-gray-100 dark:bg-zinc-700',
-        ]"
+            ? 'max-w-4/5 self-end rounded-md bg-zinc-100 px-3 dark:bg-zinc-700'
+            : 'self-start'
+        "
       >
         <MdRenderer :md="message.content" />
       </div>
@@ -26,7 +25,7 @@
       </div>
 
       <div
-        class="rounded-md border border-gray-300 transition-all duration-300 focus-within:border-purple-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-indigo-500/30 focus-within:ring-orange-400/30 dark:border-zinc-600"
+        class="rounded-md border border-zinc-300 transition-all duration-300 focus-within:border-purple-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-indigo-500/30 focus-within:ring-orange-400/30 dark:border-zinc-600"
       >
         <textarea
           ref="inputRef"
@@ -34,12 +33,12 @@
           @keydown="handleKeydown"
           placeholder="今天也要开心呀！"
           :disabled="isLoading"
-          class="h-24 w-full resize-none px-3 pt-2 leading-7 disabled:cursor-not-allowed"
+          class="h-24 w-full resize-none px-3 pt-2 leading-6 disabled:cursor-not-allowed"
         ></textarea>
 
         <div class="flex justify-between p-2">
           <button
-            class="flex gap-1 rounded-sm bg-gray-100 px-2 py-1 text-xs sm:hover:bg-gray-200 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
+            class="flex gap-1 rounded-sm bg-zinc-100 px-2 py-1 text-xs sm:hover:bg-zinc-200 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600"
             @click="
               switchModel(modelType === 'deepseek' ? 'gemini' : 'deepseek')
             "
@@ -49,6 +48,7 @@
           </button>
 
           <button
+            v-if="inputMessage.trim()"
             class="ri-arrow-up-line rounded-sm px-2 py-1 text-xs text-white"
             :class="
               inputMessage
@@ -95,8 +95,6 @@ const handleKeydown = (e) => {
 }
 
 const handleSend = async () => {
-  if (!inputMessage.value.trim() || isLoading.value) return
-
   const message = inputMessage.value
   inputMessage.value = ''
   await sendMessage(message)

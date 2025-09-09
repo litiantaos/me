@@ -34,7 +34,7 @@
 
     <ul v-if="files.length > 0" class="space-y-3">
       <li v-for="file in files" :key="file.name" class="py-3">
-        <div class="flex gap-3">
+        <div class="flex items-baseline gap-3">
           <p
             class="cursor-pointer truncate font-medium sm:hover:text-blue-500"
             @click="togglePreview(file)"
@@ -42,12 +42,12 @@
             {{ file.name }}
           </p>
           <button
-            class="ri-clipboard-line text-base text-gray-400 sm:hover:text-blue-500"
+            class="ri-file-copy-line text-zinc-400 sm:hover:text-blue-500"
             @click="copyText(file.url)"
           ></button>
         </div>
 
-        <div class="flex h-6 items-center gap-2 text-xs text-gray-400">
+        <div class="flex h-6 items-center gap-2 text-xs text-zinc-400">
           <span>{{ formatDate(file.created_at) }}</span>
           <span>·</span>
           <span>{{ formatFileSize(file.metadata.size) }}</span>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- 预览区域 -->
-        <div v-if="file.showPreview" class="mt-4 w-1/2 border border-gray-200">
+        <div v-if="file.showPreview" class="mt-4 w-1/2 border border-zinc-200">
           <img
             v-if="file.metadata.mimetype.startsWith('image/')"
             :src="file.url"

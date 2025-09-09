@@ -23,14 +23,17 @@
           @click="handlePreview"
         ></button>
 
-        <button
-          class="btn-base bg-slate-200! px-8! sm:hover:bg-slate-300/60! dark:bg-zinc-600! dark:hover:bg-zinc-500!"
-          :disabled="isSaving"
-          @click="handleSubmit"
-        >
-          <UiLoader v-if="isSaving" />
-          <i v-else class="ri-arrow-right-line"></i>
-        </button>
+        <Transition name="fade">
+          <button
+            v-if="input.trim()"
+            class="btn-base w-20! bg-slate-200! sm:hover:bg-slate-300/80! dark:bg-zinc-600! dark:sm:hover:bg-zinc-500!"
+            :disabled="isSaving"
+            @click="handleSubmit"
+          >
+            <UiLoader v-if="isSaving" size="sm" />
+            <i v-else class="ri-arrow-right-line"></i>
+          </button>
+        </Transition>
       </div>
     </UiLayout>
 
@@ -143,16 +146,12 @@ const handlePreview = () => {
 }
 
 const handleModalClose = () => {
-  console.log('handleModalClose')
-
   modalComponent.value = null
   modalComponentData.value = {}
   modalTitle.value = ''
 }
 
 const handleSubmit = throttle(async () => {
-  if (!input.value.trim()) return
-
   isSaving.value = true
 
   try {

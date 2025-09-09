@@ -20,13 +20,18 @@
 <script setup>
 const props = defineProps({
   size: {
-    type: Number,
-    default: 4,
+    type: String,
+    default: 'md',
   },
 })
 
 const sizeClass = computed(() => {
-  return `w-${props.size} h-${props.size}`
+  const sizeMap = {
+    sm: 'size-[14px]',
+    md: 'size-[16px]',
+    lg: 'size-[18px]',
+  }
+  return sizeMap[props.size]
 })
 </script>
 

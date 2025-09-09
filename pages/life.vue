@@ -3,21 +3,21 @@
     <div class="mb-12 space-y-6">
       <div class="flex items-baseline gap-4">
         <div class="text-5xl font-bold">{{ currentAge }}</div>
-        <div class="text-2xl text-gray-300">/</div>
-        <div class="text-2xl text-gray-400">{{ totalLifeYears }}</div>
+        <div class="text-2xl text-zinc-300">/</div>
+        <div class="text-2xl text-zinc-400">{{ totalLifeYears }}</div>
         <div>年</div>
       </div>
 
       <div>
         <div class="mb-2 flex items-center justify-between">
           <span> {{ passedDays }} 天 （{{ lifeProgressPercentage }}%） </span>
-          <span class="text-gray-400">
+          <span class="text-zinc-400">
             {{ Math.floor(totalLifeYears * 365.25) }} 天
           </span>
         </div>
-        <div class="h-1 w-full rounded-full bg-gray-200 dark:bg-zinc-600">
+        <div class="h-1 w-full rounded-full bg-zinc-200 dark:bg-zinc-600">
           <div
-            class="h-1 rounded-full bg-gray-600 dark:bg-gray-200"
+            class="h-1 rounded-full bg-zinc-600 dark:bg-zinc-200"
             :style="{ width: lifeProgressPercentage + '%' }"
           ></div>
         </div>
@@ -27,12 +27,12 @@
     <table class="w-full table-fixed border-collapse">
       <tbody>
         <tr v-for="year in years" :key="year">
-          <td class="w-[42px] text-gray-400">{{ year }}</td>
+          <td class="w-[42px] text-zinc-400">{{ year }}</td>
           <td v-for="month in 12" :key="`${year}-${month}`" class="py-3">
             <div
               class="ml-auto h-4 w-4 rounded-sm"
               :class="
-                isMonthPassed(year, month) ? 'bg-blue-400' : 'bg-gray-200'
+                isMonthPassed(year, month) ? 'bg-blue-400' : 'bg-zinc-200'
               "
             ></div>
           </td>
