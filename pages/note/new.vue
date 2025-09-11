@@ -9,12 +9,12 @@
       ></textarea>
 
       <div class="sticky bottom-0 flex gap-4 bg-white py-4 dark:bg-zinc-800">
+        <button class="ri-ai-generate btn-base" @click="handleChat"></button>
+
         <button
           class="ri-sticky-note-line btn-base"
           @click="handleDoc"
         ></button>
-
-        <button class="ri-ai-generate btn-base" @click="handleChat"></button>
 
         <button class="ri-folder-line btn-base" @click="handleLibrary"></button>
 
@@ -49,9 +49,8 @@
 </template>
 
 <script setup>
-import MdRenderer from '@/components/md/Renderer.vue'
+import NoteMdRenderer from '@/components/note/MdRenderer.vue'
 import FileLibrary from '@/components/note/FileLibrary.vue'
-import AiChat from '@/components/ai/Chat.vue'
 
 const input = ref('')
 const textareaRef = ref(null)
@@ -99,6 +98,12 @@ onMounted(async () => {
   // 如果是编辑模式，获取笔记内容
   if (isEditMode.value) {
     await fetchNote()
+  } else {
+    // 非编辑模式下，尝试恢复之前保存的内容
+    const savedContent = sessionStorage.getItem('note-draft-content')
+    if (savedContent) {
+      input.value = savedContent
+    }
   }
 
   nextTick(() => {
@@ -112,22 +117,24 @@ const modalComponent = ref(null)
 const modalComponentData = ref({})
 const modalTitle = ref('')
 
+const handleChat = () => {
+  // 保存当前输入内容到 sessionStorage
+  if (input.value.trim() && !isEditMode.value) {
+    sessionStorage.setItem('note-draft-content', input.value)
+  }
+  navigateTo('/chat')
+}
+
 const handleDoc = async () => {
   const res = await fetch('/docs/md.md')
   const mdDoc = await res.text()
 
   isModalShow.value = true
-  modalComponent.value = markRaw(MdRenderer)
+  modalComponent.value = markRaw(NoteMdRenderer)
   modalComponentData.value = {
     md: mdDoc,
   }
   modalTitle.value = 'Markdown Doc'
-}
-
-const handleChat = () => {
-  isModalShow.value = true
-  modalComponent.value = markRaw(AiChat)
-  modalTitle.value = 'Chat'
 }
 
 const handleLibrary = () => {
@@ -138,7 +145,7 @@ const handleLibrary = () => {
 
 const handlePreview = () => {
   isModalShow.value = true
-  modalComponent.value = markRaw(MdRenderer)
+  modalComponent.value = markRaw(NoteMdRenderer)
   modalComponentData.value = {
     md: input.value,
   }
@@ -181,6 +188,9 @@ const handleSubmit = throttle(async () => {
         .select()
 
       if (error) throw error
+
+      // 清除保存的草稿内容
+      sessionStorage.removeItem('note-draft-content')
 
       await refreshNotes()
 

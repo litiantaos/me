@@ -17,7 +17,7 @@
     </div>
 
     <template v-else>
-      <MdRenderer :md="note.content" />
+      <NoteMdRenderer :md="note.content" />
     </template>
   </div>
 </template>

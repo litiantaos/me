@@ -22,6 +22,8 @@
           ></div>
         </div>
       </div>
+
+      <p class="text-justify text-zinc-500">{{ description }}</p>
     </div>
 
     <table class="w-full table-fixed border-collapse">
@@ -80,8 +82,10 @@ const lifeProgressPercentage = computed(() => {
   return Math.min(Math.round(percentage * 10) / 10, 100)
 })
 
+const description = '努力灿烂的活到88岁，看看那时世界的样子。'
+
 useSeoMeta({
   title: '人生',
-  description: '人生时间格，我会努力灿烂的活到88岁，看看那时世界的样子。',
+  description: '人生时间格，' + description,
 })
 </script>

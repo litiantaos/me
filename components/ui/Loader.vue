@@ -27,9 +27,11 @@ const props = defineProps({
 
 const sizeClass = computed(() => {
   const sizeMap = {
+    xs: 'size-[12px]',
     sm: 'size-[14px]',
     md: 'size-[16px]',
     lg: 'size-[18px]',
+    xl: 'size-[20px]',
   }
   return sizeMap[props.size]
 })

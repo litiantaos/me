@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div v-html="html" class="html-style"></div>
+    <div v-if="md" v-html="html" class="html-style"></div>
+    <div
+      v-else
+      class="ri-tree-line flex h-[20vh] w-full items-center justify-center rounded-md border border-dashed border-zinc-300 text-4xl text-zinc-300"
+    ></div>
   </div>
 </template>
 
