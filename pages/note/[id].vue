@@ -17,21 +17,25 @@
               :class="{ '-translate-x-10': isDeleteConfirm }"
             >
               <button
-                class="ri-more-line h-full flex-1"
+                class="ri-more-line btns-item"
                 @click="handleBtnOpen"
               ></button>
               <button
-                class="ri-edit-line h-full flex-1"
+                class="ri-edit-line btns-item"
                 @click="handleEdit"
               ></button>
               <button
-                class="ri-delete-bin-7-line h-full flex-1 text-red-600"
+                class="ri-delete-bin-7-line btns-item text-red-600"
                 @click="handleDeleteConfirm"
               ></button>
               <button
-                class="ri-check-line h-full flex-1 text-blue-500"
+                class="btns-item text-blue-500"
                 @click="handleDelete"
-              ></button>
+                :disabled="isDeleting"
+              >
+                <UiLoader v-if="isDeleting" size="sm"></UiLoader>
+                <i v-else class="ri-check-line"></i>
+              </button>
             </div>
           </div>
         </ClientOnly>
@@ -92,7 +96,7 @@ const handleDeleteConfirm = () => {
   }
 }
 
-const handleDelete = async () => {
+const handleDelete = throttle(async () => {
   isDeleting.value = true
 
   try {
@@ -112,7 +116,7 @@ const handleDelete = async () => {
   } finally {
     isDeleting.value = false
   }
-}
+})
 
 // 编辑笔记
 const handleEdit = () => {
@@ -148,3 +152,9 @@ definePageMeta({
   scrollToTop: false,
 })
 </script>
+
+<style scoped>
+.btns-item {
+  @apply flex h-full flex-1 items-center justify-center;
+}
+</style>
