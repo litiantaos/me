@@ -13,7 +13,7 @@
 
     <div v-if="title && !isPage" class="mt-3 space-y-2">
       <p class="text-lg font-bold">{{ title }}</p>
-      <p class="line-clamp-3 text-justify leading-7">{{ excerpt }}</p>
+      <NoteMdRenderer :md="excerpt" :isPlain="true" />
     </div>
 
     <template v-else>

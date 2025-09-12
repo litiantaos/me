@@ -136,16 +136,18 @@ const handleBtnOpen = () => {
 // SEO
 const title = computed(() => {
   if (!note.value?.content) return null
-  if (note.value.content.startsWith('#')) {
-    const match = note.value.content.match(/^# (.+)$/m)
-    return match ? match[1] : null
-  }
-  return note.value.content.substring(0, 50)
+  const match = note.value.content.match(/^# (.+)$/m)
+  return match ? match[1] : null
+})
+
+const description = computed(() => {
+  if (!note.value?.content) return null
+  return renderToPlainText(note.value.content)
 })
 
 useSeoMeta({
-  title: () => title.value,
-  description: () => note.value?.content,
+  title: () => title.value || description.value?.substring(0, 50),
+  description: () => description.value || '',
 })
 
 definePageMeta({

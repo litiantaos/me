@@ -1,43 +1,34 @@
 <template>
   <div>
-    <div v-if="md" v-html="html" class="html-style"></div>
+    <!-- 纯文本渲染模式 -->
+    <div
+      v-if="md && isPlain"
+      class="line-clamp-3 text-justify leading-7 whitespace-pre-wrap"
+    >
+      {{ plainText }}
+    </div>
+    <!-- 默认HTML渲染模式 -->
+    <div v-else-if="md" v-html="html" class="html-style"></div>
+    <!-- 空状态 -->
     <div
       v-else
-      class="ri-tree-line flex h-[20vh] w-full items-center justify-center rounded-md border border-dashed border-zinc-300 text-4xl text-zinc-300"
+      class="ri-tree-line flex h-[20vh] w-full items-center justify-center rounded-md border border-dashed border-zinc-300 text-4xl text-zinc-300 dark:border-zinc-500 dark:text-zinc-500"
     ></div>
   </div>
 </template>
 
 <script setup>
-import { Marked } from 'marked'
-import { markedHighlight } from 'marked-highlight'
-import hljs from 'highlight.js'
-
 const props = defineProps({
   md: {
     type: String,
     default: '',
   },
+  isPlain: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const renderer = {
-  link({ href, tokens }) {
-    const text = this.parser.parseInline(tokens)
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
-  },
-}
-
-const marked = new Marked(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
-      return hljs.highlight(code, { language }).value
-    },
-  }),
-)
-
-marked.use({ renderer })
-
-const html = computed(() => marked.parse(props.md))
+const html = computed(() => renderToHtml(props.md))
+const plainText = computed(() => renderToPlainText(props.md))
 </script>
