@@ -175,6 +175,8 @@ const handleSubmit = throttle(async () => {
 
       if (error) throw error
 
+      await refreshNotes()
+
       router.push(`/note/${route.query.id}`)
     }
     // 新建模式
