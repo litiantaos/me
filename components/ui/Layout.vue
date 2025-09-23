@@ -1,10 +1,16 @@
 <template>
   <div>
-    <header
-      v-if="hasHeader"
-      class="sticky top-0 z-50 h-24 bg-linear-to-b from-white to-transparent dark:from-zinc-800"
-    >
-      <div class="mx-auto flex h-full max-w-2xl items-center gap-4 p-4">
+    <header v-if="hasHeader" class="sticky top-0 z-50 h-24">
+      <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 mask-b-from-40% backdrop-blur-xs"></div>
+        <div
+          class="absolute inset-0 bg-linear-to-b from-white from-1% to-transparent dark:from-zinc-800"
+        ></div>
+      </div>
+
+      <div
+        class="relative mx-auto flex h-full max-w-2xl items-center gap-4 p-4"
+      >
         <UiTitle
           :class="{ 'cursor-pointer': hasBack }"
           :hasUiTitle="hasUiTitle"
@@ -20,7 +26,7 @@
       </div>
     </header>
 
-    <div class="mx-auto max-w-2xl p-4">
+    <div class="relative mx-auto max-w-2xl p-4">
       <slot />
     </div>
   </div>
