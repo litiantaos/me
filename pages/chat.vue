@@ -19,9 +19,9 @@
       </div>
 
       <div
-        class="sticky bottom-0 space-y-2 bg-linear-to-b from-transparent via-white via-10% to-white pt-8 pb-4 dark:via-zinc-800! dark:to-zinc-800!"
+        class="sticky bottom-0 space-y-4 bg-linear-to-b from-transparent via-white via-10% to-white pt-8 pb-4 dark:via-zinc-800! dark:to-zinc-800!"
       >
-        <div v-if="error" class="text-xs text-red-500">
+        <div v-if="error" class="text-xs text-red-400 p-2 bg-red-400/10 rounded-md">
           {{ error }}
         </div>
 

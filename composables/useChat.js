@@ -44,21 +44,39 @@ export const useChat = (defaultPrompt = '') => {
 
       // 统一消息格式转换
       const formatMessages = (targetModel) => {
-        return historyMessages.map((msg) => {
-          const mappedRole = ROLE_MAPPINGS[targetModel][msg.role] || msg.role
-
-          if (targetModel === 'deepseek') {
+        if (targetModel === 'deepseek') {
+          return historyMessages.map((msg) => {
+            const mappedRole = ROLE_MAPPINGS[targetModel][msg.role] || msg.role
             return {
               role: mappedRole,
               content: msg.content,
             }
-          } else if (targetModel === 'gemini') {
-            return {
-              role: mappedRole,
-              parts: [{ text: msg.content }],
+          })
+        } else if (targetModel === 'gemini') {
+          // Gemini 需要特殊处理：如果有 prompt，将其合并到第一条 user 消息中
+          const geminiMessages = []
+          let promptText = ''
+          
+          for (const msg of historyMessages) {
+            if (msg.role === 'prompt') {
+              promptText = msg.content
+            } else {
+              const mappedRole = ROLE_MAPPINGS[targetModel][msg.role] || msg.role
+              const content = (msg.role === 'user' && promptText && geminiMessages.length === 0)
+                ? `${promptText}\n\n${msg.content}`
+                : msg.content
+              
+              geminiMessages.push({
+                role: mappedRole,
+                parts: [{ text: content }],
+              })
+              
+              if (promptText) promptText = '' // 只在第一条消息中使用 prompt
             }
           }
-        })
+          
+          return geminiMessages
+        }
       }
 
       // 根据不同模型构造请求参数
@@ -94,7 +112,9 @@ export const useChat = (defaultPrompt = '') => {
       })
 
       if (!response.ok) {
-        throw new Error(`${modelType.value.toUpperCase()} API 请求失败`)
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error?.message || errorData.message || response.statusText
+        throw new Error(`${modelType.value.toUpperCase()}: ${errorMessage}`)
       }
 
       const data = await response.json()

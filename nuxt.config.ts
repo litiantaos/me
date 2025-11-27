@@ -46,6 +46,7 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase'],
 
   supabase: {
+    types: false,
     redirectOptions: {
       login: '/login',
       callback: '/welcome',
