@@ -26,7 +26,7 @@
         <Transition name="fade">
           <button
             v-if="input.trim()"
-            class="btn-base w-20! bg-slate-200! sm:hover:bg-slate-300/80! dark:bg-zinc-600! dark:sm:hover:bg-zinc-500!"
+            class="btn-base w-20! bg-slate-200! hover:bg-slate-300/80! dark:bg-zinc-600! dark:hover:bg-zinc-500!"
             :disabled="isSaving"
             @click="handleSubmit"
           >
@@ -122,7 +122,7 @@ const handleChat = () => {
   if (input.value.trim() && !isEditMode.value) {
     sessionStorage.setItem('note-draft-content', input.value)
   }
-  navigateTo('/chat')
+  navigateTo('/ai')
 }
 
 const handleDoc = async () => {
@@ -162,40 +162,21 @@ const handleSubmit = throttle(async () => {
   isSaving.value = true
 
   try {
-    // 编辑模式
+    // 调用 API 保存笔记
+    const { note } = await $fetch('/api/notes/save', {
+      method: 'POST',
+      body: {
+        content: input.value,
+        noteId: isEditMode.value ? route.query.id : undefined,
+      },
+    })
+
     if (isEditMode.value) {
-      const { error } = await client
-        .from('notes')
-        .update({
-          content: input.value,
-          updated_at: new Date(),
-        })
-        .eq('id', route.query.id)
-        .eq('user_id', user.value.id)
-
-      if (error) throw error
-
       await refreshNotes()
-
       router.push(`/note/${route.query.id}`)
-    }
-    // 新建模式
-    else {
-      const { data, error } = await client
-        .from('notes')
-        .insert({
-          content: input.value,
-          user_id: user.value.id,
-        })
-        .select()
-
-      if (error) throw error
-
-      // 清除保存的草稿内容
+    } else {
       sessionStorage.removeItem('note-draft-content')
-
       await refreshNotes()
-
       router.push(`/note`)
     }
   } catch (error) {

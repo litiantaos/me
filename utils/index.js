@@ -1,3 +1,4 @@
+// 格式化日期时间
 export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
   if (!date) return ''
 
@@ -7,18 +8,19 @@ export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
 
   const padZero = (num) => String(num).padStart(2, '0')
 
-  const formats = {
-    YYYY: d.getFullYear(),
-    MM: padZero(d.getMonth() + 1),
-    DD: padZero(d.getDate()),
-    HH: padZero(d.getHours()),
-    mm: padZero(d.getMinutes()),
-    ss: padZero(d.getSeconds()),
+  const formatMap = {
+    YYYY: () => d.getFullYear(),
+    MM: () => padZero(d.getMonth() + 1),
+    DD: () => padZero(d.getDate()),
+    HH: () => padZero(d.getHours()),
+    mm: () => padZero(d.getMinutes()),
+    ss: () => padZero(d.getSeconds()),
   }
 
-  return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => formats[match])
+  return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => formatMap[match]())
 }
 
+// 防抖函数
 export const throttle = (fn, delay = 2000) => {
   let lastTime = 0
 
@@ -32,6 +34,7 @@ export const throttle = (fn, delay = 2000) => {
   }
 }
 
+// 格式化文件大小
 export const formatFileSize = (bytes, decimals = 2) => {
   if (bytes === 0) return '0 B'
 

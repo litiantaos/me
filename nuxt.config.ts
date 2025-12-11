@@ -49,17 +49,17 @@ export default defineNuxtConfig({
     types: false,
     redirectOptions: {
       login: '/login',
-      callback: '/welcome',
+      callback: '/',
       include: ['/note/new(/*)?'],
     },
   },
 
   runtimeConfig: {
+    aiGatewayApiKey: process.env.AI_GATEWAY_API_KEY,
+    jinaApiKey: process.env.JINA_AI_API_KEY,
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       siteUrl: process.env.SITE_URL,
-      deepseekApiKey: process.env.DEEPSEEK_API_KEY,
-      geminiApiKey: process.env.GEMINI_API_KEY,
     },
   },
 })

@@ -6,7 +6,7 @@
         <NuxtLink
           v-if="!isPage"
           :to="`/note/${note.id}`"
-          class="ri-arrow-right-line sm:hover:text-blue-500"
+          class="ri-arrow-right-line hover:text-blue-500"
         ></NuxtLink>
       </ClientOnly>
     </div>

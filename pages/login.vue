@@ -2,9 +2,9 @@
   <UiLayout :hasHeader="false" :isLoading="isLoading">
     <div class="mt-64 space-y-10">
       <div class="flex items-center gap-4">
-        <NuxtLink to="/">
+        <button @click="toggleAuthMode">
           <UiTitle :title="isLogin ? '登录' : '注册'" />
-        </NuxtLink>
+        </button>
       </div>
 
       <form class="mt-6 w-full space-y-6" @submit.prevent="handleSubmit">
@@ -26,35 +26,16 @@
           class="input-base w-full"
         />
 
-        <!-- 提示信息 -->
-        <div
-          v-if="message"
-          :class="[
-            'w-full rounded-md p-3',
-            message.type === 'success'
-              ? 'bg-green-50 text-green-500'
-              : 'bg-red-50 text-red-500',
-          ]"
-        >
-          {{ message.text }}
-        </div>
+        <UiMessage :type="message?.type" :text="message?.text" />
 
         <button
           type="submit"
-          class="btn-base w-full! bg-blue-500! text-white sm:hover:bg-blue-500/80!"
+          class="btn-base w-full! bg-blue-500! text-white hover:bg-blue-500/80!"
           :disabled="isLoading"
         >
-          {{ isLogin ? '登录' : '注册' }}
+          <UiLoader v-if="isLoading" size="md" />
+          <span v-else>{{ isLogin ? '登录' : '注册' }}</span>
         </button>
-
-        <div class="text-center text-sm">
-          <button
-            @click="toggleAuthMode"
-            class="text-blue-500 sm:hover:underline"
-          >
-            {{ isLogin ? '注册' : '登录' }}
-          </button>
-        </div>
       </form>
     </div>
   </UiLayout>
@@ -100,7 +81,7 @@ const handleSubmit = async () => {
       if (error) throw error
     } else {
       // 注册
-      const { error } = await client.auth.signUp({
+      const { data, error } = await client.auth.signUp({
         email: email.value,
         password: password.value,
         options: {
@@ -110,9 +91,17 @@ const handleSubmit = async () => {
 
       if (error) throw error
 
-      message.value = {
-        type: 'success',
-        text: '注册邮件已发送，请查收邮箱并点击验证链接完成注册',
+      // 检查用户是否已存在，Supabase 会返回 user 但 identities 为空
+      if (data?.user && data?.user?.identities?.length === 0) {
+        message.value = {
+          type: 'error',
+          text: '该邮箱已注册，请直接登录',
+        }
+      } else {
+        message.value = {
+          type: 'success',
+          text: '注册邮件已发送，请查收邮箱并点击验证链接完成注册',
+        }
       }
     }
   } catch (error) {

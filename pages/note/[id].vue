@@ -8,8 +8,8 @@
 
         <ClientOnly>
           <div
-            v-if="user && user.id === note.user_id"
-            class="h-7 overflow-hidden rounded-md bg-zinc-100 transition-all duration-200 sm:hover:bg-zinc-200/80 dark:bg-zinc-700 dark:sm:hover:bg-zinc-600/80"
+            v-if="isOwner"
+            class="h-7 overflow-hidden rounded-md bg-zinc-100 transition-all duration-200 hover:bg-zinc-200/80 dark:bg-zinc-700 dark:hover:bg-zinc-600/80"
             :class="isBtnsOpen ? 'w-30' : 'w-10'"
           >
             <div
@@ -58,6 +58,15 @@ const isDeleting = ref(false)
 const isBtnsOpen = ref(false)
 const btnsCloseTimer = ref(null)
 
+// 判断当前用户是否是笔记作者
+const isOwner = computed(() => {
+  return (
+    user.value?.sub &&
+    note.value?.user_id &&
+    user.value.sub === note.value.user_id
+  )
+})
+
 // 获取笔记
 const { data: note, pending: isLoading } = await useLazyAsyncData(async () => {
   const { data, error } = await client
@@ -72,12 +81,14 @@ const { data: note, pending: isLoading } = await useLazyAsyncData(async () => {
 })
 
 // 检查笔记是否存在
-if (!note.value && !isLoading.value) {
-  showError({
-    statusCode: 404,
-    statusMessage: '页面不存在',
-  })
-}
+watch(isLoading, (loading) => {
+  if (!loading && !note.value) {
+    showError({
+      statusCode: 404,
+      message: '页面不存在',
+    })
+  }
+})
 
 const resetCloseTimer = () => {
   clearTimeout(btnsCloseTimer.value)
@@ -100,13 +111,10 @@ const handleDelete = throttle(async () => {
   isDeleting.value = true
 
   try {
-    const { error: deleteError } = await client
-      .from('notes')
-      .delete()
-      .eq('id', route.params.id)
-      .eq('user_id', user.value.id)
-
-    if (deleteError) throw new Error(deleteError.message)
+    await $fetch('/api/notes/delete', {
+      method: 'POST',
+      body: { noteId: route.params.id },
+    })
 
     await refreshNotes()
 

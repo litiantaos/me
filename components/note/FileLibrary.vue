@@ -36,13 +36,13 @@
       <li v-for="file in files" :key="file.name" class="py-3">
         <div class="flex items-baseline gap-3">
           <p
-            class="cursor-pointer truncate font-medium sm:hover:text-blue-500"
+            class="cursor-pointer truncate font-medium hover:text-blue-500"
             @click="togglePreview(file)"
           >
             {{ file.name }}
           </p>
           <button
-            class="ri-file-copy-line text-zinc-400 sm:hover:text-blue-500"
+            class="ri-file-copy-line text-zinc-400 hover:text-blue-500"
             @click="copyText(file.url)"
           ></button>
         </div>
@@ -54,7 +54,7 @@
 
           <button
             v-if="file.showPreview"
-            class="ri-delete-bin-7-line ml-2 sm:hover:text-red-600"
+            class="ri-delete-bin-7-line ml-2 hover:text-red-600"
             @click="deleteFile(file)"
           ></button>
         </div>
