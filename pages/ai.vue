@@ -32,6 +32,8 @@
             :note="note"
           />
         </TransitionGroup>
+
+        <UiMediaPreview />
       </div>
 
       <!-- 输入区域 -->
@@ -41,7 +43,7 @@
         <UiMessage type="error" :text="error" />
 
         <div
-          class="rounded-md border border-zinc-300 transition-all duration-300 focus-within:border-blue-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-purple-500/30 focus-within:ring-rose-400/30 dark:border-zinc-600"
+          class="rounded-md border border-zinc-300 transition-all duration-300 focus-within:border-blue-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-rose-500/20 focus-within:ring-blue-400/20 dark:border-zinc-600"
         >
           <textarea
             ref="inputRef"
@@ -54,7 +56,7 @@
           <div class="flex items-center gap-2 p-2 text-xs">
             <!-- 模式切换 -->
             <button
-              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-sm bg-blue-100 px-2 text-blue-500 transition-colors hover:bg-blue-200"
+              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-sm bg-blue-100 px-2 text-blue-500 transition-colors hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30"
               @click="mode = mode === 'chat' ? 'search' : 'chat'"
             >
               <i
@@ -95,7 +97,7 @@
                 v-else
                 :class="[
                   'text-xs',
-                  mode === 'chat' ? 'ri-arrow-up-line' : 'ri-search-line',
+                  mode === 'chat' ? 'ri-arrow-up-line' : 'ri-search-2-line',
                 ]"
               ></i>
             </button>
@@ -164,7 +166,7 @@ const scrollToLastUserMessage = async () => {
   }
 }
 
-const handleSubmit = async () => {
+const handleSubmit = throttle(async () => {
   error.value = ''
   isLoading.value = true
 
@@ -213,7 +215,7 @@ const handleSubmit = async () => {
   } finally {
     isLoading.value = false
   }
-}
+})
 
 useSeoMeta({ title: 'AI' })
 </script>

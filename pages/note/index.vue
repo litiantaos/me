@@ -8,9 +8,10 @@
 
       <TransitionGroup name="list">
         <div v-if="shici">
-          <NuxtLink to="/poetry" class="text-zinc-400 hover:text-blue-500"
-            >有诗有词</NuxtLink
-          >
+          <NuxtLink to="/poetry" class="text-zinc-400 hover:text-blue-500">
+            <span>有诗有词</span>
+            <span class="ri-arrow-right-line ml-3"></span>
+          </NuxtLink>
           <div class="html-style">
             <p>{{ shici.content }}</p>
           </div>

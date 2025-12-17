@@ -8,7 +8,7 @@
       />
 
       <h1 class="mt-10 text-3xl font-bold">Hello!</h1>
-      <h2 class="mt-2 text-xl font-bold">我是李天涛。</h2>
+      <h2 class="mt-2 text-xl font-bold">我是{{ name }}。</h2>
 
       <div class="mt-10 space-y-4 text-justify leading-7">
         <p>
@@ -25,7 +25,7 @@
 
         <p>
           如果想交个朋友，欢迎通过
-          <a href="mailto:to@litiantao.com" class="link-color">邮件</a>
+          <a :href="`mailto:${email}`" class="link-color">邮件</a>
           联系我。
         </p>
       </div>
@@ -35,4 +35,7 @@
 
 <script setup>
 const { currentAge } = useAge()
+const {
+  public: { name, email },
+} = useRuntimeConfig()
 </script>

@@ -9,11 +9,11 @@
         <ClientOnly>
           <div
             v-if="isOwner"
-            class="h-7 overflow-hidden rounded-md bg-zinc-100 transition-all duration-200 hover:bg-zinc-200/80 dark:bg-zinc-700 dark:hover:bg-zinc-600/80"
+            class="h-7 overflow-hidden rounded-md bg-zinc-100 transition-all dark:bg-zinc-700"
             :class="isBtnsOpen ? 'w-30' : 'w-10'"
           >
             <div
-              class="flex h-full w-40 transition-transform duration-200"
+              class="flex h-full w-40 transition-transform"
               :class="{ '-translate-x-10': isDeleteConfirm }"
             >
               <button
@@ -25,7 +25,7 @@
                 @click="handleEdit"
               ></button>
               <button
-                class="ri-delete-bin-7-line btns-item text-red-600"
+                class="ri-delete-bin-7-line btns-item text-red-500"
                 @click="handleDeleteConfirm"
               ></button>
               <button
@@ -71,7 +71,7 @@ const isOwner = computed(() => {
 const { data: note, pending: isLoading } = await useLazyAsyncData(async () => {
   const { data, error } = await client
     .from('notes')
-    .select('*')
+    .select('id, content, user_id, created_at, updated_at')
     .eq('id', route.params.id)
     .single()
 
@@ -94,8 +94,14 @@ const resetCloseTimer = () => {
   clearTimeout(btnsCloseTimer.value)
 
   btnsCloseTimer.value = setTimeout(() => {
-    isBtnsOpen.value = false
-    isDeleteConfirm.value = false
+    if (isDeleteConfirm.value) {
+      isDeleteConfirm.value = false
+      setTimeout(() => {
+        isBtnsOpen.value = false
+      }, 300)
+    } else {
+      isBtnsOpen.value = false
+    }
   }, 3000)
 }
 
@@ -164,7 +170,9 @@ definePageMeta({
 </script>
 
 <style scoped>
+@reference "tailwindcss";
+
 .btns-item {
-  @apply flex h-full flex-1 items-center justify-center;
+  @apply flex h-full flex-1 items-center justify-center hover:bg-zinc-200/80 dark:hover:bg-zinc-600/80 transition-colors;
 }
 </style>

@@ -29,7 +29,7 @@
     <table class="w-full table-fixed border-collapse">
       <tbody>
         <tr v-for="year in years" :key="year">
-          <td class="w-[42px] text-zinc-400">{{ year }}</td>
+          <td class="w-10 text-zinc-400">{{ year }}</td>
           <td v-for="month in 12" :key="`${year}-${month}`" class="py-3">
             <div
               class="ml-auto h-4 w-4 rounded-sm"
@@ -82,7 +82,7 @@ const lifeProgressPercentage = computed(() => {
   return Math.min(Math.round(percentage * 10) / 10, 100)
 })
 
-const description = '努力灿烂的活到88岁，看看那时世界的样子。'
+const description = '努力灿烂的活到 88 岁，看看那时世界的样子。'
 
 useSeoMeta({
   title: '人生',

@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div
       v-if="isPreviewActive"
-      class="fixed inset-0 z-[60] cursor-zoom-out"
+      class="fixed inset-0 z-60 cursor-zoom-out"
       @click="closePreview"
     >
       <div

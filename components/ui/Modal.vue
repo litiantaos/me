@@ -3,7 +3,7 @@
     <Transition name="move-up">
       <div
         v-if="isShow"
-        class="fixed inset-0 z-[100] overflow-y-auto bg-white dark:bg-zinc-800"
+        class="fixed inset-0 z-100 overflow-y-auto bg-white dark:bg-zinc-800"
       >
         <UiLayout :hasUiTitle="hasUiTitle" :title="title" :hasBack="false">
           <template #header>

@@ -2,11 +2,11 @@ import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 
-// HTML渲染器配置
+// HTML 渲染器配置
 const htmlRenderer = {
   link({ href, tokens }) {
     const text = this.parser.parseInline(tokens)
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer"><i class="ri-link"></i>${text}</a>`
   },
 }
 
@@ -47,7 +47,7 @@ const plainTextRenderer = {
   link({ tokens }) {
     return this.parser.parseInline(tokens)
   },
-  // 图片返回alt文本
+  // 图片返回 alt 文本
   image({ text }) {
     return text || ''
   },
@@ -59,7 +59,7 @@ const plainTextRenderer = {
   hr() {
     return ' '
   },
-  // HTML换行标签返回空格
+  // HTML 换行标签返回空格
   br() {
     return ' '
   },
@@ -73,7 +73,7 @@ const plainTextRenderer = {
   },
 }
 
-// HTML渲染实例
+// HTML 渲染实例
 const htmlMarked = new Marked(
   markedHighlight({
     langPrefix: 'hljs language-',
@@ -89,12 +89,12 @@ htmlMarked.use({ renderer: htmlRenderer })
 const plainTextMarked = new Marked()
 plainTextMarked.use({ renderer: plainTextRenderer })
 
-// 将Markdown文本渲染为HTML
+// 将 Markdown 文本渲染为 HTML
 export const renderToHtml = (md) => {
   return htmlMarked.parse(md)
 }
 
-// 将Markdown文本渲染为纯文本
+// 将 Markdown 文本渲染为纯文本
 export const renderToPlainText = (md) => {
   return plainTextMarked.parse(md).trim()
 }

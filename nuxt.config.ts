@@ -15,7 +15,7 @@ export default defineNuxtConfig({
         },
         {
           name: 'description',
-          content: '李天涛的个人网站，记录生活与想法。',
+          content: `${process.env.NAME}的个人网站，记录生活与想法。`,
         },
         {
           name: 'robots',
@@ -56,8 +56,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     aiGatewayApiKey: process.env.AI_GATEWAY_API_KEY,
-    jinaApiKey: process.env.JINA_AI_API_KEY,
+    jinaApiKey: process.env.JINA_API_KEY,
     public: {
+      name: process.env.NAME,
+      birthDate: process.env.BIRTH_DATE,
+      email: process.env.EMAIL,
       supabaseUrl: process.env.SUPABASE_URL,
       siteUrl: process.env.SITE_URL,
     },

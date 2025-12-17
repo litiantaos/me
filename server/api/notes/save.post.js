@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
       .eq('id', noteId)
       .single()
 
-    if (!existing || existing.user_id !== user.id) {
+    if (!existing || existing.user_id !== user.sub) {
       throw createError({ statusCode: 403, message: '无权编辑内容' })
     }
 
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     // 新建模式
     const { data, error } = await client
       .from('notes')
-      .insert({ content, embedding, user_id: user.id })
+      .insert({ content, embedding, user_id: user.sub })
       .select()
       .single()
 

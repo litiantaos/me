@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute -top-[50vh] left-1/2 h-[200vh] w-[200vw] -translate-x-1/2 rotate-[15deg] overflow-hidden"
+    class="absolute -top-[50vh] left-1/2 h-[200vh] w-[200vw] -translate-x-1/2 rotate-15 overflow-hidden"
   >
     <div
       v-for="n in 50"

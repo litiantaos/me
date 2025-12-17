@@ -11,7 +11,7 @@ import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 useHead({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk}｜TaosLife` : '李天涛｜TaosLife'
+    return titleChunk ? `${titleChunk}｜TaosLife` : 'TaosLife'
   },
 })
 </script>

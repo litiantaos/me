@@ -14,7 +14,7 @@ export const useNotes = () => {
     try {
       const { data, error } = await client
         .from('notes')
-        .select('*')
+        .select('id, content, user_id, created_at, updated_at')
         .order('created_at', { ascending: false })
         .range(page.value * pageSize, (page.value + 1) * pageSize - 1)
 
