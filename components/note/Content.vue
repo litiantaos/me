@@ -13,11 +13,11 @@
 
     <div v-if="title && !isPage" class="mt-3 space-y-2">
       <p class="text-lg font-bold">{{ title }}</p>
-      <NoteMdRenderer :md="excerpt" :isPlain="true" />
+      <UiMarkdown :md="excerpt" :isPlain="true" />
     </div>
 
     <template v-else>
-      <NoteMdRenderer :md="note.content" />
+      <UiMarkdown :md="note.content" />
     </template>
   </div>
 </template>

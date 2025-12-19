@@ -19,9 +19,9 @@
 
         <NoteContent v-for="note in notes" :key="note.id" :note="note" />
       </TransitionGroup>
-
-      <UiMediaPreview />
     </div>
+
+    <UiMediaPreview />
   </UiLayout>
 </template>
 
@@ -31,7 +31,7 @@ const user = useSupabaseUser()
 const { notes, isLoading, hasMoreNotes, fetchNotes } = useNotes()
 const { shici, fetchShici } = useShici()
 
-// 监听滚动事件，实现触底加载
+// 监听滚动事件触底加载
 const handleScroll = () => {
   // 如果正在加载或没有更多数据，则不处理
   if (isLoading.value || !hasMoreNotes.value) return

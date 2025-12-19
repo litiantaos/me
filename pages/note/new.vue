@@ -1,41 +1,31 @@
 <template>
-  <div>
-    <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isLoading">
-      <textarea
-        class="field-sizing-content min-h-[60vh] w-full resize-none leading-7"
-        placeholder="心有从容，向阳而生"
-        v-model="input"
-        ref="textareaRef"
-      ></textarea>
+  <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isLoading">
+    <textarea
+      class="field-sizing-content min-h-[60vh] w-full resize-none leading-7"
+      placeholder="心有从容，向阳而生"
+      v-model="input"
+      ref="textareaRef"
+    ></textarea>
 
-      <div class="sticky bottom-0 flex gap-4 bg-white py-4 dark:bg-zinc-800">
-        <button class="ri-ai-generate btn-base" @click="handleChat"></button>
+    <div class="sticky bottom-0 flex gap-4 bg-white py-4 dark:bg-zinc-800">
+      <button class="ri-ai-generate btn-base" @click="handleChat"></button>
 
-        <button
-          class="ri-sticky-note-line btn-base"
-          @click="handleDoc"
-        ></button>
+      <button class="ri-sticky-note-line btn-base" @click="handleDoc"></button>
 
-        <button class="ri-folder-line btn-base" @click="handleLibrary"></button>
+      <button class="ri-folder-line btn-base" @click="handleLibrary"></button>
 
-        <button
-          class="ri-stacked-view btn-base"
-          @click="handlePreview"
-        ></button>
+      <button class="ri-stacked-view btn-base" @click="handlePreview"></button>
 
-        <Transition name="fade">
-          <button
-            v-if="input.trim()"
-            class="btn-base w-20! bg-slate-200! hover:bg-slate-300/80! dark:bg-zinc-600! dark:hover:bg-zinc-500!"
-            :disabled="isSaving"
-            @click="handleSubmit"
-          >
-            <UiLoader v-if="isSaving" size="sm" />
-            <i v-else class="ri-arrow-right-line"></i>
-          </button>
-        </Transition>
-      </div>
-    </UiLayout>
+      <button
+        v-if="input.trim()"
+        class="btn-primary w-20!"
+        :disabled="isSaving"
+        @click="handleSubmit"
+      >
+        <UiLoader v-if="isSaving" size="sm" />
+        <i v-else class="ri-arrow-right-line"></i>
+      </button>
+    </div>
 
     <UiModal
       v-model:isShow="isModalShow"
@@ -43,63 +33,51 @@
       :componentData="modalComponentData"
       :hasUiTitle="false"
       :title="modalTitle"
+      :isLoading="isModalLoading"
       @close="handleModalClose"
     />
-  </div>
+  </UiLayout>
 </template>
 
 <script setup>
-import NoteMdRenderer from '@/components/note/MdRenderer.vue'
+import UiMarkdown from '@/components/ui/Markdown.vue'
 import FileLibrary from '@/components/note/FileLibrary.vue'
+
+const route = useRoute()
+const router = useRouter()
+
+const { fetchNote, refreshNotes } = useNotes()
 
 const input = ref('')
 const textareaRef = ref(null)
 
-const client = useSupabaseClient()
-const user = useSupabaseUser()
-const route = useRoute()
-const router = useRouter()
-
-const { refreshNotes } = useNotes()
-
-const isSaving = ref(false)
 const isLoading = ref(false)
+const isSaving = ref(false)
+const isModalLoading = ref(false)
 
 // 判断是否为编辑模式
 const isEditMode = computed(() => {
   return route.query.id ? true : false
 })
 
-// 获取笔记内容（编辑模式）
-const fetchNote = async () => {
-  if (!isEditMode.value) return
+// 编辑模式 - 获取笔记
+const fetchEditingNote = async () => {
+  if (isEditMode.value) {
+    isLoading.value = true
 
-  isLoading.value = true
+    const note = await fetchNote(route.query.id)
+    input.value = note.content
 
-  try {
-    const { data, error } = await client
-      .from('notes')
-      .select('*')
-      .eq('id', route.query.id)
-      .single()
-
-    if (error) throw error
-
-    input.value = data.content
-  } catch (error) {
-    console.error('获取笔记失败', error)
-    router.push('/note')
-  } finally {
     isLoading.value = false
   }
 }
 
 onMounted(async () => {
-  // 如果是编辑模式，获取笔记内容
+  // 编辑模式 - 获取笔记
   if (isEditMode.value) {
-    await fetchNote()
+    await fetchEditingNote()
   } else {
-    // 非编辑模式下，尝试恢复之前保存的内容
+    // 新建模式 - 恢复已保存内容
     const savedContent = sessionStorage.getItem('note-draft-content')
     if (savedContent) {
       input.value = savedContent
@@ -117,6 +95,7 @@ const modalComponent = ref(null)
 const modalComponentData = ref({})
 const modalTitle = ref('')
 
+// 进入 AI 对话
 const handleChat = () => {
   // 保存当前输入内容到 sessionStorage
   if (input.value.trim() && !isEditMode.value) {
@@ -125,58 +104,65 @@ const handleChat = () => {
   navigateTo('/ai')
 }
 
+// 查看 Markdown 文档
 const handleDoc = async () => {
-  const res = await fetch('/docs/md.md')
-  const mdDoc = await res.text()
+  const mdDoc = await $fetch('/docs/md.md')
 
   isModalShow.value = true
-  modalComponent.value = markRaw(NoteMdRenderer)
+  modalComponent.value = markRaw(UiMarkdown)
   modalComponentData.value = {
     md: mdDoc,
   }
   modalTitle.value = 'Markdown Doc'
 }
 
+// 查看文件库
 const handleLibrary = () => {
   isModalShow.value = true
   modalComponent.value = markRaw(FileLibrary)
   modalTitle.value = '资源'
+  modalComponentData.value = {
+    setIsLoading: (val) => (isModalLoading.value = val),
+  }
 }
 
+// 预览笔记
 const handlePreview = () => {
   isModalShow.value = true
-  modalComponent.value = markRaw(NoteMdRenderer)
+  modalComponent.value = markRaw(UiMarkdown)
   modalComponentData.value = {
     md: input.value,
   }
   modalTitle.value = '预览'
 }
 
+// 关闭模态框
 const handleModalClose = () => {
   modalComponent.value = null
   modalComponentData.value = {}
   modalTitle.value = ''
+  isModalLoading.value = false
 }
 
+// 保存笔记
 const handleSubmit = throttle(async () => {
   isSaving.value = true
 
   try {
-    // 调用 API 保存笔记
-    const { note } = await $fetch('/api/notes/save', {
+    await $fetch('/api/notes/save', {
       method: 'POST',
       body: {
         content: input.value,
-        noteId: isEditMode.value ? route.query.id : undefined,
+        noteId: isEditMode.value ? route.query.id : null,
       },
     })
 
+    await refreshNotes()
+
     if (isEditMode.value) {
-      await refreshNotes()
       router.push(`/note/${route.query.id}`)
     } else {
       sessionStorage.removeItem('note-draft-content')
-      await refreshNotes()
       router.push(`/note`)
     }
   } catch (error) {

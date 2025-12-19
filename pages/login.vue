@@ -28,11 +28,7 @@
 
         <UiMessage :type="message?.type" :text="message?.text" />
 
-        <button
-          type="submit"
-          class="btn-base w-full! bg-blue-500! text-white hover:bg-blue-500/80!"
-          :disabled="isLoading"
-        >
+        <button type="submit" class="btn-primary" :disabled="isLoading">
           <UiLoader v-if="isLoading" size="md" />
           <span v-else>{{ isLogin ? '登录' : '注册' }}</span>
         </button>

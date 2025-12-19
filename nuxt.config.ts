@@ -2,7 +2,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  
+
   devtools: { enabled: false },
 
   app: {
@@ -55,14 +55,16 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    aiGatewayApiKey: process.env.AI_GATEWAY_API_KEY,
-    jinaApiKey: process.env.JINA_API_KEY,
+    aiGatewayApiKey: '',
+    jinaApiKey: '',
+
     public: {
-      name: process.env.NAME,
-      birthDate: process.env.BIRTH_DATE,
-      email: process.env.EMAIL,
-      supabaseUrl: process.env.SUPABASE_URL,
-      siteUrl: process.env.SITE_URL,
+      name: '',
+      birthDate: '',
+      email: '',
+      github: '',
+      siteUrl: '',
+      tmdbApiKey: '',
     },
   },
 })

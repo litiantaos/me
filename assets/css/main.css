@@ -13,10 +13,6 @@ button:not(:disabled),
   cursor: pointer;
 }
 
-button {
-  @apply transition-all!;
-}
-
 input,
 textarea,
 select,
@@ -36,8 +32,21 @@ input {
   }
 }
 
+input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+@utility btn {
+  @apply flex h-10 items-center justify-center rounded-md transition-colors;
+}
+
 .btn-base {
-  @apply flex h-10 w-10 items-center justify-center rounded-md bg-slate-100 transition-colors hover:bg-slate-200/80 dark:bg-zinc-700 dark:hover:bg-zinc-600;
+  @apply btn w-10 bg-slate-100 transition-all hover:bg-slate-200/80 dark:bg-zinc-700 dark:hover:bg-zinc-600;
+}
+
+.btn-primary {
+  @apply btn w-full bg-blue-500 text-white hover:bg-blue-500/90;
 }
 
 .input-base {
@@ -46,6 +55,10 @@ input {
 
 .link-color {
   @apply relative bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-zinc-600 to-50% bg-size-[200%_100%] bg-clip-text bg-position-[100%] font-bold text-transparent transition-[background-position] duration-300 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-blue-400 hover:bg-position-[0_100%] hover:after:h-0.5 dark:to-zinc-400 dark:after:bg-blue-200;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  @apply hidden;
 }
 
 /* Transition */

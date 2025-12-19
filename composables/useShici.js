@@ -8,14 +8,13 @@ export const useShici = () => {
         return localToken
       }
 
-      const response = await fetch('https://v2.jinrishici.com/token')
-      const data = await response.json()
+      const data = await $fetch('https://v2.jinrishici.com/token')
 
       const token = data.data
       localStorage.setItem('shici_token', token)
       return token
     } catch (error) {
-      console.error('Failed to fetch shici token:', error)
+      console.error('获取诗词 Token 失败', error)
     }
   }
 
@@ -23,14 +22,13 @@ export const useShici = () => {
     try {
       const token = await fetchShiciToken()
 
-      const response = await fetch(
+      const data = await $fetch(
         `https://v2.jinrishici.com/sentence?client=npm-sdk/1.0&X-User-Token=${encodeURIComponent(token)}`,
       )
-      const data = await response.json()
 
       shici.value = data.data
     } catch (error) {
-      console.error('Failed to fetch shici:', error)
+      console.error('获取诗词失败', error)
     }
   }
 

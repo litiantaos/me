@@ -96,5 +96,5 @@ export const renderToHtml = (md) => {
 
 // 将 Markdown 文本渲染为纯文本
 export const renderToPlainText = (md) => {
-  return plainTextMarked.parse(md).trim()
+  return plainTextMarked.parse(md)
 }

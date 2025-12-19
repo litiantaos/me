@@ -4,21 +4,31 @@
       <div class="flex gap-3">
         <button
           @click="activeTab = 'images'"
-          :class="{ 'font-medium text-blue-500': activeTab === 'images' }"
+          :class="[
+            'transition-all',
+            {
+              'font-medium text-blue-500 dark:text-blue-400':
+                activeTab === 'images',
+            },
+          ]"
         >
           图片
         </button>
         <button
           @click="activeTab = 'videos'"
-          :class="{ 'font-medium text-blue-500': activeTab === 'videos' }"
+          :class="[
+            'transition-all',
+            {
+              'font-medium text-blue-500 dark:text-blue-400':
+                activeTab === 'videos',
+            },
+          ]"
         >
           视频
         </button>
       </div>
 
-      <div class="flex-1">
-        <UiLoader v-if="isLoading" />
-      </div>
+      <div class="flex-1"></div>
 
       <div class="flex">
         <button class="ri-add-line text-lg" @click="openFileUpload"></button>
@@ -35,14 +45,14 @@
     <ul v-if="files.length > 0" class="space-y-3">
       <li v-for="file in files" :key="file.name" class="py-3">
         <div class="flex items-baseline gap-3">
-          <p
-            class="cursor-pointer truncate font-medium hover:text-blue-500"
+          <div
+            class="cursor-pointer truncate font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400"
             @click="togglePreview(file)"
           >
             {{ file.name }}
-          </p>
+          </div>
           <button
-            class="ri-file-copy-line text-zinc-400 hover:text-blue-500"
+            class="ri-file-copy-line text-zinc-400 transition-colors hover:text-blue-500 dark:hover:text-blue-400"
             @click="copyText(file.url)"
           ></button>
         </div>
@@ -54,7 +64,7 @@
 
           <button
             v-if="file.showPreview"
-            class="ri-delete-bin-7-line ml-2 hover:text-red-600"
+            class="ri-delete-bin-7-line ml-2 transition-colors hover:text-red-500"
             @click="deleteFile(file)"
           ></button>
         </div>
@@ -84,7 +94,16 @@
 const client = useSupabaseClient()
 const config = useRuntimeConfig()
 
+const props = defineProps({
+  setIsLoading: Function,
+})
+
 const isLoading = ref(false)
+
+watch(isLoading, (val) => {
+  props.setIsLoading?.(val)
+})
+
 const files = ref([])
 const activeTab = ref('images')
 

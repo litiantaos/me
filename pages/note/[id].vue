@@ -6,129 +6,38 @@
 
         <UiMediaPreview />
 
-        <ClientOnly>
-          <div
-            v-if="isOwner"
-            class="h-7 overflow-hidden rounded-md bg-zinc-100 transition-all dark:bg-zinc-700"
-            :class="isBtnsOpen ? 'w-30' : 'w-10'"
-          >
-            <div
-              class="flex h-full w-40 transition-transform"
-              :class="{ '-translate-x-10': isDeleteConfirm }"
-            >
-              <button
-                class="ri-more-line btns-item"
-                @click="handleBtnOpen"
-              ></button>
-              <button
-                class="ri-edit-line btns-item"
-                @click="handleEdit"
-              ></button>
-              <button
-                class="ri-delete-bin-7-line btns-item text-red-500"
-                @click="handleDeleteConfirm"
-              ></button>
-              <button
-                class="btns-item text-blue-500"
-                @click="handleDelete"
-                :disabled="isDeleting"
-              >
-                <UiLoader v-if="isDeleting" size="sm"></UiLoader>
-                <i v-else class="ri-check-line"></i>
-              </button>
-            </div>
-          </div>
-        </ClientOnly>
+        <UiActions
+          v-if="user && user.sub === note.user_id"
+          :isDeleting="isDeleting"
+          @edit="handleEdit"
+          @delete="handleDelete"
+        />
       </div>
     </Transition>
   </UiLayout>
 </template>
 
 <script setup>
-const client = useSupabaseClient()
-const user = useSupabaseUser()
 const route = useRoute()
 const router = useRouter()
+const user = useSupabaseUser()
 
-const { refreshNotes } = useNotes()
+const { fetchNote, deleteNote } = useNotes()
 
-const isDeleteConfirm = ref(false)
 const isDeleting = ref(false)
-
-const isBtnsOpen = ref(false)
-const btnsCloseTimer = ref(null)
-
-// 判断当前用户是否是笔记作者
-const isOwner = computed(() => {
-  return (
-    user.value?.sub &&
-    note.value?.user_id &&
-    user.value.sub === note.value.user_id
-  )
-})
 
 // 获取笔记
 const { data: note, pending: isLoading } = await useLazyAsyncData(async () => {
-  const { data, error } = await client
-    .from('notes')
-    .select('id, content, user_id, created_at, updated_at')
-    .eq('id', route.params.id)
-    .single()
-
-  if (error) throw error
-
-  return data
+  return await fetchNote(route.params.id)
 })
 
 // 检查笔记是否存在
-watch(isLoading, (loading) => {
-  if (!loading && !note.value) {
+watchEffect(() => {
+  if (note.value === null && !isLoading.value) {
     showError({
       statusCode: 404,
       message: '页面不存在',
     })
-  }
-})
-
-const resetCloseTimer = () => {
-  clearTimeout(btnsCloseTimer.value)
-
-  btnsCloseTimer.value = setTimeout(() => {
-    if (isDeleteConfirm.value) {
-      isDeleteConfirm.value = false
-      setTimeout(() => {
-        isBtnsOpen.value = false
-      }, 300)
-    } else {
-      isBtnsOpen.value = false
-    }
-  }, 3000)
-}
-
-// 删除笔记
-const handleDeleteConfirm = () => {
-  isDeleteConfirm.value = !isDeleteConfirm.value
-  if (isBtnsOpen.value) {
-    resetCloseTimer()
-  }
-}
-
-const handleDelete = throttle(async () => {
-  isDeleting.value = true
-
-  try {
-    await $fetch('/api/notes/delete', {
-      method: 'POST',
-      body: { noteId: route.params.id },
-    })
-
-    await refreshNotes()
-
-    router.push('/note')
-  } catch (err) {
-    console.error('删除失败', err)
-  } finally {
-    isDeleting.value = false
   }
 })
 
@@ -137,15 +46,15 @@ const handleEdit = () => {
   router.push(`/note/new?id=${route.params.id}`)
 }
 
-// 打开更多按钮
-const handleBtnOpen = () => {
-  isBtnsOpen.value = !isBtnsOpen.value
-  if (isBtnsOpen.value) {
-    resetCloseTimer()
-  } else {
-    clearTimeout(btnsCloseTimer.value)
-  }
-}
+// 删除笔记
+const handleDelete = throttle(async () => {
+  isDeleting.value = true
+
+  await deleteNote(route.params.id, user.value.sub)
+
+  isDeleting.value = false
+  router.push('/note')
+})
 
 // SEO
 const title = computed(() => {
@@ -163,16 +72,4 @@ useSeoMeta({
   title: () => title.value || description.value?.substring(0, 50),
   description: () => description.value || '',
 })
-
-definePageMeta({
-  scrollToTop: false,
-})
 </script>
-
-<style scoped>
-@reference "tailwindcss";
-
-.btns-item {
-  @apply flex h-full flex-1 items-center justify-center hover:bg-zinc-200/80 dark:hover:bg-zinc-600/80 transition-colors;
-}
-</style>

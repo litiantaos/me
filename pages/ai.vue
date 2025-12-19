@@ -16,7 +16,7 @@
               : 'self-start'
           "
         >
-          <NoteMdRenderer :md="message.content" />
+          <UiMarkdown :md="message.content" />
         </div>
       </div>
 
@@ -136,7 +136,6 @@ onMounted(() => {
     handleSubmit()
   }
 
-  // 自动聚焦输入框
   inputRef.value?.focus()
 })
 
