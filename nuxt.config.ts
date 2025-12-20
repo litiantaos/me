@@ -57,6 +57,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     aiGatewayApiKey: '',
     jinaApiKey: '',
+    tmdbApiKey: '',
 
     public: {
       name: '',
@@ -64,7 +65,7 @@ export default defineNuxtConfig({
       email: '',
       github: '',
       siteUrl: '',
-      tmdbApiKey: '',
+      tmdbUrl: '',
     },
   },
 })

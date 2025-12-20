@@ -30,7 +30,7 @@
             >
               <img
                 v-if="item.poster_path"
-                :src="`https://image.tmdb.org/t/p/w300${item.poster_path}`"
+                :src="`/api/tmdb/img/original${item.poster_path}`"
                 class="h-full w-full object-cover"
               />
             </div>

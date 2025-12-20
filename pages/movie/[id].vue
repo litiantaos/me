@@ -7,7 +7,7 @@
         >
           <img
             v-if="movieData.detail.poster_path"
-            :src="`https://image.tmdb.org/t/p/w500${movieData.detail.poster_path}`"
+            :src="`/api/tmdb/img/original${movieData.detail.poster_path}`"
             class="h-full w-full object-cover"
           />
         </div>
@@ -105,19 +105,19 @@
       >
         <div
           v-for="cast in movieData?.credits?.cast.slice(0, 10)"
-          class="flex-none"
+          class="w-28 flex-none"
         >
           <div
-            class="mb-2 h-42 w-28 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
+            class="mb-2 h-42 w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
           >
             <img
               v-if="cast.profile_path"
-              :src="`https://image.tmdb.org/t/p/w300${cast.profile_path}`"
+              :src="`/api/tmdb/img/original${cast.profile_path}`"
               class="h-full w-full object-cover"
             />
           </div>
-          <div class="font-medium">{{ cast.name }}</div>
-          <div class="text-zinc-500 dark:text-zinc-400">
+          <div class="line-clamp-2 font-medium">{{ cast.name }}</div>
+          <div class="line-clamp-2 text-zinc-500 dark:text-zinc-400">
             {{ cast.character }}
           </div>
         </div>
@@ -128,8 +128,9 @@
         class="w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
       >
         <img
-          :src="`https://image.tmdb.org/t/p/original${movieData.detail.backdrop_path}`"
+          :src="`/api/tmdb/img/original${movieData.detail.backdrop_path}`"
           class="w-full object-cover"
+          @error="(e) => console.log('浏览器报错了:', e)"
         />
       </div>
 

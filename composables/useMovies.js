@@ -99,14 +99,7 @@ export const useMovies = () => {
     isSearching.value = true
 
     try {
-      const data = await $fetch('https://api.themoviedb.org/3/search/multi', {
-        query: {
-          api_key: config.public.tmdbApiKey,
-          query,
-          language: 'zh-CN',
-        },
-      })
-
+      const data = await $fetch(`/api/tmdb/search/multi?query=${query}`)
       return data.results
     } catch (error) {
       console.error('搜索失败', error)
@@ -118,12 +111,7 @@ export const useMovies = () => {
   // 获取电影详情
   const fetchMovieDetail = (id, type) => {
     try {
-      return $fetch(`https://api.themoviedb.org/3/${type}/${id}`, {
-        query: {
-          api_key: config.public.tmdbApiKey,
-          language: 'zh-CN',
-        },
-      })
+      return $fetch(`/api/tmdb/${type}/${id}`)
     } catch (error) {
       console.error('获取电影详情失败', error)
     }
@@ -132,12 +120,7 @@ export const useMovies = () => {
   // 获取电影演员
   const fetchMovieCredits = (id, type) => {
     try {
-      return $fetch(`https://api.themoviedb.org/3/${type}/${id}/credits`, {
-        query: {
-          api_key: config.public.tmdbApiKey,
-          language: 'zh-CN',
-        },
-      })
+      return $fetch(`/api/tmdb/${type}/${id}/credits`)
     } catch (error) {
       console.error('获取电影演员失败', error)
     }
