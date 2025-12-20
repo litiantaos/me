@@ -7,7 +7,7 @@
         >
           <img
             v-if="movieData.detail.poster_path"
-            :src="`/api/tmdb/img/original${movieData.detail.poster_path}`"
+            :src="`/api/tmdb/img/w342${movieData.detail.poster_path}`"
             class="h-full w-full object-cover"
           />
         </div>
@@ -112,7 +112,7 @@
           >
             <img
               v-if="cast.profile_path"
-              :src="`/api/tmdb/img/original${cast.profile_path}`"
+              :src="`/api/tmdb/img/w185${cast.profile_path}`"
               class="h-full w-full object-cover"
             />
           </div>
@@ -128,7 +128,7 @@
         class="w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
       >
         <img
-          :src="`/api/tmdb/img/original${movieData.detail.backdrop_path}`"
+          :src="`/api/tmdb/img/w1280${movieData.detail.backdrop_path}`"
           class="w-full object-cover"
           @error="(e) => console.log('浏览器报错了:', e)"
         />

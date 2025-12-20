@@ -31,7 +31,7 @@
               >
                 <img
                   v-if="movie.poster_path"
-                  :src="`/api/tmdb/img/original${movie.poster_path}`"
+                  :src="`/api/tmdb/img/w342${movie.poster_path}`"
                   class="h-full w-full object-cover"
                 />
               </div>
