@@ -2,8 +2,6 @@ export const useMovies = () => {
   const client = useSupabaseClient()
   const user = useSupabaseUser()
 
-  const config = useRuntimeConfig()
-
   const movies = useState('movies', () => [])
   const isMoviesLoading = useState('moviesLoading', () => false)
   const isSearching = useState('searching', () => false)
@@ -49,6 +47,7 @@ export const useMovies = () => {
         .from('movies')
         .update({
           watch_date: movie.watch_date,
+          watch_channel: movie.watch_channel,
           rating: movie.rating,
         })
         .eq('id', movieId)
@@ -66,6 +65,7 @@ export const useMovies = () => {
         poster_path: movie.poster_path,
         overview: movie.overview,
         watch_date: movie.watch_date,
+        watch_channel: movie.watch_channel,
         rating: movie.rating,
       })
 
@@ -74,7 +74,7 @@ export const useMovies = () => {
 
     isAdding.value = false
 
-    await fetchMovies()
+    fetchMovies()
   }
 
   // 删除电影
@@ -91,7 +91,7 @@ export const useMovies = () => {
 
     isDeleting.value = false
 
-    await fetchMovies()
+    fetchMovies()
   }
 
   // 搜索电影

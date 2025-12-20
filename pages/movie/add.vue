@@ -1,6 +1,6 @@
 <template>
   <UiLayout
-    :title="isEditMode ? '编辑已看' : '添加已看'"
+    :title="isEditMode ? '编辑已看' : '新看'"
     :isLoading="isSearching || isLoading"
   >
     <div class="space-y-4">
@@ -55,20 +55,44 @@
         class="space-y-6 rounded-md border border-zinc-200 p-3 dark:border-zinc-700"
       >
         <div class="space-y-2">
-          <label class="block text-xs text-zinc-500 dark:text-zinc-400"
-            >观看日期</label
-          >
+          <label class="block text-xs text-zinc-500 dark:text-zinc-400">
+            观看日期
+          </label>
           <input
             v-model="movieData.watch_date"
-            type="date"
+            type="text"
+            placeholder="YYYY-MM-DD"
+            maxlength="10"
             class="input-base w-full"
+            @input="handleDateInput"
           />
         </div>
 
         <div class="space-y-2">
-          <label class="block text-xs text-zinc-500 dark:text-zinc-400"
-            >评价</label
-          >
+          <label class="block text-xs text-zinc-500 dark:text-zinc-400">
+            观看渠道
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              v-for="(item, key) in movieChannelMap"
+              :key="key"
+              class="flex items-center justify-center gap-2 rounded-md bg-zinc-100 py-3 text-xs transition-colors dark:bg-zinc-700"
+              :class="{
+                'text-blue-500 ring-1 ring-blue-500 dark:text-blue-400 dark:ring-blue-400':
+                  movieData.watch_channel === key,
+              }"
+              @click="movieData.watch_channel = key"
+            >
+              <i :class="item.icon"></i>
+              <span>{{ item.text }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs text-zinc-500 dark:text-zinc-400">
+            评价
+          </label>
           <div class="grid grid-cols-5 gap-2 sm:gap-3">
             <button
               v-for="(item, key) in movieRatingMap"
@@ -119,6 +143,7 @@ const isLoading = ref(false)
 
 const movieData = ref({
   watch_date: formatDate(new Date(), 'YYYY-MM-DD'),
+  watch_channel: 'cinema',
   rating: 3,
 })
 
@@ -138,6 +163,7 @@ const fetchEditingMovie = async () => {
 
     movieData.value = {
       watch_date: movie.watch_date,
+      watch_channel: movie.watch_channel,
       rating: movie.rating,
     }
 
@@ -157,7 +183,34 @@ const selectMovie = (movie) => {
   searchResults.value = [movie]
 }
 
+const handleDateInput = (e) => {
+  let v = e.target.value.replace(/\D/g, '')
+
+  if (v.length > 4) v = v.slice(0, 4) + '-' + v.slice(4)
+  if (v.length > 7) v = v.slice(0, 7) + '-' + v.slice(7)
+
+  movieData.value.watch_date = v
+}
+
+const validateDate = (dateStr) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false
+
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const date = new Date(y, m - 1, d)
+
+  return (
+    date.getFullYear() === y &&
+    date.getMonth() === m - 1 &&
+    date.getDate() === d
+  )
+}
+
 const handleSubmit = throttle(async () => {
+  if (!validateDate(movieData.value.watch_date)) {
+    alert('日期无效')
+    return
+  }
+
   try {
     await addMovie(
       {
@@ -167,6 +220,7 @@ const handleSubmit = throttle(async () => {
         poster_path: selectedMovie.value.poster_path,
         overview: selectedMovie.value.overview,
         watch_date: movieData.value.watch_date,
+        watch_channel: movieData.value.watch_channel,
         rating: movieData.value.rating,
       },
       route.query.id || null,
@@ -188,6 +242,6 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: () => (isEditMode.value ? '编辑已看' : '添加已看'),
+  title: () => (isEditMode.value ? '编辑已看' : '新看'),
 })
 </script>

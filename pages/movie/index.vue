@@ -40,8 +40,12 @@
                 <h3 class="truncate font-medium">{{ movie.title }}</h3>
                 <div
                   v-if="movie.rating"
-                  class="flex items-center gap-1 text-xs text-zinc-500"
+                  class="flex items-center gap-1 text-xs"
                 >
+                  <i
+                    class="text-sm text-zinc-400"
+                    :class="movieChannelMap[movie.watch_channel]?.icon"
+                  ></i>
                   <div :class="movieRatingMap[movie.rating].color">
                     {{ movieRatingMap[movie.rating].text }}
                   </div>

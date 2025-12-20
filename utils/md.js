@@ -30,7 +30,7 @@ const plainTextRenderer = {
   },
   // 行内代码返回文本
   codespan({ text }) {
-    return text
+    return ' ' + text + ' '
   },
   // 粗体/斜体返回文本
   strong({ tokens }) {

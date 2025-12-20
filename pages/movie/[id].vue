@@ -44,7 +44,13 @@
                   )
                 }}
               </span>
-              <span v-if="movieData.detail.last_air_date">
+              <span
+                v-if="
+                  movieData.detail.last_air_date &&
+                  movieData.detail.last_air_date !==
+                    movieData.detail.first_air_date
+                "
+              >
                 - {{ formatDate(movieData.detail.last_air_date, 'YYYY') }}
               </span>
             </div>
@@ -83,20 +89,23 @@
 
       <div
         :class="[
-          'flex w-full items-center justify-between gap-2 rounded-md p-3',
+          'flex h-12 w-full items-center gap-2 rounded-md px-3',
           movieRatingMap[movieData.rating].bgColor,
         ]"
       >
-        <div>
-          <span class="mr-2 font-bold">{{ movieData.watch_date }}</span>
-          <span class="text-zinc-500 dark:text-zinc-400">看过</span>
+        <div class="font-bold">{{ movieData.watch_date }}</div>
+        <div class="text-zinc-500 dark:text-zinc-400">看过</div>
+        <div class="text-blue-500 dark:text-blue-400">
+          <i :class="movieChannelMap[movieData.watch_channel]?.icon"></i>
+          {{ movieChannelMap[movieData.watch_channel]?.text }}
         </div>
-        <div class="flex items-center gap-2">
-          <div :class="movieRatingMap[movieData.rating].color">
-            {{ movieRatingMap[movieData.rating].text }}
-          </div>
-          <img :src="movieRatingMap[movieData.rating].gif" class="h-5 w-5" />
+
+        <div class="flex-1"></div>
+
+        <div :class="movieRatingMap[movieData.rating].color">
+          {{ movieRatingMap[movieData.rating].text }}
         </div>
+        <img :src="movieRatingMap[movieData.rating].gif" class="h-5 w-5" />
       </div>
 
       <div
@@ -105,10 +114,10 @@
       >
         <div
           v-for="cast in movieData?.credits?.cast.slice(0, 10)"
-          class="w-28 flex-none"
+          class="w-20 flex-none sm:w-28"
         >
           <div
-            class="mb-2 h-42 w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
+            class="mb-2 h-30 w-full overflow-hidden rounded-md bg-zinc-100 sm:h-42 dark:bg-zinc-700"
           >
             <img
               v-if="cast.profile_path"
@@ -130,7 +139,6 @@
         <img
           :src="`/api/tmdb/img/w1280${movieData.detail.backdrop_path}`"
           class="w-full object-cover"
-          @error="(e) => console.log('浏览器报错了:', e)"
         />
       </div>
 

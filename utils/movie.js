@@ -30,3 +30,18 @@ export const movieRatingMap = {
     bgColor: 'bg-blue-500/10',
   },
 }
+
+export const movieChannelMap = {
+  cinema: {
+    text: '影院',
+    icon: 'ri-building-line',
+  },
+  online: {
+    text: '网络',
+    icon: 'ri-tv-2-line',
+  },
+  other: {
+    text: '其他',
+    icon: 'ri-more-line',
+  },
+}

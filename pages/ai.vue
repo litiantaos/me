@@ -5,7 +5,7 @@
       <div
         v-if="mode === 'chat' && messages.length > 0"
         ref="messagesRef"
-        class="flex flex-1 flex-col gap-4 overflow-y-auto"
+        class="flex w-full flex-1 flex-col gap-4 overflow-y-auto"
       >
         <div
           v-for="(message, index) in messages"
@@ -13,7 +13,7 @@
           :class="
             message.role === 'user'
               ? 'max-w-4/5 self-end rounded-md bg-zinc-100 px-3 dark:bg-zinc-700'
-              : 'self-start'
+              : 'w-full self-start'
           "
         >
           <UiMarkdown :md="message.content" />
@@ -49,7 +49,7 @@
             ref="inputRef"
             v-model="input"
             placeholder="今天也要开心呀！"
-            class="h-20 w-full resize-none px-3 pt-2 leading-6"
+            class="no-scrollbar max-h-60 min-h-20 w-full resize-none overflow-y-auto px-3 pt-2 leading-6"
             @keydown="handleKeydown"
           ></textarea>
 
@@ -123,22 +123,15 @@ const isLoading = ref(false)
 const { models, modelType, messages, sendMessage } = useChat()
 const searchResults = ref([])
 
-onMounted(() => {
-  // 从 URL 获取参数：/ai?c 对话，ai?s 搜索
-  const { c, s } = route.query
-  const query = c || s || ''
-
-  // 只要 s 参数存在就切换到搜索模式
-  if ('s' in route.query) mode.value = 'search'
-
-  if (query) {
-    input.value = query
-    handleSubmit()
+// 输入框自适应高度
+watch(input, () => {
+  if (inputRef.value) {
+    inputRef.value.style.height = 'auto'
+    inputRef.value.style.height = inputRef.value.scrollHeight + 'px'
   }
-
-  inputRef.value?.focus()
 })
 
+// 回车提交
 const handleKeydown = (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault()
@@ -146,6 +139,7 @@ const handleKeydown = (e) => {
   }
 }
 
+// 滚动到最后一条用户消息位置
 const scrollToLastUserMessage = async () => {
   await nextTick()
 
@@ -165,7 +159,10 @@ const scrollToLastUserMessage = async () => {
   }
 }
 
+// 提交
 const handleSubmit = throttle(async () => {
+  if (!input.value.trim()) return
+
   error.value = ''
   isLoading.value = true
 
@@ -214,6 +211,22 @@ const handleSubmit = throttle(async () => {
   } finally {
     isLoading.value = false
   }
+})
+
+onMounted(() => {
+  // 从 URL 获取参数：/ai?c 对话，ai?s 搜索
+  const { c, s } = route.query
+  const query = c || s || ''
+
+  // 只要 s 参数存在就切换到搜索模式
+  if ('s' in route.query) mode.value = 'search'
+
+  if (query) {
+    input.value = query
+    handleSubmit()
+  }
+
+  inputRef.value?.focus()
 })
 
 useSeoMeta({ title: 'AI' })

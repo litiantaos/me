@@ -17,7 +17,7 @@ input,
 textarea,
 select,
 [role='button'] {
-  @apply block appearance-none bg-transparent outline-hidden;
+  @apply block appearance-none bg-transparent outline-none;
 }
 
 input {
@@ -30,11 +30,6 @@ input {
       -webkit-text-fill-color: rgb(229, 231, 235);
     }
   }
-}
-
-input[type='date']::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
 }
 
 @utility btn {

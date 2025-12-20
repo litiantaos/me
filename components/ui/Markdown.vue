@@ -3,7 +3,7 @@
     <!-- 纯文本渲染模式 -->
     <div
       v-if="md && isPlain"
-      class="line-clamp-3 text-justify leading-7 whitespace-pre-wrap"
+      class="text-justify leading-7 whitespace-pre-wrap"
     >
       {{ plainText }}
     </div>
