@@ -58,7 +58,7 @@
             <div class="flex items-center">
               <span class="mx-3 text-zinc-300">｜</span>
               <i class="ri-star-fill mr-2 text-yellow-500"></i>
-              <span>{{ movieData.detail.vote_average }}</span>
+              <span>{{ movieData.detail.vote_average.toFixed(2) }}</span>
             </div>
 
             <div v-if="movieData.detail.runtime" class="flex items-center">
@@ -95,9 +95,9 @@
       >
         <div class="font-bold">{{ movieData.watch_date }}</div>
         <div class="text-zinc-500 dark:text-zinc-400">看过</div>
-        <div class="text-blue-500 dark:text-blue-400">
+        <div class="space-x-1 text-blue-500 dark:text-blue-400">
           <i :class="movieChannelMap[movieData.watch_channel]?.icon"></i>
-          {{ movieChannelMap[movieData.watch_channel]?.text }}
+          <span>{{ movieChannelMap[movieData.watch_channel]?.text }}</span>
         </div>
 
         <div class="flex-1"></div>

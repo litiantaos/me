@@ -43,7 +43,7 @@
                   class="flex items-center gap-1 text-xs"
                 >
                   <i
-                    class="text-sm text-zinc-400"
+                    class="block text-sm text-zinc-400"
                     :class="movieChannelMap[movie.watch_channel]?.icon"
                   ></i>
                   <div :class="movieRatingMap[movie.rating].color">

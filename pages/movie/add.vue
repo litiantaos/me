@@ -83,7 +83,7 @@
               }"
               @click="movieData.watch_channel = key"
             >
-              <i :class="item.icon"></i>
+              <i :class="item.icon" class="block text-sm"></i>
               <span>{{ item.text }}</span>
             </button>
           </div>
