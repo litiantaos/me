@@ -1,11 +1,33 @@
 <template>
-  <UiLayout title="已看影视" :isLoading="isMoviesLoading">
+  <UiLayout title="已看影视" :isLoading="isFetching">
     <div class="space-y-10">
-      <div
-        v-if="user && user?.app_metadata?.role === 'admin'"
-        class="flex gap-6"
-      >
-        <NuxtLink to="/movie/add" class="link-color">Add</NuxtLink>
+      <div class="flex gap-6">
+        <NuxtLink
+          v-if="user && user?.app_metadata?.role === 'admin'"
+          to="/movie/add"
+          class="link-color"
+        >
+          Add
+        </NuxtLink>
+        <div class="link-underline flex items-center">
+          <button
+            class="link-color ri-search-line"
+            @click="handleSearchExpand"
+          ></button>
+          <input
+            type="text"
+            ref="searchInputRef"
+            v-model="searchText"
+            :class="[isSearchExpand ? 'w-40 pl-2' : 'w-0', 'transition-all']"
+            @blur="!searchText && (isSearchExpand = false)"
+            @keydown.enter="filterText = searchText"
+          />
+          <button
+            v-if="isSearchExpand"
+            class="ri-close-line text-zinc-400"
+            @click="handleSearchReset"
+          ></button>
+        </div>
       </div>
 
       <div v-if="movies.length > 0" class="space-y-10">
@@ -23,7 +45,7 @@
             <NuxtLink
               v-for="movie in group.list"
               :key="movie.id"
-              :to="`/movie/${movie.id}`"
+              :to="`/movie/${movie.media_type[0] + movie.tmdb_id}`"
               class="relative block space-y-2"
             >
               <div
@@ -65,7 +87,27 @@
 <script setup>
 const user = useSupabaseUser()
 
-const { movies, isMoviesLoading, fetchMovies } = useMovies()
+const { isFetching, movies, fetchMovieRecords } = useMovies()
+
+// 搜索
+const isSearchExpand = ref(false)
+const searchInputRef = ref(null)
+const searchText = ref('')
+const filterText = ref('')
+
+const handleSearchExpand = () => {
+  isSearchExpand.value = true
+
+  if (isSearchExpand.value) {
+    searchInputRef.value.focus()
+  }
+}
+
+const handleSearchReset = () => {
+  isSearchExpand.value = false
+  searchText.value = ''
+  filterText.value = ''
+}
 
 // 按月份分组电影
 const moviesByMonth = computed(() => {
@@ -73,7 +115,13 @@ const moviesByMonth = computed(() => {
 
   const groups = {}
 
-  movies.value.forEach((movie) => {
+  const filteredMovies = filterText.value
+    ? movies.value.filter((movie) =>
+        movie.title?.toLowerCase().includes(filterText.value.toLowerCase()),
+      )
+    : movies.value
+
+  filteredMovies.forEach((movie) => {
     const month = movie.watch_date
       ? movie.watch_date.substring(0, 7)
       : '未知时间'
@@ -97,7 +145,7 @@ const moviesByMonth = computed(() => {
 
 onMounted(async () => {
   if (movies.value.length === 0) {
-    fetchMovies()
+    fetchMovieRecords()
   }
 })
 

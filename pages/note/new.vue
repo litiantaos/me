@@ -1,5 +1,5 @@
 <template>
-  <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isLoading">
+  <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isNoteFetching">
     <textarea
       class="field-sizing-content min-h-[60vh] w-full resize-none leading-7"
       placeholder="心有从容，向阳而生"
@@ -46,12 +46,11 @@ import FileLibrary from '@/components/note/FileLibrary.vue'
 const route = useRoute()
 const router = useRouter()
 
-const { fetchNote, refreshNotes } = useNotes()
+const { isNoteFetching, fetchNote, refreshNotes } = useNotes()
 
 const input = ref('')
 const textareaRef = ref(null)
 
-const isLoading = ref(false)
 const isSaving = ref(false)
 const isModalLoading = ref(false)
 
@@ -63,30 +62,38 @@ const isEditMode = computed(() => {
 // 编辑模式 - 获取笔记
 const fetchEditingNote = async () => {
   if (isEditMode.value) {
-    isLoading.value = true
-
     const note = await fetchNote(route.query.id)
-    input.value = note.content
 
-    isLoading.value = false
+    input.value = note.content
   }
 }
 
-onMounted(async () => {
-  // 编辑模式 - 获取笔记
-  if (isEditMode.value) {
-    await fetchEditingNote()
-  } else {
-    // 新建模式 - 恢复已保存内容
-    const savedContent = sessionStorage.getItem('note-draft-content')
-    if (savedContent) {
-      input.value = savedContent
-    }
-  }
+// 保存笔记
+const handleSubmit = throttle(async () => {
+  isSaving.value = true
 
-  nextTick(() => {
-    textareaRef.value?.focus()
-  })
+  try {
+    await $fetch('/api/notes/save', {
+      method: 'POST',
+      body: {
+        content: input.value,
+        noteId: isEditMode.value ? route.query.id : null,
+      },
+    })
+
+    await refreshNotes()
+
+    if (isEditMode.value) {
+      router.push(`/note/${route.query.id}`)
+    } else {
+      sessionStorage.removeItem('note-draft-content')
+      router.push(`/note`)
+    }
+  } catch (error) {
+    console.error(isEditMode.value ? '更新失败' : '保存失败', error)
+  } finally {
+    isSaving.value = false
+  }
 })
 
 // 模态框
@@ -144,32 +151,21 @@ const handleModalClose = () => {
   isModalLoading.value = false
 }
 
-// 保存笔记
-const handleSubmit = throttle(async () => {
-  isSaving.value = true
-
-  try {
-    await $fetch('/api/notes/save', {
-      method: 'POST',
-      body: {
-        content: input.value,
-        noteId: isEditMode.value ? route.query.id : null,
-      },
-    })
-
-    await refreshNotes()
-
-    if (isEditMode.value) {
-      router.push(`/note/${route.query.id}`)
-    } else {
-      sessionStorage.removeItem('note-draft-content')
-      router.push(`/note`)
+onMounted(async () => {
+  // 编辑模式 - 获取笔记
+  if (isEditMode.value) {
+    await fetchEditingNote()
+  } else {
+    // 新建模式 - 恢复已保存内容
+    const savedContent = sessionStorage.getItem('note-draft-content')
+    if (savedContent) {
+      input.value = savedContent
     }
-  } catch (error) {
-    console.error(isEditMode.value ? '更新失败' : '保存失败', error)
-  } finally {
-    isSaving.value = false
   }
+
+  nextTick(() => {
+    textareaRef.value?.focus()
+  })
 })
 
 useSeoMeta({

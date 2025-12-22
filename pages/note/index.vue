@@ -1,5 +1,5 @@
 <template>
-  <UiLayout :isLoading="isLoading">
+  <UiLayout :isLoading="isNotesFetching">
     <div class="space-y-10">
       <div class="flex gap-6">
         <NuxtLink v-if="user" to="/note/new" class="link-color">New</NuxtLink>
@@ -28,13 +28,13 @@
 <script setup>
 const user = useSupabaseUser()
 
-const { notes, isLoading, hasMoreNotes, fetchNotes } = useNotes()
+const { notes, hasMoreNotes, isNotesFetching, fetchNotes } = useNotes()
 const { shici, fetchShici } = useShici()
 
 // 监听滚动事件触底加载
 const handleScroll = () => {
   // 如果正在加载或没有更多数据，则不处理
-  if (isLoading.value || !hasMoreNotes.value) return
+  if (isNotesFetching.value || !hasMoreNotes.value) return
 
   const scrollTop = window.scrollY || document.documentElement.scrollTop
   const windowHeight = window.innerHeight

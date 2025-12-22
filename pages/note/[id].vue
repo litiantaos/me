@@ -1,5 +1,5 @@
 <template>
-  <UiLayout :isLoading="isLoading">
+  <UiLayout :isLoading="isNoteFetching">
     <Transition name="fade">
       <div v-if="note" class="space-y-6">
         <NoteContent :note="note" isPage />
@@ -22,18 +22,16 @@ const route = useRoute()
 const router = useRouter()
 const user = useSupabaseUser()
 
-const { fetchNote, deleteNote } = useNotes()
-
-const isDeleting = ref(false)
+const { isNoteFetching, isDeleting, fetchNote, deleteNote } = useNotes()
 
 // 获取笔记
-const { data: note, pending: isLoading } = await useLazyAsyncData(async () => {
+const { data: note } = await useLazyAsyncData(async () => {
   return await fetchNote(route.params.id)
 })
 
 // 检查笔记是否存在
 watchEffect(() => {
-  if (note.value === null && !isLoading.value) {
+  if (note.value === null && !isNoteFetching.value) {
     showError({
       statusCode: 404,
       message: '页面不存在',
@@ -48,11 +46,8 @@ const handleEdit = () => {
 
 // 删除笔记
 const handleDelete = throttle(async () => {
-  isDeleting.value = true
-
   await deleteNote(route.params.id, user.value.sub)
 
-  isDeleting.value = false
   router.push('/note')
 })
 

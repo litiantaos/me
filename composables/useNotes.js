@@ -2,14 +2,17 @@ export const useNotes = () => {
   const client = useSupabaseClient()
 
   const notes = useState('notes', () => [])
-  const isLoading = useState('isLoading', () => false)
   const hasMoreNotes = useState('hasMoreNotes', () => true)
   const page = useState('notePage', () => 0)
   const pageSize = 20
 
+  const isNotesFetching = useState('notesFetching', () => false)
+  const isNoteFetching = useState('noteFetching', () => false)
+  const isDeleting = useState('deleting', () => false)
+
   // 获取笔记列表
   const fetchNotes = async () => {
-    isLoading.value = true
+    isNotesFetching.value = true
 
     const { data, error } = await client
       .from('notes')
@@ -30,7 +33,7 @@ export const useNotes = () => {
     // 更新页码
     page.value++
 
-    isLoading.value = false
+    isNotesFetching.value = false
   }
 
   // 刷新笔记列表
@@ -44,6 +47,8 @@ export const useNotes = () => {
 
   // 获取笔记
   const fetchNote = async (noteId) => {
+    isNoteFetching.value = true
+
     const { data, error } = await client
       .from('notes')
       .select('id, content, user_id, created_at, updated_at')
@@ -52,11 +57,15 @@ export const useNotes = () => {
 
     if (error) throw error
 
+    isNoteFetching.value = false
+
     return data
   }
 
   // 删除笔记
   const deleteNote = async (noteId, userId) => {
+    isDeleting.value = true
+
     const { error } = await client
       .from('notes')
       .delete()
@@ -68,12 +77,16 @@ export const useNotes = () => {
     if (notes.value.length > 0) {
       notes.value = notes.value.filter((note) => note.id !== noteId)
     }
+
+    isDeleting.value = false
   }
 
   return {
     notes,
-    isLoading,
     hasMoreNotes,
+    isNotesFetching,
+    isNoteFetching,
+    isDeleting,
     fetchNotes,
     refreshNotes,
     fetchNote,

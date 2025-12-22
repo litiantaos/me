@@ -1,7 +1,7 @@
 <template>
   <UiLayout
     :title="isEditMode ? '编辑已看' : '新看'"
-    :isLoading="isSearching || isLoading"
+    :isLoading="isSearching || isFetching"
   >
     <div class="space-y-4">
       <input
@@ -18,11 +18,12 @@
           <div
             v-for="item in searchResults"
             :key="item.id"
-            class="flex cursor-pointer items-center gap-2 rounded-md border border-zinc-200 p-2 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:hover:bg-zinc-700/30"
-            :class="{
-              'pointer-events-none bg-zinc-50 dark:bg-zinc-700/30':
-                selectedMovie,
-            }"
+            class="flex items-center gap-2 rounded-md border border-zinc-200 p-2 transition-colors dark:border-zinc-600"
+            :class="
+              selectedMovie
+                ? 'cursor-default bg-zinc-50 dark:bg-zinc-700/30'
+                : 'cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700/30'
+            "
             @click="selectMovie(item)"
           >
             <div
@@ -36,12 +37,16 @@
             </div>
 
             <div class="space-y-2 text-xs">
-              <p class="text-sm font-bold">
+              <NuxtLink
+                :to="`/movie/${item.media_type[0] + item.id}`"
+                class="block w-fit text-sm font-bold hover:text-blue-500 dark:hover:text-blue-400"
+                @click.stop
+              >
                 {{ item.title || item.name }}
-              </p>
-              <p class="text-zinc-500 dark:text-zinc-400">
+              </NuxtLink>
+              <div class="text-zinc-500 dark:text-zinc-400">
                 {{ item.release_date || item.first_air_date }}
-              </p>
+              </div>
               <p class="line-clamp-2 text-zinc-500 dark:text-zinc-400">
                 {{ item.overview }}
               </p>
@@ -132,14 +137,20 @@
 const route = useRoute()
 const router = useRouter()
 
-const { searchMovies, addMovie, fetchMovie, isSearching, isAdding } =
-  useMovies()
+const {
+  isSearching,
+  isAdding,
+  searchMovies,
+  addMovieRecord,
+  fetchMovieRecord,
+  fetchMovieDetail,
+} = useMovies()
 
 const inputRef = ref(null)
 const searchQuery = ref('')
+const isFetching = ref(false)
 const searchResults = ref([])
 const selectedMovie = ref(null)
-const isLoading = ref(false)
 
 const movieData = ref({
   watch_date: formatDate(new Date(), 'YYYY-MM-DD'),
@@ -153,13 +164,17 @@ const isEditMode = computed(() => {
 })
 
 // 编辑模式 - 获取电影
-const fetchEditingMovie = async () => {
+const fetchEditingMovieRecord = async () => {
   if (isEditMode.value) {
-    isLoading.value = true
+    isFetching.value = true
 
-    const movie = await fetchMovie(route.query.id)
+    const movie = await fetchMovieRecord(route.query.id)
+    const movieDetail = await fetchMovieDetail(movie.tmdb_id, movie.media_type)
 
-    selectMovie(movie)
+    selectMovie({
+      ...movieDetail,
+      media_type: movie.media_type,
+    })
 
     movieData.value = {
       watch_date: movie.watch_date,
@@ -167,7 +182,7 @@ const fetchEditingMovie = async () => {
       rating: movie.rating,
     }
 
-    isLoading.value = false
+    isFetching.value = false
   }
 }
 
@@ -179,17 +194,29 @@ const handleSearch = throttle(async () => {
 })
 
 const selectMovie = (movie) => {
+  if (selectedMovie.value) return
+
   selectedMovie.value = movie
   searchResults.value = [movie]
 }
 
 const handleDateInput = (e) => {
-  let v = e.target.value.replace(/\D/g, '')
+  const el = e.target
+  let pos = el.selectionStart
+
+  let v = el.value.replace(/\D/g, '')
 
   if (v.length > 4) v = v.slice(0, 4) + '-' + v.slice(4)
   if (v.length > 7) v = v.slice(0, 7) + '-' + v.slice(7)
 
   movieData.value.watch_date = v
+
+  nextTick(() => {
+    if ((pos === 5 && v[4] === '-') || (pos === 8 && v[7] === '-')) {
+      pos++
+    }
+    el.setSelectionRange(pos, pos)
+  })
 }
 
 const validateDate = (dateStr) => {
@@ -212,13 +239,12 @@ const handleSubmit = throttle(async () => {
   }
 
   try {
-    await addMovie(
+    await addMovieRecord(
       {
-        id: selectedMovie.value.id,
+        tmdb_id: selectedMovie.value.id,
         media_type: selectedMovie.value.media_type,
         title: selectedMovie.value.title || selectedMovie.value.name,
         poster_path: selectedMovie.value.poster_path,
-        overview: selectedMovie.value.overview,
         watch_date: movieData.value.watch_date,
         watch_channel: movieData.value.watch_channel,
         rating: movieData.value.rating,
@@ -226,16 +252,17 @@ const handleSubmit = throttle(async () => {
       route.query.id || null,
     )
 
-    router.push('/movie')
+    router.push(
+      `/movie/${selectedMovie.value.media_type[0] + selectedMovie.value.id}`,
+    )
   } catch (error) {
     console.error('添加电影失败', error)
   }
 })
 
 onMounted(() => {
-  // 编辑模式 - 获取电影
   if (isEditMode.value) {
-    fetchEditingMovie()
+    fetchEditingMovieRecord()
   }
 
   inputRef.value?.focus()

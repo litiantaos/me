@@ -48,8 +48,12 @@ input {
   @apply h-10 rounded-md border border-zinc-300 px-3 transition-all duration-300 focus:border-blue-500 dark:border-zinc-600;
 }
 
-.link-color {
-  @apply relative bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-zinc-600 to-50% bg-size-[200%_100%] bg-clip-text bg-position-[100%] font-bold text-transparent transition-[background-position] duration-300 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-blue-400 hover:bg-position-[0_100%] hover:after:h-0.5 dark:to-zinc-400 dark:after:bg-blue-200;
+@utility link-underline {
+  @apply relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-blue-400 hover:after:h-0.5 dark:after:bg-blue-200;
+}
+
+@utility link-color {
+  @apply link-underline bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-zinc-600 to-50% bg-size-[200%_100%] bg-clip-text bg-position-[100%] font-bold text-transparent transition-[background-position] duration-300 hover:bg-position-[0_100%] dark:to-zinc-400;
 }
 
 .no-scrollbar::-webkit-scrollbar {
