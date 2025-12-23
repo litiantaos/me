@@ -81,35 +81,39 @@
           v-for="record in movie.records"
           :key="record.id"
           :class="[
-            'flex h-12 w-full items-center gap-3 rounded-md px-3',
+            'flex w-full flex-row-reverse items-center gap-3 overflow-hidden rounded-md p-3',
             movieRatingMap[record.rating].bgColor,
           ]"
         >
-          <div class="font-bold">{{ record.watch_date }}</div>
-          <div class="text-zinc-500 dark:text-zinc-400">看过</div>
-          <div class="space-x-1 text-blue-500 dark:text-blue-400">
-            <i :class="movieChannelMap[record.watch_channel].icon"></i>
-            <span>{{ movieChannelMap[record.watch_channel].text }}</span>
-          </div>
-
-          <div class="flex-1"></div>
-
-          <div :class="movieRatingMap[record.rating].color">
-            {{ movieRatingMap[record.rating].text }}
-          </div>
-          <img :src="movieRatingMap[record.rating].gif" class="h-5 w-5" />
-
           <UiActions
             v-if="user && user?.app_metadata?.role === 'admin'"
             direction="left"
             :customClass="{
-              base: `${movieRatingMap[record.rating].bgColor} ${movieRatingMap[record.rating].color} rounded-sm`,
+              base: `${movieRatingMap[record.rating].bgColor} ${movieRatingMap[record.rating].color} rounded-sm flex-none`,
               hover: `${movieRatingMap[record.rating].hoverColor}`,
             }"
             :isDeleting="isDeleting"
             @edit="handleEdit(record.id)"
             @delete="handleDelete(record.id)"
           />
+
+          <div class="flex flex-none items-center gap-3">
+            <div :class="movieRatingMap[record.rating].color">
+              {{ movieRatingMap[record.rating].text }}
+            </div>
+            <img :src="movieRatingMap[record.rating].gif" class="h-5 w-5" />
+          </div>
+
+          <div class="flex-1"></div>
+
+          <div class="flex flex-none items-center gap-3">
+            <div class="font-bold">{{ record.watch_date }}</div>
+            <div class="text-zinc-500 dark:text-zinc-400">看过</div>
+            <div class="space-x-1 text-blue-500 dark:text-blue-400">
+              <i :class="movieChannelMap[record.watch_channel].icon"></i>
+              <span>{{ movieChannelMap[record.watch_channel].text }}</span>
+            </div>
+          </div>
         </div>
       </div>
 

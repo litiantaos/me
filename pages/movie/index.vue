@@ -9,16 +9,16 @@
         >
           Add
         </NuxtLink>
-        <div class="link-underline flex items-center">
-          <button
-            class="link-color ri-search-line"
-            @click="handleSearchExpand"
-          ></button>
+        <div class="link-color flex items-center">
+          <button class="ri-search-line" @click="handleSearchExpand"></button>
           <input
             type="text"
             ref="searchInputRef"
             v-model="searchText"
-            :class="[isSearchExpand ? 'w-40 pl-2' : 'w-0', 'transition-all']"
+            :class="[
+              isSearchExpand ? 'w-40 px-2' : 'w-0',
+              'font-normal! text-zinc-600 transition-all dark:text-zinc-200',
+            ]"
             @blur="!searchText && (isSearchExpand = false)"
             @keydown.enter="filterText = searchText"
           />
@@ -99,7 +99,9 @@ const handleSearchExpand = () => {
   isSearchExpand.value = true
 
   if (isSearchExpand.value) {
-    searchInputRef.value.focus()
+    setTimeout(() => {
+      searchInputRef.value.focus()
+    }, 200)
   }
 }
 
