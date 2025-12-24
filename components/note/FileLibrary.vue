@@ -5,7 +5,7 @@
         <button
           @click="activeTab = 'images'"
           :class="[
-            'transition-all',
+            'transition-all duration-300',
             {
               'font-medium text-blue-500 dark:text-blue-400':
                 activeTab === 'images',
@@ -17,7 +17,7 @@
         <button
           @click="activeTab = 'videos'"
           :class="[
-            'transition-all',
+            'transition-all duration-300',
             {
               'font-medium text-blue-500 dark:text-blue-400':
                 activeTab === 'videos',
@@ -46,13 +46,13 @@
       <li v-for="file in files" :key="file.name" class="py-3">
         <div class="flex items-baseline gap-3">
           <div
-            class="cursor-pointer truncate font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400"
+            class="cursor-pointer truncate font-medium transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
             @click="togglePreview(file)"
           >
             {{ file.name }}
           </div>
           <button
-            class="ri-file-copy-line text-zinc-400 transition-colors hover:text-blue-500 dark:hover:text-blue-400"
+            class="ri-file-copy-line text-zinc-400 transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
             @click="copyText(file.url)"
           ></button>
         </div>
@@ -64,7 +64,7 @@
 
           <button
             v-if="file.showPreview"
-            class="ri-delete-bin-7-line ml-2 transition-colors hover:text-red-500 dark:hover:text-red-400"
+            class="ri-delete-bin-7-line ml-2 transition-colors duration-300 hover:text-red-500 dark:hover:text-red-400"
             @click="deleteFile(file)"
           ></button>
         </div>

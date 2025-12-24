@@ -56,7 +56,7 @@
           <div class="flex items-center gap-2 p-2 text-xs">
             <!-- 模式切换 -->
             <button
-              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-sm bg-blue-100 px-2 text-blue-500 transition-colors hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30"
+              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-sm bg-blue-100 px-2 text-blue-500 transition-colors duration-300 hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30"
               @click="mode = mode === 'chat' ? 'search' : 'chat'"
             >
               <i
@@ -73,7 +73,7 @@
             <!-- 模型选择 -->
             <div
               v-if="mode === 'chat'"
-              class="flex h-7 items-center gap-1 rounded-sm bg-zinc-100 px-2 text-xs transition-colors hover:bg-zinc-200 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+              class="flex h-7 items-center gap-1 rounded-sm bg-zinc-100 px-2 text-xs transition-colors duration-300 hover:bg-zinc-200 dark:bg-zinc-700 dark:hover:bg-zinc-600"
             >
               <select
                 v-model="modelType"
@@ -88,7 +88,7 @@
 
             <!-- 提交按钮 -->
             <button
-              class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-blue-500 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-blue-500 text-white transition-colors duration-300 hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
               :disabled="!input.trim() || isLoading"
               @click="handleSubmit"
             >

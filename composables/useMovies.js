@@ -17,6 +17,7 @@ export const useMovies = () => {
       .from('movies')
       .select('*')
       .order('watch_date', { ascending: false })
+      .order('created_at', { ascending: false })
 
     if (error) throw error
 
@@ -62,6 +63,7 @@ export const useMovies = () => {
           watch_date: record.watch_date,
           watch_channel: record.watch_channel,
           rating: record.rating,
+          season_number: record.season_number,
         })
         .eq('id', recordId)
         .select()
@@ -79,6 +81,7 @@ export const useMovies = () => {
         watch_date: record.watch_date,
         watch_channel: record.watch_channel,
         rating: record.rating,
+        season_number: record.season_number,
       })
 
       if (error) throw error
@@ -119,7 +122,7 @@ export const useMovies = () => {
   }
 
   // 获取电影详情
-  const fetchMovieDetail = (tmdbId, type) => {
+  const fetchMovieDetail = (type, tmdbId) => {
     try {
       return $fetch(`/api/tmdb/${type}/${tmdbId}`)
     } catch (error) {
@@ -128,7 +131,7 @@ export const useMovies = () => {
   }
 
   // 获取电影演员
-  const fetchMovieCredits = (tmdbId, type) => {
+  const fetchMovieCredits = (type, tmdbId) => {
     try {
       return $fetch(`/api/tmdb/${type}/${tmdbId}/credits`)
     } catch (error) {

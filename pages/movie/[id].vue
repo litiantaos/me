@@ -37,7 +37,8 @@
               <span
                 v-if="
                   movie.last_air_date &&
-                  movie.last_air_date !== movie.first_air_date
+                  formatDate(movie.last_air_date, 'YYYY') !==
+                    formatDate(movie.first_air_date, 'YYYY')
                 "
               >
                 - {{ formatDate(movie.last_air_date, 'YYYY') }}
@@ -117,29 +118,23 @@
         </div>
       </div>
 
-      <div
-        v-if="movie?.credits?.cast"
-        class="no-scrollbar flex gap-3 overflow-x-auto text-xs"
-      >
-        <div
-          v-for="cast in movie?.credits?.cast.slice(0, 10)"
-          class="w-20 flex-none sm:w-28"
-        >
+      <UiScrollView v-if="credits" customClass="gap-3 ">
+        <div v-for="credit in credits" class="w-20 flex-none text-xs sm:w-28">
           <div
             class="mb-2 h-30 w-full overflow-hidden rounded-md bg-zinc-100 sm:h-42 dark:bg-zinc-700"
           >
             <img
-              v-if="cast.profile_path"
-              :src="`/api/tmdb/img/w185${cast.profile_path}`"
+              v-if="credit.profile_path"
+              :src="`/api/tmdb/img/w185${credit.profile_path}`"
               class="h-full w-full object-cover"
             />
           </div>
-          <div class="line-clamp-2 font-medium">{{ cast.name }}</div>
+          <div class="line-clamp-2 font-medium">{{ credit.name }}</div>
           <div class="line-clamp-2 text-zinc-500 dark:text-zinc-400">
-            {{ cast.character }}
+            {{ credit.character || credit.job }}
           </div>
         </div>
-      </div>
+      </UiScrollView>
 
       <div
         v-if="movie.backdrop_path"
@@ -168,21 +163,45 @@ const {
   deleteMovieRecord,
 } = useMovies()
 
-const { data: movie, pending: isLoading } = await useLazyAsyncData(async () => {
-  const tmdbId = route.params.id.slice(1)
-  const mediaType = route.params.id[0] === 'm' ? 'movie' : 'tv'
+const credits = computed(() => {
+  if (!movie.value || !movie.value.credits) return []
 
-  const [detail, credits, records] = await Promise.all([
-    fetchMovieDetail(tmdbId, mediaType),
-    fetchMovieCredits(tmdbId, mediaType),
+  const cs = movie.value.credits
+  const crew = cs.crew.filter((item) => item.job === 'Director')
+
+  return [...crew, ...cs.cast.slice(0, 10)]
+})
+
+const { data: movie, pending: isLoading } = await useLazyAsyncData(async () => {
+  const [_, prefix, tmdbId, seasonNumber] =
+    route.params.id.match(/^([mt])(\d+)(?:s(\d+))?$/) || []
+
+  const mediaType = prefix === 'm' ? 'movie' : 'tv'
+  const path = seasonNumber ? `${tmdbId}/season/${seasonNumber}` : tmdbId
+
+  const [movieDetail, seasonDetail, credits, records] = await Promise.all([
+    fetchMovieDetail(mediaType, tmdbId),
+    seasonNumber ? fetchMovieDetail(mediaType, path) : null,
+    fetchMovieCredits(mediaType, seasonNumber ? path : tmdbId),
     fetchMovieRecordsByTmdbId(tmdbId),
   ])
 
-  return {
-    ...detail,
+  let movieData = {
+    ...movieDetail,
     credits,
     records,
   }
+
+  if (seasonNumber) {
+    movieData.poster_path = seasonDetail.poster_path
+    movieData.name = movieDetail.name + ' ' + seasonDetail.name
+    movieData.first_air_date = seasonDetail.air_date
+    movieData.overview = seasonDetail.overview || movieDetail.overview
+    movieData.vote_average =
+      seasonDetail.vote_average || movieDetail.vote_average
+  }
+
+  return movieData
 })
 
 const handleEdit = (id) => {

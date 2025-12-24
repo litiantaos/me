@@ -39,14 +39,14 @@ export const movieRatingMap = {
 export const movieChannelMap = {
   cinema: {
     text: '影院',
-    icon: 'ri-building-line',
+    icon: 'ri-film-line',
   },
   online: {
     text: '网络',
-    icon: 'ri-tv-2-line',
+    icon: 'ri-movie-line',
   },
   other: {
     text: '其他',
-    icon: 'ri-more-line',
+    icon: 'ri-clapperboard-line',
   },
 }

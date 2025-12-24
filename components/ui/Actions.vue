@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex h-7 overflow-hidden transition-all"
+    class="flex h-7 overflow-hidden transition-all duration-300"
     :class="[
       customClass?.base,
       isBtnsOpen ? 'w-30' : 'w-10',
@@ -8,8 +8,8 @@
     ]"
   >
     <div
-      class="flex h-full w-40 flex-none transition-transform"
       :class="[
+        'flex h-full w-40 flex-none transition-transform duration-300',
         {
           '-translate-x-10': isDeleteConfirm && direction === 'right',
           'translate-x-10': isDeleteConfirm && direction === 'left',
@@ -110,6 +110,6 @@ onUnmounted(() => {
 @reference "tailwindcss";
 
 .action-btn {
-  @apply flex h-full flex-1 items-center justify-center transition-colors;
+  @apply flex h-full flex-1 items-center justify-center transition-colors duration-300;
 }
 </style>

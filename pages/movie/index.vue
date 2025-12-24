@@ -17,7 +17,7 @@
             v-model="searchText"
             :class="[
               isSearchExpand ? 'w-40 px-2' : 'w-0',
-              'font-normal! text-zinc-600 transition-all dark:text-zinc-200',
+              'font-normal! text-zinc-600 transition-all duration-300 dark:text-zinc-200',
             ]"
             @blur="!searchText && (isSearchExpand = false)"
             @keydown.enter="filterText = searchText"
@@ -45,7 +45,7 @@
             <NuxtLink
               v-for="movie in group.list"
               :key="movie.id"
-              :to="`/movie/${movie.media_type[0] + movie.tmdb_id}`"
+              :to="`/movie/${movie.media_type[0] + movie.tmdb_id + (movie.season_number ? 's' + movie.season_number : '')}`"
               class="relative block space-y-2"
             >
               <div
@@ -54,12 +54,17 @@
                 <img
                   v-if="movie.poster_path"
                   :src="`/api/tmdb/img/w342${movie.poster_path}`"
-                  class="h-full w-full object-cover"
+                  class="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                 />
               </div>
 
               <div class="space-y-1">
-                <h3 class="truncate font-medium">{{ movie.title }}</h3>
+                <h3 class="truncate font-medium">
+                  {{ movie.title }}
+                  <span v-if="movie.season_number">
+                    S{{ movie.season_number }}
+                  </span>
+                </h3>
                 <div
                   v-if="movie.rating"
                   class="flex items-center gap-1 text-xs"

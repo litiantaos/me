@@ -24,7 +24,7 @@
   }
 
   a {
-    @apply link-color space-x-1;
+    @apply link-color space-x-1 to-blue-500! font-normal!;
   }
 
   ul,
