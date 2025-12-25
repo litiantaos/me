@@ -124,7 +124,9 @@ const { models, modelType, messages, sendMessage } = useChat()
 const searchResults = ref([])
 
 // 输入框自适应高度
-watch(input, () => {
+watch(input, async () => {
+  await nextTick()
+
   if (inputRef.value) {
     inputRef.value.style.height = 'auto'
     inputRef.value.style.height = inputRef.value.scrollHeight + 'px'

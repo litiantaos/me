@@ -1,14 +1,13 @@
 <template>
   <div>
     <!-- 纯文本渲染模式 -->
-    <div
-      v-if="md && isPlain"
-      class="text-justify leading-7 whitespace-pre-wrap"
-    >
-      {{ plainText }}
+    <div v-if="md && isPlain" class="html-style">
+      <p>{{ plainText }}</p>
     </div>
-    <!-- 默认HTML渲染模式 -->
+
+    <!-- 默认 HTML 渲染模式 -->
     <div v-else-if="md" v-html="html" class="html-style"></div>
+
     <!-- 空状态 -->
     <div
       v-else

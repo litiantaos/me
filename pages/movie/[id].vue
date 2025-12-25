@@ -15,9 +15,15 @@
 
         <div class="flex flex-1 flex-col gap-4 overflow-hidden sm:h-72">
           <h2 class="text-2xl font-bold">
-            <span>{{ movie.title || movie.name }}</span>
-            <span v-if="movie.original_language !== 'zh'" class="text-zinc-400">
-              （{{ movie.original_title || movie.original_name }}）
+            <span>{{ movie.display_title }}</span>
+            <span
+              v-if="
+                movie.original_language !== 'zh' &&
+                movie.display_title !== movie.original_display_title
+              "
+              class="text-lg text-zinc-400"
+            >
+              （{{ movie.original_display_title }}）
             </span>
           </h2>
 
@@ -217,11 +223,15 @@ const credits = computed(() => {
   if (!movie.value || !movie.value.credits) return []
 
   const cs = movie.value.credits
-  const crew = cs.crew.filter((item) => item.job === 'Director')
+
+  const crew = cs.crew
+    .filter((item) => item.job === 'Director')
+    .map((item) => ({ ...item, job: '导演' }))
+
   const creator =
     movie.value.created_by?.map((item) => ({
       ...item,
-      job: 'Creator',
+      job: '创作者',
     })) ?? []
 
   return [...crew, ...creator, ...cs.cast.slice(0, 10)]
@@ -247,9 +257,13 @@ const { data: movie, pending: isLoading } = await useLazyAsyncData(async () => {
     records,
   }
 
+  movieData.display_title = movieDetail.title || movieDetail.name
+  movieData.original_display_title =
+    movieDetail.original_title || movieDetail.original_name
+
   if (seasonNumber) {
     movieData.poster_path = seasonDetail.poster_path
-    movieData.name = movieDetail.name + ' ' + seasonDetail.name
+    movieData.display_title = movieDetail.name + ' ' + seasonDetail.name
     movieData.first_air_date = seasonDetail.air_date
     movieData.overview = seasonDetail.overview || movieDetail.overview
     movieData.vote_average =
