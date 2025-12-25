@@ -130,12 +130,12 @@ export const useMovies = () => {
     }
   }
 
-  // 获取电影演员
+  // 获取电影演职员
   const fetchMovieCredits = (type, tmdbId) => {
     try {
       return $fetch(`/api/tmdb/${type}/${tmdbId}/credits`)
     } catch (error) {
-      console.error('获取电影演员失败', error)
+      console.error('获取电影演职员失败', error)
     }
   }
 

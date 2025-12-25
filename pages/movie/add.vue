@@ -48,7 +48,9 @@
               <div class="text-zinc-500 dark:text-zinc-400">
                 {{ item.release_date || item.first_air_date }}
               </div>
-              <p class="line-clamp-2 text-zinc-500 dark:text-zinc-400">
+              <p
+                class="line-clamp-2 text-justify text-zinc-500 dark:text-zinc-400"
+              >
                 {{ item.overview }}
               </p>
             </div>
@@ -318,7 +320,7 @@ const handleSubmit = throttle(async () => {
     )
 
     router.push(
-      `/movie/${selectedMovie.value.media_type[0] + selectedMovie.value.id}`,
+      `/movie/${selectedMovie.value.media_type[0] + selectedMovie.value.id + (movieRecordData.value.season_number ? 's' + movieRecordData.value.season_number : '')}`,
     )
   } catch (error) {
     console.error('添加电影失败', error)

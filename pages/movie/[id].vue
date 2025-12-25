@@ -1,6 +1,7 @@
 <template>
   <UiLayout :isLoading="isLoading">
     <div v-if="movie" class="space-y-6">
+      <!-- 影视详情 -->
       <div class="flex flex-col gap-6 sm:flex-row">
         <div
           class="h-72 w-48 flex-none overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
@@ -77,6 +78,7 @@
         </div>
       </div>
 
+      <!-- 观看记录 -->
       <div v-if="movie.records?.length > 0" class="space-y-3">
         <div
           v-for="record in movie.records"
@@ -118,6 +120,7 @@
         </div>
       </div>
 
+      <!-- 演职员 -->
       <UiScrollView v-if="credits" customClass="gap-3 ">
         <div v-for="credit in credits" class="w-20 flex-none text-xs sm:w-28">
           <div
@@ -136,6 +139,7 @@
         </div>
       </UiScrollView>
 
+      <!-- 背景图 -->
       <div
         v-if="movie.backdrop_path"
         class="w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
@@ -144,6 +148,52 @@
           :src="`/api/tmdb/img/w1280${movie.backdrop_path}`"
           class="w-full object-cover"
         />
+      </div>
+
+      <!-- 剧集季 -->
+      <div v-if="movie.seasons" class="space-y-3">
+        <h3 class="flex items-baseline justify-between text-xl">
+          <span class="font-bold">全部季</span>
+          <span class="text-sm text-zinc-500 dark:text-zinc-400">
+            共 {{ movie.number_of_seasons }} 季
+            {{ movie.number_of_episodes }} 集
+          </span>
+        </h3>
+        <div
+          v-for="season in movie.seasons"
+          :key="season.id"
+          class="flex overflow-hidden rounded-md border border-zinc-200 py-2 pl-2 dark:border-zinc-600"
+        >
+          <div
+            class="h-36 w-24 flex-none overflow-hidden rounded-sm bg-zinc-100 dark:bg-zinc-700"
+          >
+            <img
+              v-if="season.poster_path"
+              :src="`/api/tmdb/img/w154${season.poster_path}`"
+              class="h-full w-full object-cover"
+            />
+          </div>
+
+          <div class="space-y-2 px-3 py-1 text-xs">
+            <div class="w-fit text-sm font-bold">
+              {{ season.name }}
+            </div>
+            <div class="font-medium text-zinc-500 dark:text-zinc-400">
+              <span>
+                {{ season.air_date }}
+              </span>
+              <span> / {{ season.episode_count }} 集</span>
+              <span v-if="season.vote_average">
+                / {{ season.vote_average.toFixed(2) }}
+              </span>
+            </div>
+            <p
+              class="line-clamp-3 text-justify text-zinc-500 dark:text-zinc-400"
+            >
+              {{ season.overview || movie.overview }}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </UiLayout>
@@ -168,8 +218,13 @@ const credits = computed(() => {
 
   const cs = movie.value.credits
   const crew = cs.crew.filter((item) => item.job === 'Director')
+  const creator =
+    movie.value.created_by?.map((item) => ({
+      ...item,
+      job: 'Creator',
+    })) ?? []
 
-  return [...crew, ...cs.cast.slice(0, 10)]
+  return [...crew, ...creator, ...cs.cast.slice(0, 10)]
 })
 
 const { data: movie, pending: isLoading } = await useLazyAsyncData(async () => {
