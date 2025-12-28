@@ -17,14 +17,6 @@
       @mouseleave="handleMouseLeave"
       @touchend="handleMouseLeave"
     >
-      <!-- 渐变定义 -->
-      <defs>
-        <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="rgb(59, 130, 246)" stop-opacity="0.5" />
-          <stop offset="100%" stop-color="rgb(59, 130, 246)" stop-opacity="0" />
-        </linearGradient>
-      </defs>
-
       <!-- Y轴刻度线和标签 -->
       <g v-for="(tick, index) in yTicks" :key="`tick-${index}`">
         <line
@@ -51,18 +43,6 @@
         </text>
       </g>
 
-      <!-- 曲线和面积 -->
-      <g v-if="points.length > 0">
-        <path :d="areaPath" :fill="`url(#${gradientId})`" />
-        <path
-          :d="linePath"
-          class="fill-none stroke-blue-500 dark:stroke-blue-400"
-          :stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </g>
-
       <!-- X轴标签（首尾） -->
       <g v-for="(label, i) in visibleXLabels" :key="`xlabel-${i}`">
         <text
@@ -73,6 +53,26 @@
         >
           {{ label.text }}
         </text>
+      </g>
+
+      <!-- 渐变定义 -->
+      <defs>
+        <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.3" />
+          <stop offset="100%" stop-color="#60a5fa" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <!-- 曲线和面积 -->
+      <g v-if="points.length > 0">
+        <path :d="areaPath" :fill="`url(#${gradientId})`" />
+        <path
+          :d="linePath"
+          class="fill-none stroke-blue-500 dark:stroke-blue-400"
+          :stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </g>
 
       <!-- 悬停指示线与点 -->

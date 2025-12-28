@@ -28,12 +28,12 @@
     </div>
 
     <UiModal
-      v-model:isShow="isModalShow"
-      :component="modalComponent"
-      :componentData="modalComponentData"
+      v-model:isShow="modalState.isShow"
+      :component="modalState.component"
+      :componentData="modalState.data"
       :hasUiTitle="false"
-      :title="modalTitle"
-      :isLoading="isModalLoading"
+      :title="modalState.title"
+      :isLoading="modalState.isLoading"
       @close="handleModalClose"
     />
   </UiLayout>
@@ -52,7 +52,6 @@ const input = ref('')
 const textareaRef = ref(null)
 
 const isSaving = ref(false)
-const isModalLoading = ref(false)
 
 // 判断是否为编辑模式
 const isEditMode = computed(() => {
@@ -97,10 +96,13 @@ const handleSubmit = throttle(async () => {
 })
 
 // 模态框
-const isModalShow = ref(false)
-const modalComponent = ref(null)
-const modalComponentData = ref({})
-const modalTitle = ref('')
+const modalState = reactive({
+  isShow: false,
+  component: null,
+  data: {},
+  title: '',
+  isLoading: false,
+})
 
 // 进入 AI 对话
 const handleChat = () => {
@@ -115,40 +117,40 @@ const handleChat = () => {
 const handleDoc = async () => {
   const mdDoc = await $fetch('/docs/md.md')
 
-  isModalShow.value = true
-  modalComponent.value = markRaw(UiMarkdown)
-  modalComponentData.value = {
+  modalState.isShow = true
+  modalState.component = markRaw(UiMarkdown)
+  modalState.data = {
     md: mdDoc,
   }
-  modalTitle.value = 'Markdown Doc'
+  modalState.title = 'Markdown Doc'
 }
 
 // 查看文件库
 const handleLibrary = () => {
-  isModalShow.value = true
-  modalComponent.value = markRaw(FileLibrary)
-  modalTitle.value = '资源'
-  modalComponentData.value = {
-    setIsLoading: (val) => (isModalLoading.value = val),
+  modalState.isShow = true
+  modalState.component = markRaw(FileLibrary)
+  modalState.title = '资源'
+  modalState.data = {
+    setIsLoading: (val) => (modalState.isLoading = val),
   }
 }
 
 // 预览笔记
 const handlePreview = () => {
-  isModalShow.value = true
-  modalComponent.value = markRaw(UiMarkdown)
-  modalComponentData.value = {
+  modalState.isShow = true
+  modalState.component = markRaw(UiMarkdown)
+  modalState.data = {
     md: input.value,
   }
-  modalTitle.value = '预览'
+  modalState.title = '预览'
 }
 
 // 关闭模态框
 const handleModalClose = () => {
-  modalComponent.value = null
-  modalComponentData.value = {}
-  modalTitle.value = ''
-  isModalLoading.value = false
+  modalState.component = null
+  modalState.data = {}
+  modalState.title = ''
+  modalState.isLoading = false
 }
 
 onMounted(async () => {

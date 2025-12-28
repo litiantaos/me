@@ -71,20 +71,40 @@
             <div class="flex-1"></div>
 
             <!-- 模型选择 -->
-            <div
+            <button
               v-if="mode === 'chat'"
               class="flex h-7 items-center gap-1 rounded-sm bg-zinc-100 px-2 text-xs transition-colors duration-300 hover:bg-zinc-200 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+              @click="isModalShow = true"
             >
-              <select
-                v-model="modelType"
-                class="field-sizing-content cursor-pointer"
-              >
-                <option v-for="(name, id) in models" :key="id" :value="id">
-                  {{ name }}
-                </option>
-              </select>
+              <span>{{ models[modelType] }}</span>
               <i class="ri-expand-up-down-line"></i>
-            </div>
+            </button>
+
+            <UiModal
+              title="选择模型"
+              :hasUiTitle="false"
+              :isSlot="true"
+              v-model:isShow="isModalShow"
+            >
+              <div class="space-y-2">
+                <button
+                  v-for="(name, id) in models"
+                  :key="id"
+                  class="w-full rounded-md py-3 text-left text-xs transition-all duration-300 hover:bg-zinc-100 hover:px-3 dark:hover:bg-zinc-700"
+                  :class="
+                    modelType === id ? 'text-blue-500 dark:text-blue-400' : ''
+                  "
+                  @click="
+                    () => {
+                      modelType = id
+                      isModalShow = false
+                    }
+                  "
+                >
+                  {{ name }}
+                </button>
+              </div>
+            </UiModal>
 
             <!-- 提交按钮 -->
             <button
@@ -119,6 +139,8 @@ const messagesRef = ref(null)
 
 const error = ref('')
 const isLoading = ref(false)
+
+const isModalShow = ref(false)
 
 const { models, modelType, messages, sendMessage } = useChat()
 const searchResults = ref([])
