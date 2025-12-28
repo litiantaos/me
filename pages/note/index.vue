@@ -4,6 +4,10 @@
       <div class="flex gap-6">
         <NuxtLink v-if="user" to="/note/new" class="link-color">New</NuxtLink>
         <NuxtLink to="/ai?s" class="link-color ri-search-line"></NuxtLink>
+        <NuxtLink
+          to="/note/stats"
+          class="link-color ri-line-chart-line"
+        ></NuxtLink>
       </div>
 
       <TransitionGroup name="list">
