@@ -56,12 +56,32 @@
     @apply rounded-sm bg-zinc-100 px-2 py-1 font-mono text-xs dark:bg-zinc-700;
   }
 
-  pre {
-    @apply my-4;
+  .code-wrapper {
+    @apply my-4 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-600;
   }
 
-  pre code {
-    @apply block overflow-x-auto rounded-md border border-zinc-200 bg-transparent! px-4 py-4 leading-6 dark:border-zinc-600 dark:bg-transparent!;
+  .code-header {
+    @apply flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-4 py-2 text-xs text-zinc-400 dark:border-zinc-600 dark:bg-zinc-700/50;
+  }
+
+  .code-copy {
+    @apply hover:text-blue-500;
+  }
+
+  .code-body {
+    @apply flex;
+
+    pre {
+      @apply flex-1 overflow-x-auto;
+
+      code {
+        @apply bg-transparent! p-4 leading-6 dark:bg-transparent!;
+      }
+    }
+  }
+
+  .line-numbers {
+    @apply flex flex-col items-end border-r border-zinc-200 bg-zinc-50 px-3 py-4 text-right font-mono text-xs leading-6 text-zinc-400 select-none dark:border-zinc-600 dark:bg-zinc-700/50;
   }
 
   table {

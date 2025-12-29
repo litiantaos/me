@@ -1,5 +1,4 @@
 import { Marked } from 'marked'
-import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 
 // HTML 渲染器配置
@@ -7,6 +6,26 @@ const htmlRenderer = {
   link({ href, tokens }) {
     const text = this.parser.parseInline(tokens)
     return `<a href="${href}" target="_blank" rel="noopener noreferrer"><i class="ri-link"></i><span>${text}</span></a>`
+  },
+  code({ text, lang }) {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext'
+    const highlighted = hljs.highlight(text, { language }).value
+    const lines = text.trimEnd().split('\n').length
+    const lineNumbers = Array.from(
+      { length: lines },
+      (_, i) => `<div>${i + 1}</div>`,
+    ).join('')
+
+    return `<div class="code-wrapper">
+      <div class="code-header">
+        <span class="code-lang">${language}</span>
+        <button class="code-copy ri-file-copy-line"></button>
+      </div>
+      <div class="code-body">
+        <div class="line-numbers">${lineNumbers}</div>
+        <pre><code class="hljs language-${language}">${highlighted}</code></pre>
+      </div>
+    </div>`
   },
 }
 
@@ -74,15 +93,7 @@ const plainTextRenderer = {
 }
 
 // HTML 渲染实例
-const htmlMarked = new Marked(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
-      return hljs.highlight(code, { language }).value
-    },
-  }),
-)
+const htmlMarked = new Marked()
 htmlMarked.use({ renderer: htmlRenderer })
 
 // 纯文本渲染实例

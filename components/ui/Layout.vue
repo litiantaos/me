@@ -12,10 +12,9 @@
         class="relative mx-auto flex h-full max-w-2xl items-center gap-4 p-4"
       >
         <UiTitle
-          :class="{ 'cursor-pointer': hasBack }"
           :hasUiTitle="hasUiTitle"
           :title="title"
-          @click="handleBack"
+          :handleTitle="handleTitle"
         />
 
         <Transition name="fade">
@@ -46,24 +45,12 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  handleTitle: {
+    type: Function,
+  },
   isLoading: {
     type: Boolean,
     default: false,
   },
-  hasBack: {
-    type: Boolean,
-    default: true,
-  },
 })
-
-const handleBack = () => {
-  if (!props.hasBack) return
-
-  // 检查页面是否在顶部
-  if (window.scrollY > 0) {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  } else {
-    navigateTo('/')
-  }
-}
 </script>

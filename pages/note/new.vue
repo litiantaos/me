@@ -31,7 +31,6 @@
       v-model:isShow="modalState.isShow"
       :component="modalState.component"
       :componentData="modalState.data"
-      :hasUiTitle="false"
       :title="modalState.title"
       :isLoading="modalState.isLoading"
       @close="handleModalClose"

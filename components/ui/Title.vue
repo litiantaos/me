@@ -1,11 +1,18 @@
 <template>
   <h1 class="flex items-center gap-4 font-bold">
-    <span v-if="hasUiTitle" class="text-2xl">
+    <button v-if="hasUiTitle" class="text-2xl" @click="handleBack">
       <span class="text-blue-500 italic">Taos</span>
       <span>Life</span>
-    </span>
+    </button>
 
-    <span v-if="title" class="text-xl">{{ title }}</span>
+    <div
+      v-if="title"
+      class="text-xl"
+      :class="handleTitle ? 'cursor-pointer select-none' : ''"
+      @click="handleTitle"
+    >
+      {{ title }}
+    </div>
   </h1>
 </template>
 
@@ -19,5 +26,17 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  handleTitle: {
+    type: Function,
+  },
 })
+
+const handleBack = () => {
+  // 检查页面是否在顶部
+  if (window.scrollY > 0) {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  } else {
+    navigateTo('/')
+  }
+}
 </script>

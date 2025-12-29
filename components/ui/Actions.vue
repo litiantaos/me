@@ -18,22 +18,22 @@
       ]"
     >
       <button
-        class="ri-more-line action-btn"
+        class="ri-more-line btn h-full! flex-1 rounded-none!"
         :class="customClass.hover"
         @click="handleBtnOpen"
       ></button>
       <button
-        class="ri-edit-line action-btn"
+        class="ri-edit-line btn h-full! flex-1 rounded-none!"
         :class="customClass.hover"
         @click="$emit('edit')"
       ></button>
       <button
-        class="ri-delete-bin-7-line action-btn text-red-500 dark:text-red-400"
+        class="ri-delete-bin-7-line btn h-full! flex-1 rounded-none! text-red-500 dark:text-red-400"
         :class="customClass.hover"
         @click="handleDeleteConfirm"
       ></button>
       <button
-        class="action-btn text-blue-500"
+        class="btn h-full! flex-1 rounded-none! text-blue-500"
         :class="customClass.hover"
         @click="$emit('delete')"
         :disabled="isDeleting"
@@ -105,11 +105,3 @@ onUnmounted(() => {
   clearTimeout(btnsCloseTimer.value)
 })
 </script>
-
-<style scoped>
-@reference "tailwindcss";
-
-.action-btn {
-  @apply flex h-full flex-1 items-center justify-center transition-colors duration-300;
-}
-</style>

@@ -5,12 +5,7 @@
         v-if="isShow"
         class="fixed inset-0 z-60 overflow-y-auto bg-white dark:bg-zinc-800"
       >
-        <UiLayout
-          :hasUiTitle="hasUiTitle"
-          :title="title"
-          :hasBack="false"
-          :isLoading="isLoading"
-        >
+        <UiLayout :hasUiTitle="false" :title="title" :isLoading="isLoading">
           <template #header>
             <div class="flex flex-1 items-center justify-end">
               <button
@@ -41,13 +36,7 @@
 <script setup>
 const isShow = defineModel('isShow', { default: false })
 const isLoading = defineModel('isLoading', { default: false })
-const props = defineProps([
-  'component',
-  'componentData',
-  'isSlot',
-  'hasUiTitle',
-  'title',
-])
+const props = defineProps(['component', 'componentData', 'isSlot', 'title'])
 const emit = defineEmits(['close', 'confirm'])
 
 // 控制页面滚动

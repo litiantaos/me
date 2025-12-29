@@ -4,25 +4,19 @@
       <div class="flex gap-3">
         <button
           @click="activeTab = 'images'"
-          :class="[
-            'transition-all duration-300',
-            {
-              'font-medium text-blue-500 dark:text-blue-400':
-                activeTab === 'images',
-            },
-          ]"
+          :class="{
+            'font-medium text-blue-500 dark:text-blue-400':
+              activeTab === 'images',
+          }"
         >
           图片
         </button>
         <button
           @click="activeTab = 'videos'"
-          :class="[
-            'transition-all duration-300',
-            {
-              'font-medium text-blue-500 dark:text-blue-400':
-                activeTab === 'videos',
-            },
-          ]"
+          :class="{
+            'font-medium text-blue-500 dark:text-blue-400':
+              activeTab === 'videos',
+          }"
         >
           视频
         </button>
@@ -52,7 +46,7 @@
             {{ file.name }}
           </div>
           <button
-            class="ri-file-copy-line text-zinc-400 transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+            class="ri-file-copy-line text-zinc-400 hover:text-blue-500 dark:hover:text-blue-400"
             @click="copyText(file.url)"
           ></button>
         </div>
@@ -64,7 +58,7 @@
 
           <button
             v-if="file.showPreview"
-            class="ri-delete-bin-7-line ml-2 transition-colors duration-300 hover:text-red-500 dark:hover:text-red-400"
+            class="ri-delete-bin-7-line ml-2 hover:text-red-500 dark:hover:text-red-400"
             @click="deleteFile(file)"
           ></button>
         </div>
@@ -121,7 +115,7 @@ const fetchFiles = async () => {
     files.value = data.map((file) => {
       return {
         ...file,
-        url: `${config.public.supabaseUrl}/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
+        url: `${config.public.supabase.url}/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
       }
     })
   } catch (err) {

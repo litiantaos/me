@@ -1,11 +1,10 @@
 <template>
   <UiLayout :hasHeader="false" :isLoading="isLoading">
     <div class="mt-64 space-y-10">
-      <div class="flex items-center gap-4">
-        <button @click="toggleAuthMode">
-          <UiTitle :title="isLogin ? '登录' : '注册'" />
-        </button>
-      </div>
+      <UiTitle
+        :title="isLogin ? '登录' : '注册'"
+        :handleTitle="toggleAuthMode"
+      />
 
       <form class="mt-6 w-full space-y-6" @submit.prevent="handleSubmit">
         <input

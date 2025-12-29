@@ -110,7 +110,7 @@
             <button
               v-for="(item, key) in movieChannelMap"
               :key="key"
-              class="flex items-center justify-center gap-2 rounded-md bg-zinc-100 py-3 text-xs transition-colors duration-300 dark:bg-zinc-700"
+              class="btn-base w-auto! gap-2 py-3 text-xs"
               :class="{
                 'text-blue-500 ring-1 ring-blue-500 dark:text-blue-400 dark:ring-blue-400':
                   movieRecordData.watch_channel === key,
@@ -131,7 +131,7 @@
             <button
               v-for="(item, key) in movieRatingMap"
               :key="key"
-              class="group flex flex-col items-center gap-3 rounded-md bg-zinc-100 py-3 transition-colors duration-300 dark:bg-zinc-700"
+              class="group btn-base h-auto! w-auto! flex-col gap-3 py-3"
               :class="{
                 'text-blue-500 ring-1 ring-blue-500 dark:text-blue-400 dark:ring-blue-400':
                   movieRecordData.rating === Number(key),

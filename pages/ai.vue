@@ -1,29 +1,39 @@
 <template>
-  <UiLayout :title="mode === 'chat' ? '对话' : '搜索'">
+  <UiLayout
+    :title="mode === 'chat' ? '对话' : '搜索'"
+    :isLoading="isLoading"
+    :handleTitle="toggleMode"
+  >
     <div class="w-full">
       <!-- 消息列表 -->
       <div
         v-if="mode === 'chat' && messages.length > 0"
         ref="messagesRef"
-        class="flex w-full flex-1 flex-col gap-4 overflow-y-auto"
+        class="w-full space-y-4"
       >
         <div
           v-for="(message, index) in messages"
           :key="index"
-          :class="
-            message.role === 'user'
-              ? 'max-w-4/5 self-end rounded-md bg-zinc-100 px-3 dark:bg-zinc-700'
-              : 'w-full self-start'
-          "
+          :class="[
+            'flex w-full',
+            message.role === 'user' ? 'justify-end' : 'justify-start',
+          ]"
         >
-          <UiMarkdown :md="message.content" />
+          <UiMarkdown
+            :md="message.content"
+            :class="
+              message.role === 'user'
+                ? 'max-w-4/5 rounded-md bg-zinc-100 px-3 dark:bg-zinc-700'
+                : 'w-full'
+            "
+          />
         </div>
       </div>
 
       <!-- 搜索结果 -->
       <div
         v-if="mode === 'search' && searchResults.length > 0"
-        class="space-y-10"
+        class="w-full space-y-10"
       >
         <TransitionGroup name="list">
           <NoteContent
@@ -48,79 +58,62 @@
           <textarea
             ref="inputRef"
             v-model="input"
-            placeholder="今天也要开心呀！"
-            class="no-scrollbar max-h-60 min-h-20 w-full resize-none overflow-y-auto px-3 pt-2 leading-6"
+            :placeholder="mode === 'chat' ? '今天也要开心呀！' : '搜索笔记'"
+            :rows="mode === 'chat' ? '3' : '1'"
+            class="no-scrollbar max-h-60 w-full resize-none overflow-y-auto px-3 py-2 leading-6"
             @keydown="handleKeydown"
           ></textarea>
 
-          <div class="flex items-center gap-2 p-2 text-xs">
-            <!-- 模式切换 -->
+          <div
+            v-if="mode === 'chat'"
+            class="flex items-center justify-between px-2 pb-2"
+          >
             <button
-              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-sm bg-blue-100 px-2 text-blue-500 transition-colors duration-300 hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30"
-              @click="mode = mode === 'chat' ? 'search' : 'chat'"
-            >
-              <i
-                :class="
-                  mode === 'chat' ? 'ri-chat-3-line' : 'ri-search-ai-2-line'
-                "
-              ></i>
-              <span>{{ mode === 'chat' ? '对话' : '搜索' }}</span>
-              <i class="ri-expand-up-down-line"></i>
-            </button>
-
-            <div class="flex-1"></div>
-
-            <!-- 模型选择 -->
-            <button
-              v-if="mode === 'chat'"
-              class="flex h-7 items-center gap-1 rounded-sm bg-zinc-100 px-2 text-xs transition-colors duration-300 hover:bg-zinc-200 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+              class="btn-base h-7! w-auto! gap-2 rounded-sm! px-2 text-xs"
               @click="isModalShow = true"
             >
               <span>{{ models[modelType] }}</span>
               <i class="ri-expand-up-down-line"></i>
             </button>
 
-            <UiModal
-              title="选择模型"
-              :hasUiTitle="false"
-              :isSlot="true"
-              v-model:isShow="isModalShow"
-            >
-              <div class="space-y-2">
-                <button
-                  v-for="(name, id) in models"
-                  :key="id"
-                  class="w-full rounded-md py-3 text-left text-xs transition-all duration-300 hover:bg-zinc-100 hover:px-3 dark:hover:bg-zinc-700"
-                  :class="
-                    modelType === id ? 'text-blue-500 dark:text-blue-400' : ''
-                  "
-                  @click="
-                    () => {
-                      modelType = id
-                      isModalShow = false
-                    }
-                  "
-                >
-                  {{ name }}
-                </button>
-              </div>
-            </UiModal>
-
-            <!-- 提交按钮 -->
             <button
-              class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-blue-500 text-white transition-colors duration-300 hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+              class="btn-primary h-7! w-7! rounded-sm! text-xs"
               :disabled="!input.trim() || isLoading"
               @click="handleSubmit"
             >
               <UiLoader v-if="isLoading" size="xs" />
-              <i
-                v-else
-                :class="[
-                  'text-xs',
-                  mode === 'chat' ? 'ri-arrow-up-line' : 'ri-search-2-line',
-                ]"
-              ></i>
+              <i v-else class="ri-arrow-up-line"></i>
             </button>
+
+            <UiModal
+              v-model:isShow="isModalShow"
+              title="选择模型"
+              :isSlot="true"
+            >
+              <div class="space-y-2">
+                <div
+                  v-for="(name, id) in models"
+                  :key="id"
+                  class="flex w-full items-center gap-2"
+                  :class="
+                    modelType === id ? 'text-blue-500 dark:text-blue-400' : ''
+                  "
+                >
+                  <i :class="modelsLogoMap[id.split('-')[0]]"></i>
+                  <button
+                    class="btn flex-1 justify-start! px-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    @click="
+                      () => {
+                        modelType = id
+                        isModalShow = false
+                      }
+                    "
+                  >
+                    {{ name }}
+                  </button>
+                </div>
+              </div>
+            </UiModal>
           </div>
         </div>
       </div>
@@ -132,21 +125,40 @@
 const route = useRoute()
 const router = useRouter()
 
+const { models, modelType, messages, sendMessage } = useChat()
+
+const mode = ref('chat')
 const input = ref('')
 const inputRef = ref(null)
-const mode = ref('chat')
-const messagesRef = ref(null)
-
-const error = ref('')
 const isLoading = ref(false)
-
 const isModalShow = ref(false)
-
-const { models, modelType, messages, sendMessage } = useChat()
+const messagesRef = ref(null)
 const searchResults = ref([])
+const error = ref('')
+const searchQuery = ref('')
+
+const modelsLogoMap = {
+  gemini: 'ri-gemini-fill',
+  claude: 'ri-claude-fill',
+  gpt: 'ri-openai-fill',
+  grok: 'ri-twitter-x-fill',
+  deepseek: 'ri-deepseek-fill',
+}
+
+// 切换模式
+const toggleMode = () => {
+  mode.value = mode.value === 'chat' ? 'search' : 'chat'
+  inputRef.value?.focus()
+
+  if (mode.value === 'search') {
+    router.replace({ query: { s: searchQuery.value } })
+  } else {
+    router.replace({ query: {} })
+  }
+}
 
 // 输入框自适应高度
-watch(input, async () => {
+watch([input, mode], async () => {
   await nextTick()
 
   if (inputRef.value) {
@@ -157,6 +169,7 @@ watch(input, async () => {
 
 // 回车提交
 const handleKeydown = (e) => {
+  if (e.isComposing) return
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault()
     handleSubmit()
@@ -194,7 +207,8 @@ const handleSubmit = throttle(async () => {
 
   // 仅搜索模式更新 URL
   if (mode.value === 'search') {
-    router.replace(`/ai?s=${encodeURIComponent(query)}`)
+    searchQuery.value = query
+    router.replace({ query: { s: searchQuery.value } })
   }
 
   try {
