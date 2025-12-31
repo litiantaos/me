@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4">
+  <div class="w-full space-y-4">
     <div
       ref="containerRef"
       @scroll="handleScroll"
@@ -45,6 +45,12 @@ const calculatePages = () => {
   if (!containerRef.value) return
   const { scrollWidth, clientWidth } = containerRef.value
   if (clientWidth === 0) return
+
+  if (scrollWidth <= clientWidth) {
+    totalPages.value = 1
+    return
+  }
+
   const pageWidth = clientWidth * 0.9
   totalPages.value = Math.ceil(scrollWidth / pageWidth)
 }

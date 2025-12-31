@@ -10,21 +10,13 @@ const htmlRenderer = {
   code({ text, lang }) {
     const language = hljs.getLanguage(lang) ? lang : 'plaintext'
     const highlighted = hljs.highlight(text, { language }).value
-    const lines = text.trimEnd().split('\n').length
-    const lineNumbers = Array.from(
-      { length: lines },
-      (_, i) => `<div>${i + 1}</div>`,
-    ).join('')
 
     return `<div class="code-wrapper">
       <div class="code-header">
-        <span class="code-lang">${language}</span>
+        <span>${language.toUpperCase()}</span>
         <button class="code-copy ri-file-copy-line"></button>
       </div>
-      <div class="code-body">
-        <div class="line-numbers">${lineNumbers}</div>
-        <pre><code class="hljs language-${language}">${highlighted}</code></pre>
-      </div>
+      <pre><code class="hljs language-${language}">${highlighted}</code></pre>
     </div>`
   },
 }

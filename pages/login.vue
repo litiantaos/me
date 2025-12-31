@@ -1,38 +1,36 @@
 <template>
-  <UiLayout :hasHeader="false" :isLoading="isLoading">
-    <div class="mt-64 space-y-10">
-      <UiTitle
-        :title="isLogin ? '登录' : '注册'"
-        :handleTitle="toggleAuthMode"
+  <UiLayout
+    :title="isLogin ? '登录' : '注册'"
+    :isLoading="isLoading"
+    :handleTitle="toggleAuthMode"
+    class="mt-[30vh]"
+  >
+    <form class="w-full space-y-6" @submit.prevent="handleSubmit">
+      <input
+        id="email"
+        v-model="email"
+        type="email"
+        placeholder="邮箱"
+        required
+        class="input-base w-full"
       />
 
-      <form class="mt-6 w-full space-y-6" @submit.prevent="handleSubmit">
-        <input
-          id="email"
-          v-model="email"
-          type="email"
-          placeholder="邮箱"
-          required
-          class="input-base w-full"
-        />
+      <input
+        id="password"
+        v-model="password"
+        type="password"
+        placeholder="密码"
+        required
+        class="input-base w-full"
+      />
 
-        <input
-          id="password"
-          v-model="password"
-          type="password"
-          placeholder="密码"
-          required
-          class="input-base w-full"
-        />
+      <UiMessage :type="message?.type" :text="message?.text" />
 
-        <UiMessage :type="message?.type" :text="message?.text" />
-
-        <button type="submit" class="btn-primary" :disabled="isLoading">
-          <UiLoader v-if="isLoading" size="md" />
-          <span v-else>{{ isLogin ? '登录' : '注册' }}</span>
-        </button>
-      </form>
-    </div>
+      <button type="submit" class="btn-primary" :disabled="isLoading">
+        <UiLoader v-if="isLoading" size="md" />
+        <span v-else>{{ isLogin ? '登录' : '注册' }}</span>
+      </button>
+    </form>
   </UiLayout>
 </template>
 
