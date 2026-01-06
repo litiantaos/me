@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-4 space-y-3">
+  <div class="space-y-3">
     <div class="flex h-8 items-center gap-3">
       <div class="flex gap-3">
         <button
@@ -69,7 +69,7 @@
             v-if="file.metadata.mimetype.startsWith('image/')"
             :src="file.url"
             alt="图片预览"
-            class="w-full"
+            class="w-full cursor-zoom-in"
           />
 
           <video
@@ -81,6 +81,8 @@
         </div>
       </li>
     </ul>
+
+    <UiMediaPreview />
   </div>
 </template>
 

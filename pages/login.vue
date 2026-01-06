@@ -1,7 +1,6 @@
 <template>
   <UiLayout
     :title="isLogin ? '登录' : '注册'"
-    :isLoading="isLoading"
     :handleTitle="toggleAuthMode"
     class="mt-[30vh]"
   >

@@ -1,5 +1,8 @@
 <template>
-  <UiLayout :title="isEditMode ? '编辑' : '想法'" :isLoading="isNoteFetching">
+  <UiLayout
+    :title="isEditMode ? '编辑想法' : '新想法'"
+    :isLoading="isNoteFetching"
+  >
     <textarea
       class="field-sizing-content min-h-[60vh] w-full resize-none leading-7"
       placeholder="心有从容，向阳而生"

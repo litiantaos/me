@@ -1,5 +1,5 @@
 <template>
-  <UiLayout title="已看影视" :isLoading="isFetching">
+  <UiLayout title="已看" :isLoading="isFetching">
     <div class="space-y-10">
       <div class="flex gap-6">
         <NuxtLink

@@ -50,7 +50,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/',
-      include: ['/note/new(/*)?'],
+      include: ['/note/new(/*)?', '/movie/add(/*)?'],
     },
   },
 

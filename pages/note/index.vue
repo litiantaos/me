@@ -1,5 +1,5 @@
 <template>
-  <UiLayout :isLoading="isNotesFetching">
+  <UiLayout title="想法" :isLoading="isNotesFetching">
     <div class="space-y-10">
       <div class="flex gap-6">
         <NuxtLink v-if="user" to="/note/new" class="link-color">New</NuxtLink>
