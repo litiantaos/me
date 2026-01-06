@@ -42,7 +42,7 @@
 
     <div
       v-if="cities.length > 0"
-      class="fixed bottom-20 left-0 flex w-full flex-col items-center space-y-3 px-4"
+      class="fixed bottom-8 left-0 flex w-full flex-col items-center space-y-3 px-4 sm:bottom-20"
     >
       <div class="flex items-baseline gap-2">
         <span class="text-2xl font-bold">{{ countries.size }}</span>

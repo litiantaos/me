@@ -502,6 +502,36 @@ const onClick = (e) =>
     radius: 0,
   })
 
+const onTouchStart = (e) => {
+  if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX
+    const dy = e.touches[0].clientY - e.touches[1].clientY
+    interact.touch.lastDist = Math.sqrt(dx * dx + dy * dy)
+  }
+}
+
+const onTouchMove = (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault()
+    const dx = e.touches[0].clientX - e.touches[1].clientX
+    const dy = e.touches[0].clientY - e.touches[1].clientY
+    const dist = Math.sqrt(dx * dx + dy * dy)
+
+    if (interact.touch.lastDist > 0) {
+      const delta = dist - interact.touch.lastDist
+      interact.zoom.target = Math.max(
+        CONFIG.minZoom,
+        Math.min(CONFIG.maxZoom, interact.zoom.target + delta * 0.01),
+      )
+    }
+    interact.touch.lastDist = dist
+  }
+}
+
+const onTouchEnd = () => {
+  interact.touch.lastDist = 0
+}
+
 let ro = null,
   mq = null
 watch(() => props.data, updateCities, { deep: true })
@@ -519,6 +549,13 @@ onMounted(() => {
     ro.observe(canvasRef.value)
     canvasRef.value.addEventListener('click', onClick)
     canvasRef.value.addEventListener('mousemove', onMove)
+    canvasRef.value.addEventListener('touchstart', onTouchStart, {
+      passive: false,
+    })
+    canvasRef.value.addEventListener('touchmove', onTouchMove, {
+      passive: false,
+    })
+    canvasRef.value.addEventListener('touchend', onTouchEnd)
     canvasRef.value.addEventListener(
       'wheel',
       (e) => {
