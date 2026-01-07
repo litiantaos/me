@@ -18,7 +18,7 @@
         class="relative flex h-full items-center gap-4 p-4"
         :class="[titleAlign, { 'mx-auto max-w-2xl': !isFullPage }]"
       >
-        <h1 class="flex items-center gap-4 font-bold">
+        <h1 class="flex items-center gap-4 font-bold select-none">
           <button v-if="hasUiTitle" class="text-2xl" @click="handleBack">
             <span class="text-blue-500 italic">Taos</span>
             <span>Life</span>
@@ -27,7 +27,7 @@
           <div
             v-if="title"
             class="text-xl"
-            :class="handleTitle ? 'cursor-pointer select-none' : ''"
+            :class="handleTitle ? 'cursor-pointer' : ''"
             @click="handleTitle"
           >
             {{ title }}

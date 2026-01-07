@@ -1,43 +1,45 @@
 <template>
-  <canvas ref="canvasRef" class="block h-screen w-full"></canvas>
+  <canvas ref="canvasRef" class="block h-full w-full touch-none"></canvas>
 </template>
 
 <script setup>
 const props = defineProps({
+  // 高亮点数据，包含 latitude 和 longitude 属性
   data: {
     type: Array,
     default: () => [],
   },
 })
 
-// Configuration
+// 配置项
 const CONFIG = {
-  particleGap: 2,
-  mobileGap: 5,
-  fov: 800,
-  baseSize: 2,
-  citySize: 16,
-  mouseRadiusSq: 8100,
-  viscosity: 0.1,
-  maxRotation: 0.5,
-  minZoom: 0.8,
-  maxZoom: 12,
-  initialScale: 1.2,
-  defaultZoom: 3.2,
-  centerLat: 35,
-  centerLon: 105,
+  particleGap: 2, // 桌面端粒子间隔（像素），值越小粒子越密集
+  mobileGap: 5, // 移动端粒子间隔
+  fov: 800, // 视场深度，影响3D透视效果
+  baseSize: 2, // 基础粒子大小
+  highlightSize: 16, // 高亮点标记大小
+  mouseRadiusSq: 8100, // 鼠标交互影响范围的平方 (90^2)
+  viscosity: 0.1, // 粘度系数（暂未使用，保留属性）
+  maxRotation: 0.5, // 地图随鼠标移动的最大旋转角度（弧度）
+  minZoom: 0.8, // 最小缩放比例
+  maxZoom: 12, // 最大缩放比例
+  initialScale: 1.2, // 初始缩放比例
+  defaultZoom: 3.2, // 默认缩放层级
+  centerLat: 35, // 初始中心纬度
+  centerLon: 105, // 初始中心经度
   colors: {
-    light: { land: '#334155', city: '#fbbf24' },
-    dark: { land: '#a1a1aa', city: '#fbbf24' },
+    // 亮色/暗色模式配色方案
+    light: { land: '#334155', highlight: '#fbbf24' },
+    dark: { land: '#a1a1aa', highlight: '#fbbf24' },
   },
-  projectionOffset: { lat: 5, lon: -1 },
-  cityMagnify: 3,
-  landRepulsion: 15,
-  springStiffness: 0.1,
-  springDamping: 0.8,
-  waveSpeed: 15,
-  waveWidth: 60,
-  waveForce: 40,
+  projectionOffset: { lat: 5, lon: -1 }, // 投影偏移修正，用于校准地图中心
+  highlightMagnify: 3, // 鼠标悬停时高亮点的放大倍数
+  landRepulsion: 15, // 鼠标对陆地粒子的排斥力度
+  springStiffness: 0.1, // 弹簧系统的劲度系数（回弹速度）
+  springDamping: 0.8, // 弹簧系统的阻尼系数（回弹平滑度）
+  waveSpeed: 15, // 点击波纹扩散速度
+  waveWidth: 60, // 波纹宽度
+  waveForce: 40, // 波纹对粒子的推力
 }
 
 const SHADERS = {
@@ -82,17 +84,12 @@ const hexToRgb = (hex) => {
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
 }
 
-const createWebGLProgram = (gl, vsSrc, fsSrc) => {
+const createProgram = (gl, vsSrc, fsSrc) => {
   const compile = (type, src) => {
-    const shader = gl.createShader(type)
-    gl.shaderSource(shader, src)
-    gl.compileShader(shader)
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(shader))
-      gl.deleteShader(shader)
-      return null
-    }
-    return shader
+    const s = gl.createShader(type)
+    gl.shaderSource(s, src)
+    gl.compileShader(s)
+    return s
   }
   const prog = gl.createProgram()
   gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSrc))
@@ -106,18 +103,16 @@ const project = (lat, lon) => ({
   y: (90 - (lat + CONFIG.projectionOffset.lat)) * (400 / 180) - 200,
 })
 
-// State
+// 状态管理
 const canvasRef = ref(null)
 const isDark = ref(false)
 const engine = {
   gl: null,
   program: null,
-  locs: {}, // locations
-  bufs: {}, // buffers
-  // Data arrays
-  land: { physics: null, render: null, count: 0 }, // physics: [baseX, baseY, dx, dy]
-  city: { physics: [], render: null, count: 0 },
-  // Runtime
+  locs: {},
+  bufs: {},
+  land: { physics: null, render: null, count: 0 }, // render 现在仅包含 [x, y]
+  highlight: { physics: [], render: null, count: 0 }, // render 包含 [x, y, size]
   width: 0,
   height: 0,
   halfW: 0,
@@ -125,7 +120,7 @@ const engine = {
   rect: { left: 0, top: 0 },
   dpr: 1,
   center: { x: 0, y: 0 },
-  colors: { land: [0, 0, 0], city: [0, 0, 0] },
+  colors: { land: [0, 0, 0], highlight: [0, 0, 0] },
   waves: [],
   animId: null,
   isMobile: false,
@@ -138,7 +133,7 @@ const interact = {
   baseScale: 1,
 }
 
-// Resources
+// 资源加载
 let cachedPixels = null
 const loadPixelData = async () => {
   if (cachedPixels) return cachedPixels
@@ -182,7 +177,7 @@ const initWebGL = () => {
     }
   })
 
-  const prog = createWebGLProgram(gl, SHADERS.vertex, SHADERS.fragment)
+  const prog = createProgram(gl, SHADERS.vertex, SHADERS.fragment)
   if (!prog) return false
 
   gl.useProgram(prog)
@@ -217,34 +212,34 @@ const initParticles = async () => {
 
     const count = coords.length / 2
     engine.land.count = count
-    engine.land.physics = new Float32Array(count * 4)
-    engine.land.render = new Float32Array(count * 3)
+    engine.land.physics = new Float32Array(count * 4) // [bx, by, dx, dy]
+    engine.land.render = new Float32Array(count * 2) // [x, y] - 优化: 不包含大小
 
     for (let i = 0; i < count; i++) {
-      engine.land.physics[i * 4] = coords[i * 2] // bx
-      engine.land.physics[i * 4 + 1] = coords[i * 2 + 1] // by
-      engine.land.render[i * 3 + 2] = CONFIG.baseSize * engine.dpr
+      engine.land.physics[i * 4] = coords[i * 2]
+      engine.land.physics[i * 4 + 1] = coords[i * 2 + 1]
     }
 
     if (engine.bufs.land) engine.gl.deleteBuffer(engine.bufs.land)
     engine.bufs.land = engine.gl.createBuffer()
+    // 初始数据上传，之后每帧更新
     engine.gl.bindBuffer(engine.gl.ARRAY_BUFFER, engine.bufs.land)
     engine.gl.bufferData(
       engine.gl.ARRAY_BUFFER,
-      engine.land.render,
+      engine.land.render.byteLength, // 仅分配大小
       engine.gl.DYNAMIC_DRAW,
     )
 
-    updateCities()
+    updateHighlights()
     if (!engine.animId) render()
   } catch (e) {
     console.error(e)
   }
 }
 
-const updateCities = () => {
+const updateHighlights = () => {
   if (!engine.center || !props.data) return
-  engine.city.physics = props.data.map((c) => {
+  engine.highlight.physics = props.data.map((c) => {
     const { x, y } = project(c.latitude, c.longitude)
     return {
       bx: x - engine.center.x,
@@ -254,16 +249,16 @@ const updateCities = () => {
     }
   })
 
-  const count = engine.city.physics.length
-  engine.city.count = count
-  engine.city.render = new Float32Array(count * 3)
+  const count = engine.highlight.physics.length
+  engine.highlight.count = count
+  engine.highlight.render = new Float32Array(count * 3) // [x, y, size]
 
-  if (engine.bufs.city) engine.gl.deleteBuffer(engine.bufs.city)
-  engine.bufs.city = engine.gl.createBuffer()
-  engine.gl.bindBuffer(engine.gl.ARRAY_BUFFER, engine.bufs.city)
+  if (engine.bufs.highlight) engine.gl.deleteBuffer(engine.bufs.highlight)
+  engine.bufs.highlight = engine.gl.createBuffer()
+  engine.gl.bindBuffer(engine.gl.ARRAY_BUFFER, engine.bufs.highlight)
   engine.gl.bufferData(
     engine.gl.ARRAY_BUFFER,
-    engine.city.render,
+    engine.highlight.render.byteLength,
     engine.gl.DYNAMIC_DRAW,
   )
 }
@@ -271,7 +266,7 @@ const updateCities = () => {
 const updateColors = () => {
   const t = isDark.value ? CONFIG.colors.dark : CONFIG.colors.light
   engine.colors.land = hexToRgb(t.land)
-  engine.colors.city = hexToRgb(t.city)
+  engine.colors.highlight = hexToRgb(t.highlight)
 }
 
 const render = () => {
@@ -280,22 +275,22 @@ const render = () => {
   const { width, height, halfW, halfH, dpr, gl, locs, bufs } = engine
   const { mouse, zoom, baseScale } = interact
   const cfg = CONFIG
-  const waveLimit = Math.max(width, height) * 1.5
 
-  // 1. Update Interaction & Physics State
-  // Wave GC
+  // 1. 更新物理状态
   for (let i = engine.waves.length - 1; i >= 0; i--) {
     engine.waves[i].radius += cfg.waveSpeed
-    if (engine.waves[i].radius > waveLimit) engine.waves.splice(i, 1)
+    if (engine.waves[i].radius > Math.max(width, height) * 1.5)
+      engine.waves.splice(i, 1)
   }
 
   mouse.tx += (mouse.x - width / 2 - mouse.tx) * 0.1
   mouse.ty += (mouse.y - height / 2 - mouse.ty) * 0.1
   zoom.val += (zoom.target - zoom.val) * 0.1
 
+  // 预计算变换矩阵
   const finalScale = baseScale * zoom.val
-  const rotY = (mouse.tx / (width / 2)) * cfg.maxRotation
-  const rotX = (mouse.ty / (height / 2)) * cfg.maxRotation
+  const rotY = (mouse.tx / halfW) * cfg.maxRotation
+  const rotX = (mouse.ty / halfH) * cfg.maxRotation
   const cy = Math.cos(rotY),
     sy = Math.sin(rotY)
   const cx = Math.cos(rotX),
@@ -307,27 +302,26 @@ const render = () => {
   )
   const panX = engine.center.x * (1 - panP)
   const panY = engine.center.y * (1 - panP)
-
-  const interactActive = !engine.isMobile
   const mouseRad = Math.sqrt(cfg.mouseRadiusSq)
+  const interactActive = !engine.isMobile
 
-  // 2. Land Calculation
+  // 2. 陆地计算
   const count = engine.land.count
   const phy = engine.land.physics
   const ren = engine.land.render
-  const STRIDE = 12
+  // ren 现在是紧密排列的 [x, y]，索引步长为 2
 
   for (let i = 0; i < count; i++) {
-    const i4 = i * 4,
-      i3 = i * 3
+    const i4 = i * 4
+    const i2 = i * 2 // 优化索引
     let dx = phy[i4 + 2],
       dy = phy[i4 + 3]
 
-    // Projection
+    // 投影
     const wx = (phy[i4] + panX) * finalScale
     const wy = (phy[i4 + 1] + panY) * finalScale
 
-    // 3D Transform
+    // 3D 旋转
     const z0 = wx * sy
     const x0 = wx * cy
     const y0 = wy * cx - z0 * sx
@@ -340,7 +334,7 @@ const render = () => {
       let tdx = 0,
         tdy = 0
 
-      // Interaction
+      // 交互
       if (interactActive) {
         const dxM = px - mouse.x
         if (Math.abs(dxM) < mouseRad) {
@@ -356,7 +350,7 @@ const render = () => {
         }
       }
 
-      // Waves
+      // 波纹
       for (let w = 0; w < engine.waves.length; w++) {
         const wv = engine.waves[w]
         const dxW = px - wv.x
@@ -377,18 +371,18 @@ const render = () => {
       phy[i4 + 2] = dx * cfg.springDamping
       phy[i4 + 3] = dy * cfg.springDamping
 
-      ren[i3] = px + dx
-      ren[i3 + 1] = py + dy
-      ren[i3 + 2] = CONFIG.baseSize * dpr
+      ren[i2] = px + dx
+      ren[i2 + 1] = py + dy
     } else {
-      ren[i3 + 2] = 0
+      ren[i2] = -9999 // 裁剪
+      ren[i2 + 1] = -9999
     }
   }
 
-  // 3. City Calculation
-  const cCount = engine.city.count
-  const cPhy = engine.city.physics
-  const cRen = engine.city.render
+  // 3. 高亮点计算
+  const cCount = engine.highlight.count
+  const cPhy = engine.highlight.physics
+  const cRen = engine.highlight.render
 
   for (let i = 0; i < cCount; i++) {
     const p = cPhy[i]
@@ -396,7 +390,7 @@ const render = () => {
 
     const wx = (p.bx + panX) * finalScale
     const wy = (p.by + panY) * finalScale
-    const wz = -20 // Base offset
+    const wz = -20
 
     const z0 = wz * cy + wx * sy
     const x0 = wx * cy - wz * sy
@@ -418,7 +412,7 @@ const render = () => {
             dx * dx + dy * dy < cfg.mouseRadiusSq
           ) {
             tScale =
-              (1 - Math.sqrt(dx * dx + dy * dy) / mouseRad) * cfg.cityMagnify
+              (1 - Math.sqrt(dx * dx + dy * dy) / mouseRad) * cfg.highlightMagnify
           }
         }
       }
@@ -430,35 +424,39 @@ const render = () => {
 
       cRen[i3] = px
       cRen[i3 + 1] = py
-      cRen[i3 + 2] = cfg.citySize * (1 + Math.max(0, p.scale)) * dpr
+      cRen[i3 + 2] = cfg.highlightSize * (1 + Math.max(0, p.scale)) * dpr
     } else {
       cRen[i3 + 2] = 0
     }
   }
 
-  // 4. Draw
+  // 4. 绘制
   gl.viewport(0, 0, width * dpr, height * dpr)
   gl.clearColor(0, 0, 0, 0)
   gl.clear(gl.COLOR_BUFFER_BIT)
   gl.uniform2f(locs.res, width, height)
   gl.uniform1f(locs.scale, 0.6 + 0.4 * panP)
   gl.uniform1f(locs.opacity, 0.6 + 0.4 * panP)
+
+  // 绘制陆地 (优化: 大小是统一常量)
   gl.enableVertexAttribArray(locs.pos)
-  gl.enableVertexAttribArray(locs.size)
+  gl.disableVertexAttribArray(locs.size) // 关键优化
+  gl.vertexAttrib1f(locs.size, cfg.baseSize * dpr)
 
   gl.bindBuffer(gl.ARRAY_BUFFER, bufs.land)
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, ren)
-  gl.vertexAttribPointer(locs.pos, 2, gl.FLOAT, false, STRIDE, 0)
-  gl.vertexAttribPointer(locs.size, 1, gl.FLOAT, false, STRIDE, 8) // Offset 2*4
+  gl.vertexAttribPointer(locs.pos, 2, gl.FLOAT, false, 0, 0) // 紧密排列
   gl.uniform3fv(locs.color, engine.colors.land)
   gl.drawArrays(gl.POINTS, 0, count)
 
+  // 绘制高亮点 (动态大小)
   if (cCount > 0) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufs.city)
+    gl.enableVertexAttribArray(locs.size) // 为高亮点重新启用
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufs.highlight)
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, cRen)
-    gl.vertexAttribPointer(locs.pos, 2, gl.FLOAT, false, STRIDE, 0)
-    gl.vertexAttribPointer(locs.size, 1, gl.FLOAT, false, STRIDE, 8)
-    gl.uniform3fv(locs.color, engine.colors.city)
+    gl.vertexAttribPointer(locs.pos, 2, gl.FLOAT, false, 12, 0) // 步长 12
+    gl.vertexAttribPointer(locs.size, 1, gl.FLOAT, false, 12, 8) // 偏移 8
+    gl.uniform3fv(locs.color, engine.colors.highlight)
     gl.drawArrays(gl.POINTS, 0, cCount)
   }
 
@@ -468,6 +466,7 @@ const render = () => {
 const handleResize = () => {
   if (!canvasRef.value) return
   const rect = canvasRef.value.getBoundingClientRect()
+  const isFirstResize = engine.width === 0
   engine.width = rect.width
   engine.height = rect.height
   engine.halfW = rect.width / 2
@@ -476,6 +475,11 @@ const handleResize = () => {
   engine.dpr = window.devicePixelRatio || 1
   canvasRef.value.width = rect.width * engine.dpr
   canvasRef.value.height = rect.height * engine.dpr
+
+  if (isFirstResize) {
+    interact.mouse.x = engine.halfW
+    interact.mouse.y = engine.halfH
+  }
 
   if (!engine.gl) {
     if (initWebGL()) {
@@ -502,22 +506,24 @@ const onClick = (e) =>
     radius: 0,
   })
 
-const onTouchStart = (e) => {
-  if (e.touches.length === 2) {
-    const dx = e.touches[0].clientX - e.touches[1].clientX
-    const dy = e.touches[0].clientY - e.touches[1].clientY
-    interact.touch.lastDist = Math.sqrt(dx * dx + dy * dy)
+// 统一的触摸逻辑
+const handleTouch = (e, type) => {
+  if (e.touches.length > 0) e.preventDefault()
+  if (type === 'end') {
+    interact.touch.lastDist = 0
+    return
   }
-}
+  const t0 = e.touches[0]
+  const t1 = e.touches[1]
 
-const onTouchMove = (e) => {
-  if (e.touches.length === 2) {
-    e.preventDefault()
-    const dx = e.touches[0].clientX - e.touches[1].clientX
-    const dy = e.touches[0].clientY - e.touches[1].clientY
+  if (e.touches.length === 1) {
+    interact.mouse.x = t0.clientX - engine.rect.left
+    interact.mouse.y = t0.clientY - engine.rect.top
+  } else if (e.touches.length === 2) {
+    const dx = t0.clientX - t1.clientX
+    const dy = t0.clientY - t1.clientY
     const dist = Math.sqrt(dx * dx + dy * dy)
-
-    if (interact.touch.lastDist > 0) {
+    if (type === 'move' && interact.touch.lastDist > 0) {
       const delta = dist - interact.touch.lastDist
       interact.zoom.target = Math.max(
         CONFIG.minZoom,
@@ -528,13 +534,9 @@ const onTouchMove = (e) => {
   }
 }
 
-const onTouchEnd = () => {
-  interact.touch.lastDist = 0
-}
-
 let ro = null,
   mq = null
-watch(() => props.data, updateCities, { deep: true })
+watch(() => props.data, updateHighlights, { deep: true })
 watch(isDark, updateColors)
 
 onMounted(() => {
@@ -549,13 +551,15 @@ onMounted(() => {
     ro.observe(canvasRef.value)
     canvasRef.value.addEventListener('click', onClick)
     canvasRef.value.addEventListener('mousemove', onMove)
-    canvasRef.value.addEventListener('touchstart', onTouchStart, {
-      passive: false,
-    })
-    canvasRef.value.addEventListener('touchmove', onTouchMove, {
-      passive: false,
-    })
-    canvasRef.value.addEventListener('touchend', onTouchEnd)
+    canvasRef.value.addEventListener('touchstart', (e) =>
+      handleTouch(e, 'start'),
+    )
+    canvasRef.value.addEventListener(
+      'touchmove',
+      (e) => handleTouch(e, 'move'),
+      { passive: false },
+    )
+    canvasRef.value.addEventListener('touchend', (e) => handleTouch(e, 'end'))
     canvasRef.value.addEventListener(
       'wheel',
       (e) => {
@@ -576,7 +580,7 @@ onUnmounted(() => {
   if (engine.animId) cancelAnimationFrame(engine.animId)
   if (engine.gl) {
     engine.gl.deleteBuffer(engine.bufs.land)
-    engine.gl.deleteBuffer(engine.bufs.city)
+    engine.gl.deleteBuffer(engine.bufs.highlight)
     engine.gl.deleteProgram(engine.program)
   }
 })

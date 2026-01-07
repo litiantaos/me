@@ -1,6 +1,8 @@
 <template>
   <UiLayout title="足迹" :isFullPage="true" :isLoading="isLoading">
-    <UiParticleMap :data="cities" />
+    <div class="fixed inset-0">
+      <UiParticleMap :data="cities" />
+    </div>
 
     <div
       v-if="user && user?.app_metadata?.role === 'admin'"
