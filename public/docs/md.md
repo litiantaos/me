@@ -57,13 +57,19 @@ _italicized text_
 ### Link
 
 ```
-[Markdown Guide](https://www.markdownguide.org)
+[Markdown Guide](https://)
 ```
 
 ### Image
 
 ```
-![alt text](https://www.markdownguide.org/assets/images/tux.png)
+![alt text](https://)
+```
+
+### Video
+
+```
+<video controls src="" />
 ```
 
 ### Table

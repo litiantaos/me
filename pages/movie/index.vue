@@ -5,11 +5,11 @@
         <NuxtLink
           v-if="user && user?.app_metadata?.role === 'admin'"
           to="/movie/add"
-          class="link-color"
+          class="link-base"
         >
           Add
         </NuxtLink>
-        <div class="link-color flex items-center">
+        <div class="link-base flex items-center">
           <button class="ri-search-line" @click="handleSearchExpand"></button>
           <input
             type="text"

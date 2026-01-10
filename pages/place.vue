@@ -97,19 +97,21 @@ watch(
 
 // 获取所有城市
 const fetchPlaces = async () => {
+  isLoading.value = true
+
   const { data, error } = await client
     .from('places')
     .select('*')
     .order('priority')
 
   if (error) {
-    console.error('Error fetching places:', error)
+    console.error('获取城市失败', error)
     return
   }
 
-  if (data) {
-    cities.value = data
-  }
+  cities.value = data
+
+  isLoading.value = false
 }
 
 // 搜索城市

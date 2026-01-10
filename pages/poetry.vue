@@ -15,7 +15,7 @@
 
       <p class="mt-10 space-x-2">
         <span
-          class="link-color cursor-pointer font-medium"
+          class="link-base cursor-pointer font-medium"
           @click="toggleShiciShow"
           >《{{ shici.origin?.title }}》</span
         >

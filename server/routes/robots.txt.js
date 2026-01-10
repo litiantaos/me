@@ -11,9 +11,11 @@ Allow: /
 Allow: /note/
 Allow: /life/
 Allow: /poetry/
-Allow: /chat/
+Allow: /ai/
+Allow: /movie/
 Disallow: /login/
 Disallow: /note/new/
+Disallow: /movie/add/
 
 Sitemap: ${siteUrl}/sitemap.xml
 `

@@ -18,8 +18,7 @@ const CONFIG = {
   fov: 800, // 视场深度，影响3D透视效果
   baseSize: 2, // 基础粒子大小
   highlightSize: 16, // 高亮点标记大小
-  mouseRadiusSq: 8100, // 鼠标交互影响范围的平方 (90^2)
-  viscosity: 0.1, // 粘度系数（暂未使用，保留属性）
+  mouseRadius: 90, // 鼠标交互影响范围（像素）
   maxRotation: 0.5, // 地图随鼠标移动的最大旋转角度（弧度）
   minZoom: 0.8, // 最小缩放比例
   maxZoom: 12, // 最大缩放比例
@@ -33,7 +32,7 @@ const CONFIG = {
     dark: { land: '#a1a1aa', highlight: '#fbbf24' },
   },
   projectionOffset: { lat: 5, lon: -1 }, // 投影偏移修正，用于校准地图中心
-  highlightMagnify: 3, // 鼠标悬停时高亮点的放大倍数
+  highlightMagnify: 2, // 鼠标悬停时高亮点的放大倍数
   landRepulsion: 15, // 鼠标对陆地粒子的排斥力度
   springStiffness: 0.1, // 弹簧系统的劲度系数（回弹速度）
   springDamping: 0.8, // 弹簧系统的阻尼系数（回弹平滑度）
@@ -66,11 +65,11 @@ const SHADERS = {
       float dist = length(coord);
       float alpha = 0.0;
       if (v_size < 8.0) {
-        alpha = 1.0 - smoothstep(0.45, 0.5, dist);
+        alpha = 1.0 - step(0.5, dist);
       } else {
-        float core = smoothstep(0.25, 0.23, dist);
-        float glow = 0.4 * smoothstep(0.5, 0.3, dist);
-        alpha = max(core, glow);
+        float core = 1.0 - step(0.25, dist);
+        float ring = 0.3 * (1.0 - step(0.5, dist));
+        alpha = max(core, ring);
       }
       if (alpha < 0.01) discard;
       float finalAlpha = alpha * u_opacity;
@@ -302,7 +301,7 @@ const render = () => {
   )
   const panX = engine.center.x * (1 - panP)
   const panY = engine.center.y * (1 - panP)
-  const mouseRad = Math.sqrt(cfg.mouseRadiusSq)
+  const mouseRad = cfg.mouseRadius
   const interactActive = !engine.isMobile
 
   // 2. 陆地计算
@@ -407,12 +406,9 @@ const render = () => {
         const dx = px - mouse.x
         if (Math.abs(dx) < mouseRad) {
           const dy = py - mouse.y
-          if (
-            Math.abs(dy) < mouseRad &&
-            dx * dx + dy * dy < cfg.mouseRadiusSq
-          ) {
-            tScale =
-              (1 - Math.sqrt(dx * dx + dy * dy) / mouseRad) * cfg.highlightMagnify
+          const distSq = dx * dx + dy * dy
+          if (Math.abs(dy) < mouseRad && distSq < mouseRad * mouseRad) {
+            tScale = (1 - Math.sqrt(distSq) / mouseRad) * cfg.highlightMagnify
           }
         }
       }
@@ -506,28 +502,23 @@ const onClick = (e) =>
     radius: 0,
   })
 
-// 统一的触摸逻辑
 const handleTouch = (e, type) => {
   if (e.touches.length > 0) e.preventDefault()
-  if (type === 'end') {
-    interact.touch.lastDist = 0
-    return
-  }
-  const t0 = e.touches[0]
-  const t1 = e.touches[1]
+  if (type === 'end') return void (interact.touch.lastDist = 0)
 
-  if (e.touches.length === 1) {
+  const [t0, t1] = e.touches
+  if (!t1) {
     interact.mouse.x = t0.clientX - engine.rect.left
     interact.mouse.y = t0.clientY - engine.rect.top
-  } else if (e.touches.length === 2) {
-    const dx = t0.clientX - t1.clientX
-    const dy = t0.clientY - t1.clientY
-    const dist = Math.sqrt(dx * dx + dy * dy)
+  } else {
+    const dist = Math.hypot(t0.clientX - t1.clientX, t0.clientY - t1.clientY)
     if (type === 'move' && interact.touch.lastDist > 0) {
-      const delta = dist - interact.touch.lastDist
       interact.zoom.target = Math.max(
         CONFIG.minZoom,
-        Math.min(CONFIG.maxZoom, interact.zoom.target + delta * 0.01),
+        Math.min(
+          CONFIG.maxZoom,
+          interact.zoom.target + (dist - interact.touch.lastDist) * 0.01,
+        ),
       )
     }
     interact.touch.lastDist = dist
@@ -535,31 +526,41 @@ const handleTouch = (e, type) => {
 }
 
 let ro = null,
-  mq = null
+  mq = null,
+  mqHandler = null,
+  abortController = null
 watch(() => props.data, updateHighlights, { deep: true })
 watch(isDark, updateColors)
 
 onMounted(() => {
   mq = window.matchMedia('(prefers-color-scheme: dark)')
   isDark.value = mq.matches
-  mq.addEventListener('change', (e) => (isDark.value = e.matches))
+  mqHandler = (e) => (isDark.value = e.matches)
+  mq.addEventListener('change', mqHandler)
+
+  abortController = new AbortController()
+  const signal = abortController.signal
 
   ro = new ResizeObserver((entries) => {
     if (entries[0]) handleResize()
   })
   if (canvasRef.value) {
     ro.observe(canvasRef.value)
-    canvasRef.value.addEventListener('click', onClick)
-    canvasRef.value.addEventListener('mousemove', onMove)
-    canvasRef.value.addEventListener('touchstart', (e) =>
-      handleTouch(e, 'start'),
+    canvasRef.value.addEventListener('click', onClick, { signal })
+    canvasRef.value.addEventListener('mousemove', onMove, { signal })
+    canvasRef.value.addEventListener(
+      'touchstart',
+      (e) => handleTouch(e, 'start'),
+      { signal },
     )
     canvasRef.value.addEventListener(
       'touchmove',
       (e) => handleTouch(e, 'move'),
-      { passive: false },
+      { passive: false, signal },
     )
-    canvasRef.value.addEventListener('touchend', (e) => handleTouch(e, 'end'))
+    canvasRef.value.addEventListener('touchend', (e) => handleTouch(e, 'end'), {
+      signal,
+    })
     canvasRef.value.addEventListener(
       'wheel',
       (e) => {
@@ -569,13 +570,14 @@ onMounted(() => {
           Math.min(CONFIG.maxZoom, interact.zoom.target - e.deltaY * 0.001),
         )
       },
-      { passive: false },
+      { passive: false, signal },
     )
   }
 })
 
 onUnmounted(() => {
-  if (mq) mq.removeEventListener('change', () => {})
+  if (mq && mqHandler) mq.removeEventListener('change', mqHandler)
+  if (abortController) abortController.abort()
   if (ro) ro.disconnect()
   if (engine.animId) cancelAnimationFrame(engine.animId)
   if (engine.gl) {

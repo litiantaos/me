@@ -130,13 +130,14 @@
       <UiScrollView v-if="credits" customClass="gap-3 ">
         <div v-for="credit in credits" class="w-20 flex-none text-xs sm:w-28">
           <div
-            class="mb-2 h-30 w-full overflow-hidden rounded-md bg-zinc-100 sm:h-42 dark:bg-zinc-700"
+            class="mb-2 flex h-30 w-full items-center justify-center overflow-hidden rounded-md bg-zinc-100 text-xl text-zinc-300 sm:h-42 dark:bg-zinc-700 dark:text-zinc-500"
           >
             <img
               v-if="credit.profile_path"
               :src="`/api/tmdb/img/w185${credit.profile_path}`"
               class="h-full w-full object-cover"
             />
+            <i v-else class="ri-landscape-fill"></i>
           </div>
           <div class="line-clamp-2 font-medium">{{ credit.name }}</div>
           <div class="line-clamp-2 text-zinc-500 dark:text-zinc-400">

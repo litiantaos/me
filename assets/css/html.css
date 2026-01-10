@@ -24,7 +24,7 @@
   }
 
   a {
-    @apply link-color space-x-1 to-blue-400! font-normal!;
+    @apply link-base space-x-1 to-blue-400! font-normal!;
   }
 
   ul,

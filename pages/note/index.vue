@@ -2,11 +2,11 @@
   <UiLayout title="想法" :isLoading="isNotesFetching">
     <div class="space-y-10">
       <div class="flex gap-6">
-        <NuxtLink v-if="user" to="/note/new" class="link-color">New</NuxtLink>
-        <NuxtLink to="/ai?s" class="link-color ri-search-line"></NuxtLink>
+        <NuxtLink v-if="user" to="/note/new" class="link-base">New</NuxtLink>
+        <NuxtLink to="/ai?s" class="link-base ri-search-line"></NuxtLink>
         <NuxtLink
           to="/note/stats"
-          class="link-color ri-line-chart-line"
+          class="link-base ri-line-chart-line"
         ></NuxtLink>
       </div>
 

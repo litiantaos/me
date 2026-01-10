@@ -50,15 +50,15 @@ input {
 
 /* Link */
 @utility link-text {
-  @apply bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-zinc-600 to-50% bg-size-[200%_100%] bg-clip-text bg-position-[100%] font-bold text-transparent transition-[background-position] duration-300 hover:bg-position-[0_100%] dark:to-zinc-400;
+  @apply bg-linear-to-r from-cyan-500 via-blue-500 via-50% to-zinc-600 to-50% bg-size-[200%_100%] bg-clip-text bg-position-[100%] font-bold text-transparent transition-all duration-300 hover:bg-position-[0_100%] dark:to-zinc-400;
 }
 
 @utility link-underline {
   @apply relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:bg-linear-to-r after:from-cyan-500 after:to-blue-500 hover:after:h-0.5;
 }
 
-@utility link-color {
-  @apply link-text link-underline transition-opacity active:opacity-70;
+@utility link-base {
+  @apply link-text link-underline active:opacity-70;
 }
 
 /* Scrollbar */
