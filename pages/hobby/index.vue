@@ -1,26 +1,27 @@
 <template>
-  <UiLayout title="已看" :isLoading="isFetching">
+  <UiLayout title="爱好" :isLoading="isFetching">
     <div class="space-y-10">
       <div class="flex gap-6">
         <NuxtLink
           v-if="user && user?.app_metadata?.role === 'admin'"
-          to="/movie/add"
+          to="/hobby/add"
           class="link-base"
         >
           Add
         </NuxtLink>
+
         <div class="link-base flex items-center">
           <button class="ri-search-line" @click="handleSearchExpand"></button>
           <input
             type="text"
             ref="searchInputRef"
-            v-model="searchText"
+            v-model="searchQuery"
             :class="[
               isSearchExpand ? 'w-40 px-2' : 'w-0',
               'font-normal! text-zinc-600 transition-all duration-300 dark:text-zinc-200',
             ]"
-            @blur="!searchText && (isSearchExpand = false)"
-            @keydown.enter="filterText = searchText"
+            @blur="!searchQuery && (isSearchExpand = false)"
+            @keydown.enter="handleSearch"
           />
           <button
             v-if="isSearchExpand"
@@ -30,9 +31,9 @@
         </div>
       </div>
 
-      <div v-if="movies.length > 0" class="space-y-10">
+      <div v-if="hobbies.length > 0" class="space-y-10">
         <div
-          v-for="group in moviesByMonth"
+          v-for="group in hobbiesByMonth"
           :key="group.month"
           class="space-y-4"
         >
@@ -43,41 +44,42 @@
             class="grid grid-cols-3 gap-4 sm:grid-cols-3 sm:gap-6 md:grid-cols-4"
           >
             <NuxtLink
-              v-for="movie in group.list"
-              :key="movie.id"
-              :to="`/movie/${movie.media_type[0] + movie.tmdb_id + (movie.season_number ? 's' + movie.season_number : '')}`"
+              v-for="hobby in group.list"
+              :key="hobby.id"
+              :to="`/hobby/${hobby.type}/${hobby.hobby_id}`"
               class="relative block space-y-2"
             >
               <div
                 class="aspect-2/3 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
               >
                 <img
-                  v-if="movie.poster_path"
-                  :src="`/api/tmdb/img/w342${movie.poster_path}`"
+                  v-if="hobby.poster"
+                  :src="
+                    hobby.type === 'game'
+                      ? hobby.poster
+                      : `/api/tmdb/img/w342${hobby.poster}`
+                  "
                   class="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                 />
               </div>
 
               <div class="space-y-1">
                 <h3 class="truncate font-medium">
-                  {{ movie.title }}
-                  <span v-if="movie.season_number">
-                    S{{ movie.season_number }}
-                  </span>
+                  {{ hobby.title }}
                 </h3>
                 <div
-                  v-if="movie.rating"
+                  v-if="hobby.rating"
                   class="flex items-center gap-1 text-xs"
                 >
                   <i
                     class="block text-sm text-zinc-400"
-                    :class="movieChannelMap[movie.watch_channel]?.icon"
+                    :class="hobbyChannelMap[hobby.type][hobby.channel]?.icon"
                   ></i>
-                  <div :class="movieRatingMap[movie.rating].color">
-                    {{ movieRatingMap[movie.rating].text }}
+                  <div :class="hobbyRatingMap[hobby.rating]?.color">
+                    {{ hobbyRatingMap[hobby.rating]?.text }}
                   </div>
                   <img
-                    :src="movieRatingMap[movie.rating].gif"
+                    :src="hobbyRatingMap[hobby.rating]?.gif"
                     class="h-4 w-4"
                   />
                 </div>
@@ -92,13 +94,13 @@
 <script setup>
 const user = useSupabaseUser()
 
-const { isFetching, movies, fetchMovieRecords } = useMovies()
+const { isFetching, hobbies, fetchHobbyRecords } = useHobby()
 
 // 搜索
 const isSearchExpand = ref(false)
 const searchInputRef = ref(null)
-const searchText = ref('')
-const filterText = ref('')
+const searchQuery = ref('')
+const filterQuery = ref('')
 
 const handleSearchExpand = () => {
   isSearchExpand.value = true
@@ -112,51 +114,52 @@ const handleSearchExpand = () => {
 
 const handleSearchReset = () => {
   isSearchExpand.value = false
-  searchText.value = ''
-  filterText.value = ''
+  searchQuery.value = ''
+  filterQuery.value = ''
 }
 
-// 按月份分组电影
-const moviesByMonth = computed(() => {
-  if (!movies.value) return []
+const handleSearch = (e) => {
+  if (e.isComposing) return
+  filterQuery.value = searchQuery.value.trim()
+}
+
+// 按月份分组
+const hobbiesByMonth = computed(() => {
+  if (!hobbies.value) return []
 
   const groups = {}
 
-  const filteredMovies = filterText.value
-    ? movies.value.filter((movie) =>
-        movie.title?.toLowerCase().includes(filterText.value.toLowerCase()),
+  const filteredHobbies = filterQuery.value
+    ? hobbies.value.filter((hobby) =>
+        hobby.title?.toLowerCase().includes(filterQuery.value.toLowerCase()),
       )
-    : movies.value
+    : hobbies.value
 
-  filteredMovies.forEach((movie) => {
-    const month = movie.watch_date
-      ? movie.watch_date.substring(0, 7)
-      : '未知时间'
+  filteredHobbies.forEach((hobby) => {
+    const month = hobby.date ? hobby.date.substring(0, 7) : '时间之外'
 
     if (!groups[month]) {
       groups[month] = []
     }
 
-    groups[month].push(movie)
+    groups[month].push(hobby)
   })
 
   return Object.keys(groups)
     .sort((a, b) => b.localeCompare(a))
     .map((month) => ({
       month,
-      list: groups[month].sort(
-        (a, b) => new Date(b.watch_date) - new Date(a.watch_date),
-      ),
+      list: groups[month].sort((a, b) => new Date(b.date) - new Date(a.date)),
     }))
 })
 
 onMounted(async () => {
-  if (movies.value.length === 0) {
-    fetchMovieRecords()
+  if (hobbies.value.length === 0) {
+    fetchHobbyRecords()
   }
 })
 
 useSeoMeta({
-  title: '已看影视',
+  title: '爱好',
 })
 </script>

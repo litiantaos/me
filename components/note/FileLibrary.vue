@@ -1,22 +1,24 @@
 <template>
   <div class="space-y-3">
     <div class="flex h-8 items-center gap-3">
-      <div class="flex gap-3">
+      <div class="flex gap-4 font-medium">
         <button
           @click="activeTab = 'images'"
-          :class="{
-            'font-medium text-blue-500 dark:text-blue-400':
-              activeTab === 'images',
-          }"
+          :class="
+            activeTab === 'images'
+              ? 'text-blue-500 dark:text-blue-400'
+              : 'text-zinc-400'
+          "
         >
           图片
         </button>
         <button
           @click="activeTab = 'videos'"
-          :class="{
-            'font-medium text-blue-500 dark:text-blue-400':
-              activeTab === 'videos',
-          }"
+          :class="
+            activeTab === 'videos'
+              ? 'text-blue-500 dark:text-blue-400'
+              : 'text-zinc-400'
+          "
         >
           视频
         </button>
@@ -29,9 +31,9 @@
         <input
           type="file"
           ref="fileInput"
-          @change="handleFileUpload"
           class="hidden!"
           :accept="activeTab === 'images' ? 'image/*' : 'video/*'"
+          @change="handleFileUpload"
         />
       </div>
     </div>

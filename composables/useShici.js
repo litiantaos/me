@@ -8,11 +8,11 @@ export const useShici = () => {
         return localToken
       }
 
-      const data = await $fetch('https://v2.jinrishici.com/token')
+      const response = await $fetch('https://v2.jinrishici.com/token')
 
-      const token = data.data
-      localStorage.setItem('shici_token', token)
-      return token
+      localStorage.setItem('shici_token', response.data)
+
+      return response.data
     } catch (error) {
       console.error('获取诗词 Token 失败', error)
     }
@@ -22,11 +22,11 @@ export const useShici = () => {
     try {
       const token = await fetchShiciToken()
 
-      const data = await $fetch(
+      const response = await $fetch(
         `https://v2.jinrishici.com/sentence?client=npm-sdk/1.0&X-User-Token=${encodeURIComponent(token)}`,
       )
 
-      shici.value = data.data
+      shici.value = response.data
     } catch (error) {
       console.error('获取诗词失败', error)
     }

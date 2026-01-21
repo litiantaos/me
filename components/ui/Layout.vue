@@ -5,15 +5,8 @@
       class="top-0 right-0 left-0 z-50 h-24"
       :class="isFullPage ? 'fixed' : 'sticky'"
     >
-      <!-- 模糊渐变背景 -->
-      <div class="absolute inset-0 z-0">
-        <div class="absolute inset-0 mask-b-from-40% backdrop-blur-xs"></div>
-        <div
-          class="absolute inset-0 bg-linear-to-b from-white from-1% to-transparent dark:from-zinc-800"
-        ></div>
-      </div>
+      <UiBlurBlock />
 
-      <!-- 标题栏内容 -->
       <div
         class="relative flex h-full items-center gap-4 p-4"
         :class="[titleAlign, { 'mx-auto max-w-2xl': !isFullPage }]"
@@ -42,7 +35,6 @@
       </div>
     </header>
 
-    <!-- 内容区域 -->
     <div class="relative" :class="{ 'mx-auto max-w-2xl p-4': !isFullPage }">
       <slot />
     </div>

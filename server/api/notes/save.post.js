@@ -1,18 +1,11 @@
 import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-  const client = await serverSupabaseClient(event)
-  const user = await serverSupabaseUser(event)
-
   const { content, noteId } = await readBody(event)
 
-  let embedding = null
-
-  try {
-    embedding = await generateEmbedding(content)
-  } catch (error) {
-    if (error) throw error
-  }
+  const client = await serverSupabaseClient(event)
+  const user = await serverSupabaseUser(event)
+  const embedding = await generateEmbedding(content)
 
   if (noteId) {
     // 更新

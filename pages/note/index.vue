@@ -3,7 +3,7 @@
     <div class="space-y-10">
       <div class="flex gap-6">
         <NuxtLink v-if="user" to="/note/new" class="link-base">New</NuxtLink>
-        <NuxtLink to="/ai?s" class="link-base ri-search-line"></NuxtLink>
+        <NuxtLink to="/note/search" class="link-base ri-search-line"></NuxtLink>
         <NuxtLink
           to="/note/stats"
           class="link-base ri-line-chart-line"

@@ -1,17 +1,10 @@
 import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-  const client = await serverSupabaseClient(event)
-
   const { query } = await readBody(event)
 
-  let queryEmbedding
-
-  try {
-    queryEmbedding = await generateEmbedding(query)
-  } catch (error) {
-    if (error) throw error
-  }
+  const client = await serverSupabaseClient(event)
+  const queryEmbedding = await generateEmbedding(query)
 
   const { data, error } = await client.rpc('hybrid_search_notes', {
     query_text: query,

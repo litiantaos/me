@@ -10,10 +10,10 @@
     >
       <input
         v-model="input"
-        @keyup.enter="handleSearch"
         placeholder="搜索城市"
         class="input-base w-full bg-white/90! dark:bg-zinc-800/90!"
         :disabled="isLoading"
+        @keydown.enter="handleSearch"
       />
 
       <UiMessage v-if="errorMsg" :text="errorMsg" />
@@ -115,7 +115,8 @@ const fetchPlaces = async () => {
 }
 
 // 搜索城市
-const handleSearch = async () => {
+const handleSearch = async (e) => {
+  if (e.isComposing) return
   if (!input.value.trim()) return
 
   isLoading.value = true
@@ -123,19 +124,16 @@ const handleSearch = async () => {
   searchResults.value = []
 
   try {
-    const data = await $fetch(
-      `https://api.mapbox.com/search/geocode/v6/forward?q=${input.value}&types=place&limit=5&access_token=${config.public.mapboxToken}`,
-    )
+    const response = await $fetch(`/api/mapbox/search`, {
+      query: { query: input.value },
+    })
 
-    console.log(data)
-    // return
-
-    if (data.features?.length === 0) {
+    if (response.features?.length === 0) {
       errorMsg.value = '未找到该城市'
       return
     }
 
-    searchResults.value = data.features
+    searchResults.value = response.features
   } catch (error) {
     console.error('Error:', error)
     errorMsg.value = error.message || '搜索失败'

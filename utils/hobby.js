@@ -1,4 +1,4 @@
-export const movieRatingMap = {
+export const hobbyRatingMap = {
   1: {
     text: '如坐针毡',
     gif: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f92e/512.gif',
@@ -36,17 +36,43 @@ export const movieRatingMap = {
   },
 }
 
-export const movieChannelMap = {
-  cinema: {
-    text: '影院',
-    icon: 'ri-film-line',
+export const hobbyChannelMap = {
+  movie: {
+    cinema: {
+      text: '影院',
+      icon: 'ri-film-line',
+    },
+    online: {
+      text: '网络',
+      icon: 'ri-movie-line',
+    },
+    other: {
+      text: '其他',
+      icon: 'ri-more-fill',
+    },
   },
-  online: {
-    text: '网络',
-    icon: 'ri-movie-line',
+  tv: {
+    online: {
+      text: '网络',
+      icon: 'ri-movie-line',
+    },
+    other: {
+      text: '其他',
+      icon: 'ri-more-fill',
+    },
   },
-  other: {
-    text: '其他',
-    icon: 'ri-clapperboard-line',
+  game: {
+    pc: {
+      text: '电脑',
+      icon: 'ri-computer-line',
+    },
+    mobile: {
+      text: '手机',
+      icon: 'ri-smartphone-line',
+    },
+    other: {
+      text: '其他',
+      icon: 'ri-gamepad-line',
+    },
   },
 }

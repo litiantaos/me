@@ -50,7 +50,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/',
-      include: ['/note/new(/*)?', '/movie/add(/*)?'],
+      include: ['/note/new(/*)?', '/hobby/add(/*)?'],
     },
   },
 
@@ -58,6 +58,9 @@ export default defineNuxtConfig({
     aiGatewayApiKey: '',
     jinaApiKey: '',
     tmdbApiKey: '',
+    igdbClientId: '',
+    igdbClientSecret: '',
+    mapboxToken: '',
 
     public: {
       name: '',
@@ -65,8 +68,6 @@ export default defineNuxtConfig({
       email: '',
       github: '',
       siteUrl: '',
-      tmdbUrl: '',
-      mapboxToken: '',
     },
   },
 })
