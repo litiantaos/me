@@ -1,7 +1,7 @@
 <template>
   <UiLayout title="爱好" :isLoading="isFetching">
     <div class="space-y-10">
-      <div class="flex gap-6">
+      <div class="flex items-center gap-6">
         <NuxtLink
           v-if="user && user?.app_metadata?.role === 'admin'"
           to="/hobby/add"
@@ -29,6 +29,16 @@
             @click="handleSearchReset"
           ></button>
         </div>
+
+        <div class="flex-1"></div>
+
+        <UiTabs
+          v-model="activeTab"
+          :tabs="[
+            { label: '影视', value: 'video', icon: 'ri-youtube-fill' },
+            { label: '游戏', value: 'game', icon: 'ri-gamepad-fill' },
+          ]"
+        />
       </div>
 
       <div v-if="hobbies.length > 0" class="space-y-10">
@@ -96,6 +106,8 @@ const user = useSupabaseUser()
 
 const { isFetching, hobbies, fetchHobbyRecords } = useHobby()
 
+const activeTab = ref('video')
+
 // 搜索
 const isSearchExpand = ref(false)
 const searchInputRef = ref(null)
@@ -129,11 +141,20 @@ const hobbiesByMonth = computed(() => {
 
   const groups = {}
 
-  const filteredHobbies = filterQuery.value
+  let filteredHobbies = filterQuery.value
     ? hobbies.value.filter((hobby) =>
         hobby.title?.toLowerCase().includes(filterQuery.value.toLowerCase()),
       )
     : hobbies.value
+
+  // 根据 Tab 过滤类型
+  if (activeTab.value === 'video') {
+    filteredHobbies = filteredHobbies.filter((h) =>
+      ['movie', 'tv'].includes(h.type),
+    )
+  } else if (activeTab.value === 'game') {
+    filteredHobbies = filteredHobbies.filter((h) => h.type === 'game')
+  }
 
   filteredHobbies.forEach((hobby) => {
     const month = hobby.date ? hobby.date.substring(0, 7) : '时间之外'

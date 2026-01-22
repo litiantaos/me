@@ -13,8 +13,7 @@ export default defineEventHandler(async (event) => {
       .from('notes')
       .update({ content, embedding })
       .eq('id', noteId)
-      .select()
-      .single()
+      .eq('user_id', user.sub)
 
     if (error) throw error
   } else {
@@ -22,9 +21,9 @@ export default defineEventHandler(async (event) => {
     const { error } = await client
       .from('notes')
       .insert({ content, embedding, user_id: user.sub })
-      .select()
-      .single()
 
     if (error) throw error
   }
+
+  return { success: true }
 })

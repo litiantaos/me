@@ -31,8 +31,13 @@
             <div>
               <span>
                 {{
-                  hobbyDetail.type?.charAt(0).toUpperCase() +
-                  hobbyDetail.type?.slice(1)
+                  hobbyDetail.type === 'movie'
+                    ? 'Movie'
+                    : hobbyDetail.type === 'tv'
+                      ? 'TV'
+                      : hobbyDetail.type === 'game'
+                        ? 'Game'
+                        : 'Other'
                 }}
               </span>
             </div>
@@ -93,7 +98,7 @@
         </div>
       </div>
 
-      <!-- 观看记录 -->
+      <!-- 记录 -->
       <div v-if="hobbyDetail.records?.length > 0" class="space-y-3">
         <div
           v-for="record in hobbyDetail.records"
@@ -126,7 +131,9 @@
 
           <div class="flex flex-none items-center gap-3">
             <div class="font-bold">{{ record.date }}</div>
-            <div class="text-zinc-500 dark:text-zinc-400">看过</div>
+            <div class="text-zinc-500 dark:text-zinc-400">
+              {{ type === 'game' ? '玩过' : '看过' }}
+            </div>
             <div class="space-x-1 text-blue-500 dark:text-blue-400">
               <i :class="hobbyChannelMap[type]?.[record.channel].icon"></i>
               <span>{{ hobbyChannelMap[type]?.[record.channel].text }}</span>
@@ -250,40 +257,32 @@ const { data: hobbyDetail, pending: isLoading } = await useLazyAsyncData(
       fetchHobbyRecordsByHobbyId(id),
     ])
 
+    const creators =
+      detail.created_by?.map((item) => ({
+        ...item,
+        job: '创作者',
+      })) ?? []
+
     return {
       ...detail,
-      credits,
+      credits: [...creators, ...credits],
       records,
     }
   },
 )
 
-const credits = computed(() => {
-  if (Object.keys(hobbyDetail.value?.credits).length === 0) return []
-
-  const cs = hobbyDetail.value.credits
-
-  const crew = cs.crew
-    .filter((item) => item.job === 'Director')
-    .map((item) => ({ ...item, job: '导演' }))
-
-  const creator =
-    hobbyDetail.value.created_by?.map((item) => ({
-      ...item,
-      job: '创作者',
-    })) ?? []
-
-  return [...crew, ...creator, ...cs.cast.slice(0, 10)]
-})
+const credits = computed(() => hobbyDetail.value?.credits || [])
 
 const handleEdit = (id) => {
   const record = hobbyDetail.value.records.find((r) => r.id === id)
 
   if (record) {
-    useState('editing_hobby_data', () => ({
+    const editingHobbyData = useState('editing_hobby_data')
+
+    editingHobbyData.value = {
       record,
       detail: hobbyDetail.value,
-    }))
+    }
   }
 
   router.push(`/hobby/add?id=${id}`)

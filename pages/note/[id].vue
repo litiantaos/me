@@ -46,8 +46,7 @@ const handleEdit = () => {
 
 // 删除笔记
 const handleDelete = throttle(async () => {
-  await deleteNote(route.params.id, user.value.sub)
-
+  await deleteNote(route.params.id)
   router.push('/note')
 })
 

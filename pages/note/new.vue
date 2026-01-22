@@ -48,40 +48,29 @@ import FileLibrary from '@/components/note/FileLibrary.vue'
 const route = useRoute()
 const router = useRouter()
 
-const { isNoteFetching, fetchNote, refreshNotes } = useNotes()
+const { isNoteFetching, isSaving, fetchNote, saveNote, refreshNotes } =
+  useNotes()
 
 const input = ref('')
 const textareaRef = ref(null)
-
-const isSaving = ref(false)
 
 // 判断是否为编辑模式
 const isEditMode = computed(() => {
   return route.query.id ? true : false
 })
 
-// 编辑模式 - 获取笔记
+// 编辑模式获取笔记
 const fetchEditingNote = async () => {
   if (isEditMode.value) {
     const note = await fetchNote(route.query.id)
-
     input.value = note.content
   }
 }
 
 // 保存笔记
 const handleSubmit = throttle(async () => {
-  isSaving.value = true
-
   try {
-    await $fetch('/api/notes/save', {
-      method: 'POST',
-      body: {
-        content: input.value,
-        noteId: isEditMode.value ? route.query.id : null,
-      },
-    })
-
+    await saveNote(input.value, isEditMode.value ? route.query.id : null)
     await refreshNotes()
 
     if (isEditMode.value) {
@@ -92,8 +81,6 @@ const handleSubmit = throttle(async () => {
     }
   } catch (error) {
     console.error(isEditMode.value ? '更新失败' : '保存失败', error)
-  } finally {
-    isSaving.value = false
   }
 })
 

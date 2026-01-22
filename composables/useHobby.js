@@ -41,11 +41,15 @@ export const useHobby = () => {
 
     if (recordId) {
       // 更新
-      const { error } = await client.from('hobbies').update({
-        date: record.date,
-        channel: record.channel,
-        rating: record.rating,
-      })
+      const { error } = await client
+        .from('hobbies')
+        .update({
+          date: record.date,
+          channel: record.channel,
+          rating: record.rating,
+        })
+        .eq('id', recordId)
+        .eq('user_id', user.value.sub)
 
       if (error) throw error
     } else {
@@ -106,13 +110,22 @@ export const useHobby = () => {
     }
   }
 
-  const fetchHobbyCredits = (type, id) => {
-    if (type === 'game') return {}
+  const fetchHobbyCredits = async (type, id) => {
+    if (type === 'game') return []
 
     try {
-      return $fetch(`/api/tmdb/${type}/${id}/credits`)
+      const { cast = [], crew = [] } = await $fetch(
+        `/api/tmdb/${type}/${id}/credits`,
+      )
+
+      const directors = crew
+        .filter((item) => item.job === 'Director')
+        .map((item) => ({ ...item, job: '导演' }))
+
+      return [...directors, ...cast.slice(0, 10)]
     } catch (error) {
       console.error('获取演职员失败', error)
+      return []
     }
   }
 

@@ -10,23 +10,19 @@ const getAccessToken = async () => {
     return accessToken
   }
 
-  try {
-    const response = await $fetch('https://id.twitch.tv/oauth2/token', {
-      method: 'POST',
-      params: {
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'client_credentials',
-      },
-    })
+  const response = await $fetch('https://id.twitch.tv/oauth2/token', {
+    method: 'POST',
+    params: {
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'client_credentials',
+    },
+  })
 
-    accessToken = response.access_token
-    tokenExpiry = Date.now() + response.expires_in * 1000 // expires_in 是秒数，转换为毫秒时间戳
-    return accessToken
-  } catch (error) {
-    console.error('Failed to get IGDB access token:', error)
-    throw error
-  }
+  accessToken = response.access_token
+  tokenExpiry = Date.now() + response.expires_in * 1000 // 秒转毫秒
+
+  return accessToken
 }
 
 export const fetchIgdb = async (endpoint, body) => {

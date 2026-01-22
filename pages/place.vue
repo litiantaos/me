@@ -70,7 +70,6 @@
 <script setup>
 const user = useSupabaseUser()
 const client = useSupabaseClient()
-const config = useRuntimeConfig()
 
 const input = ref('')
 const isLoading = ref(false)

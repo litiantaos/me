@@ -1,33 +1,21 @@
 <template>
   <div class="space-y-3">
     <div class="flex h-8 items-center gap-3">
-      <div class="flex gap-4 font-medium">
-        <button
-          @click="activeTab = 'images'"
-          :class="
-            activeTab === 'images'
-              ? 'text-blue-500 dark:text-blue-400'
-              : 'text-zinc-400'
-          "
-        >
-          图片
-        </button>
-        <button
-          @click="activeTab = 'videos'"
-          :class="
-            activeTab === 'videos'
-              ? 'text-blue-500 dark:text-blue-400'
-              : 'text-zinc-400'
-          "
-        >
-          视频
-        </button>
-      </div>
+      <UiTabs
+        v-model="activeTab"
+        :tabs="[
+          { label: '图片', value: 'images', icon: 'ri-image-fill' },
+          { label: '视频', value: 'videos', icon: 'ri-movie-fill' },
+        ]"
+      />
 
       <div class="flex-1"></div>
 
       <div class="flex">
-        <button class="ri-add-line text-lg" @click="openFileUpload"></button>
+        <button
+          class="ri-add-line btn-base h-7! w-7!"
+          @click="openFileUpload"
+        ></button>
         <input
           type="file"
           ref="fileInput"

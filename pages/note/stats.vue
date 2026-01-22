@@ -19,48 +19,46 @@
 </template>
 
 <script setup>
-const client = useSupabaseClient()
+const { fetchNotesData } = useNotes()
 
 const { data, pending: isLoading } = await useLazyAsyncData(async () => {
-  const { data: notes } = await client
-    .from('notes')
-    .select('created_at')
-    .order('created_at', { ascending: true })
+  const notes = await fetchNotesData('created_at')
 
-  if (notes) {
-    const monthCounts = {}
+  if (!notes || notes.length === 0) {
+    return null
+  }
 
-    notes.forEach((note) => {
-      const date = new Date(note.created_at)
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-      monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1
-    })
+  // 按月份分组统计
+  const monthCounts = {}
+  notes.forEach((note) => {
+    const date = new Date(note.created_at)
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+    monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1
+  })
 
-    const chartData = Object.entries(monthCounts).map(([month, count]) => ({
-      label: month,
-      value: count,
-    }))
-
-    // 计算统计信息
-    const totalNotes = notes.length
-    let maxMonth = ''
-    let maxCount = 0
-
-    Object.entries(monthCounts).forEach(([month, count]) => {
-      if (count > maxCount) {
-        maxCount = count
-        maxMonth = month
-      }
-    })
-
-    return {
-      chartData,
-      stats: {
-        totalNotes,
-        maxMonth,
-        maxCount,
-      },
+  // 找出笔记最多的月份
+  let maxMonth = ''
+  let maxCount = 0
+  Object.entries(monthCounts).forEach(([month, count]) => {
+    if (count > maxCount) {
+      maxMonth = month
+      maxCount = count
     }
+  })
+
+  // 生成图表数据
+  const chartData = Object.entries(monthCounts).map(([month, count]) => ({
+    label: month,
+    value: count,
+  }))
+
+  return {
+    chartData,
+    stats: {
+      totalNotes: notes.length,
+      maxMonth,
+      maxCount,
+    },
   }
 })
 

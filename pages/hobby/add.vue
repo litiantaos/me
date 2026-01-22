@@ -4,26 +4,20 @@
     :isLoading="isSearching"
   >
     <div class="space-y-4">
-      <div class="flex gap-3">
-        <button
-          v-for="item in searchTypes"
-          :key="item.value"
-          :class="[
-            'flex items-center gap-2 rounded-md bg-zinc-100 px-2 py-0.5',
-            searchType === item.value ? 'text-blue-500' : '',
-          ]"
-          @click="
-            () => {
-              searchType = item.value
-              searchResults = []
-              selectedItem = null
-            }
-          "
-        >
-          <i :class="item.icon"></i>
-          <span class="text-xs">{{ item.label }}</span>
-        </button>
-      </div>
+      <UiTabs
+        v-if="!isEditMode"
+        v-model="searchType"
+        :tabs="[
+          { label: '影视', value: 'video', icon: 'ri-youtube-fill' },
+          { label: '游戏', value: 'game', icon: 'ri-gamepad-fill' },
+        ]"
+        @update:model-value="
+          () => {
+            searchResults = []
+            selectedItem = null
+          }
+        "
+      />
 
       <input
         ref="inputRef"
@@ -180,10 +174,6 @@ const inputRef = ref(null)
 const searchQuery = ref('')
 const searchResults = ref([])
 const searchType = ref('video')
-const searchTypes = [
-  { label: '影视', value: 'video', icon: 'ri-youtube-fill' },
-  { label: '游戏', value: 'game', icon: 'ri-gamepad-fill' },
-]
 const selectedItem = ref(null)
 
 const hobbyRecordData = ref({
@@ -230,8 +220,6 @@ const selectItem = async (item) => {
 
   const type = item.type
   hobbyRecordData.value.channel = Object.keys(hobbyChannelMap[type])[0]
-
-  console.log(item, hobbyRecordData.value)
 }
 
 const handleDateInput = (e) => {
