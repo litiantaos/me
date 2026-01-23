@@ -48,7 +48,11 @@
             >
               <img
                 v-if="item.poster"
-                :src="item.poster"
+                :src="
+                  item.type === 'game'
+                    ? item.poster
+                    : `/api/tmdb/img/w342${item.poster}`
+                "
                 class="h-full w-full object-cover"
               />
             </div>

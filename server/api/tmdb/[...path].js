@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
         .map((i) => ({
           id: i.id,
           title: i.title || i.name,
-          poster: i.poster_path ? `/api/tmdb/img/w342${i.poster_path}` : null,
+          poster: i.poster_path,
           release_date: i.release_date || i.first_air_date,
           overview: i.overview,
           type: i.media_type,
@@ -52,10 +52,8 @@ export default defineEventHandler(async (event) => {
       id: data.id,
       title: data.title || data.name,
       original_title: data.original_title || data.original_name,
-      poster: data.poster_path ? `/api/tmdb/img/w342${data.poster_path}` : null,
-      backdrop: data.backdrop_path
-        ? `/api/tmdb/img/w1280${data.backdrop_path}`
-        : null,
+      poster: data.poster_path,
+      backdrop: data.backdrop_path,
       release_date: data.release_date || data.first_air_date,
       overview: data.overview,
       genres: data.genres,

@@ -4,7 +4,7 @@
       v-for="tab in tabs"
       :key="tab.value"
       :class="[
-        'flex h-7 items-center gap-2 rounded-md bg-zinc-100 px-2 dark:bg-zinc-700',
+        'flex h-7 items-center gap-2 rounded-md bg-zinc-100 px-2 whitespace-nowrap dark:bg-zinc-700',
         modelValue === tab.value
           ? 'text-blue-500 dark:text-blue-400'
           : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200',

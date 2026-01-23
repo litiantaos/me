@@ -8,7 +8,11 @@
         >
           <img
             v-if="hobbyDetail.poster"
-            :src="hobbyDetail.poster"
+            :src="
+              type === 'game'
+                ? hobbyDetail.poster
+                : `/api/tmdb/img/w342${hobbyDetail.poster}`
+            "
             class="h-full w-full object-cover"
           />
         </div>
@@ -181,7 +185,14 @@
         v-if="hobbyDetail.backdrop"
         class="w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-700"
       >
-        <img :src="hobbyDetail.backdrop" class="h-full w-full object-cover" />
+        <img
+          :src="
+            type === 'game'
+              ? hobbyDetail.backdrop
+              : `/api/tmdb/img/w1280${hobbyDetail.backdrop}`
+          "
+          class="h-full w-full object-cover"
+        />
       </div>
 
       <!-- 剧集季 -->
