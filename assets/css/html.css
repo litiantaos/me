@@ -24,7 +24,7 @@
   }
 
   a {
-    @apply link-base space-x-1 to-blue-400! font-normal!;
+    @apply underline decoration-zinc-400 underline-offset-5 transition-all hover:decoration-zinc-600 active:opacity-70 dark:hover:decoration-zinc-200;
   }
 
   ul,

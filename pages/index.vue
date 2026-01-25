@@ -22,7 +22,7 @@
         <p>
           我今年
           <NuxtLink to="/life" class="link-base">{{ currentAge }}岁</NuxtLink>
-          ，性格内敛，不喜社交，极少在网络上发布内容或与人互动，这种「隐形」的状态使我产生了一种空虚与不安，作为社恐的救赎，我建立了这个独特的
+          ，性格内敛，不喜社交，极少在网络上发布内容或与人互动，这种隐形的状态使我产生了一种空虚与不安，作为社恐的救赎，我建立了这个独特的
           <NuxtLink to="/note" class="link-base">精神角落</NuxtLink>
           来记录自己的想法与生活，还有看过的
           <NuxtLink to="/hobby" class="link-base">电影</NuxtLink>

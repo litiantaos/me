@@ -5,7 +5,7 @@ import hljs from 'highlight.js'
 const htmlRenderer = {
   link({ href, tokens }) {
     const text = this.parser.parseInline(tokens)
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer"><i class="ri-link"></i><span>${text}</span></a>`
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
   },
   code({ text, lang }) {
     const language = hljs.getLanguage(lang) ? lang : 'plaintext'

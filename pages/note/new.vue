@@ -10,8 +10,10 @@
       ref="textareaRef"
     ></textarea>
 
-    <div class="sticky bottom-0 flex gap-4 bg-white py-4 dark:bg-zinc-800">
+    <div class="sticky bottom-0 flex gap-3 bg-white py-4 dark:bg-zinc-800">
       <button class="ri-ai-generate btn-base" @click="handleChat"></button>
+
+      <button class="ri-search-line btn-base" @click="handleSearch"></button>
 
       <button class="ri-sticky-note-line btn-base" @click="handleDoc"></button>
 
@@ -84,7 +86,6 @@ const handleSubmit = throttle(async () => {
   }
 })
 
-// 模态框
 const modalState = reactive({
   isShow: false,
   component: null,
@@ -93,16 +94,20 @@ const modalState = reactive({
   isLoading: false,
 })
 
-// 进入 AI 对话
 const handleChat = () => {
-  // 保存当前输入内容到 sessionStorage
-  if (input.value.trim() && !isEditMode.value) {
+  if (input.value.trim()) {
     sessionStorage.setItem('note-draft-content', input.value)
   }
   navigateTo('/ai')
 }
 
-// 查看 Markdown 文档
+const handleSearch = () => {
+  if (input.value.trim()) {
+    sessionStorage.setItem('note-draft-content', input.value)
+  }
+  navigateTo('/note/search')
+}
+
 const handleDoc = async () => {
   const mdDoc = await $fetch('/docs/md.md')
 
@@ -114,7 +119,6 @@ const handleDoc = async () => {
   modalState.title = 'Markdown Doc'
 }
 
-// 查看文件库
 const handleLibrary = () => {
   modalState.isShow = true
   modalState.component = markRaw(FileLibrary)
@@ -124,7 +128,6 @@ const handleLibrary = () => {
   }
 }
 
-// 预览笔记
 const handlePreview = () => {
   modalState.isShow = true
   modalState.component = markRaw(UiMarkdown)
@@ -134,7 +137,6 @@ const handlePreview = () => {
   modalState.title = '预览'
 }
 
-// 关闭模态框
 const handleModalClose = () => {
   modalState.component = null
   modalState.data = {}
@@ -143,11 +145,11 @@ const handleModalClose = () => {
 }
 
 onMounted(async () => {
-  // 编辑模式 - 获取笔记
+  // 编辑
   if (isEditMode.value) {
     await fetchEditingNote()
   } else {
-    // 新建模式 - 恢复已保存内容
+    // 新建
     const savedContent = sessionStorage.getItem('note-draft-content')
     if (savedContent) {
       input.value = savedContent

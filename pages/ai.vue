@@ -25,18 +25,18 @@
 
       <!-- 输入区域 -->
       <div
-        class="sticky bottom-0 space-y-4 bg-linear-to-b from-transparent via-white via-15% to-white pt-8 pb-4 dark:via-zinc-800 dark:to-zinc-800"
+        class="sticky bottom-0 space-y-4 bg-linear-to-b from-transparent via-white via-20% to-white pt-8 pb-4 dark:via-zinc-800 dark:to-zinc-800"
       >
         <UiMessage type="error" :text="errorMsg" />
 
         <div
-          class="rounded-md border border-zinc-300 transition-all duration-300 focus-within:border-blue-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-rose-500/20 focus-within:ring-blue-400/20 dark:border-zinc-600"
+          class="rounded-md border border-zinc-300 bg-white transition-all duration-300 focus-within:border-blue-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-rose-500/20 focus-within:ring-blue-400/20 dark:border-zinc-600 dark:bg-zinc-800"
         >
           <textarea
             ref="inputRef"
             v-model="input"
             placeholder="今天也要开心呀！"
-            rows="3"
+            rows="2"
             class="no-scrollbar max-h-60 w-full resize-none overflow-y-auto px-3 py-2 leading-6"
             @keydown.enter="handleKeydown"
           ></textarea>

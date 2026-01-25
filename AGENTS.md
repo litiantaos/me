@@ -7,22 +7,28 @@
 **技术栈:**
 
 - **框架:** Nuxt 4 (Vue 3)
-- **语言:** TypeScript & JavaScript (混合)
+- **语言:** JavaScript
 - **样式:** Tailwind CSS v4 (@tailwindcss/vite)
 - **后端/数据库:** Supabase (@nuxtjs/supabase)
-- **图标:** Remixicon
+- **图标:** Remixicon （类名方式）
+- **Markdown:** marked (渲染) + highlight.js (代码高亮)
 - **部署:** Vercel (Analytics, Speed Insights)
 
 **关键指令:**
 
-- **开发服务器:** `npm run dev` (运行 `nuxt dev`)
-- **生产构建:** `npm run build` (运行 `nuxt build`)
+- **开发服务器:** `npm run dev`
+- **生产构建:** `npm run build`
 - **静态生成:** `npm run generate`
-- **预览:** `npm run preview`
-- **类型检查:** `npx nuxi typecheck` (若适用)
-- **Lint/格式化:** `npx prettier --write .` (Prettier 是主要的格式化工具，包含 Tailwind 插件)
-- **依赖检查:** `npm run check` (npm-check-updates)
-- **测试:** `package.json` 中目前未配置自动化测试框架 (Vitest/Jest)。
+- **预览构建:** `npm run preview`
+- **代码格式化:** `npx prettier --write .` 或 `npx prettier --write <文件路径>`
+- **依赖更新检查:** `npm run check`
+- **测试:** 项目未配置自动化测试框架
+
+**注意事项:**
+
+- 项目使用 Prettier 作为唯一的代码格式化工具，未配置 ESLint
+- 没有测试框架，代码修改需特别谨慎
+- 使用 npm 作为包管理器
 
 ## 2. 代码风格 & 规范
 
@@ -34,19 +40,28 @@
 - **尾随逗号:** ES5 风格 (对象, 数组)。
 - **行宽:** Prettier 默认配置。
 
+**导入规范:**
+
+- Nuxt 自动导入: Composables、组件、Vue API (`ref`, `computed`, `onMounted` 等) 无需手动导入
+- 第三方库需显式导入 (例如: `import { Analytics } from '@vercel/analytics/nuxt'`)
+- 工具函数自动从 `utils/` 导入
+- 服务端工具函数从 `server/utils/` 自动导入
+
 **Vue/Nuxt 模式:**
 
-- **Composables:** 将逻辑放置在 `composables/` 中，使用 `use[Feature]` 命名约定 (例如 `useMovies.js`)。
-  - 在 composables 中使用 `useState` 进行共享状态管理。
-  - 返回包含响应式 refs 和异步函数的对象。
+- **Composables:** 将逻辑放置在 `composables/` 中，使用 `use[Feature]` 命名约定 (例如 `useNotes.js`)。
+  - 使用 `useState` 进行跨组件共享状态管理
+  - 返回包含响应式 refs 和异步函数的对象
+  - 使用 try-catch-finally 模式处理异步操作
 - **组件:** 单文件组件 (.vue)。
-  - 使用 `<script setup>` 语法。
-  - 组件文件名使用 PascalCase (例如 `ScrollView.vue`)。
-  - Prop 定义优先使用 `defineProps` 宏。
+  - 使用 `<script setup>` 语法
+  - 组件文件名使用 PascalCase (例如 `ScrollView.vue`)
+  - Prop 定义使用 `defineProps` 宏，支持类型和默认值
+  - 模板中优先使用 `:class` 数组语法结合条件判断
 - **数据获取:**
-  - 服务器 API 路由 (`/api/...`) 使用 `$fetch`。
-  - 客户端数据获取使用 `useAsyncData` 或 `useFetch` 以支持 SSR。
-  - 直接数据库交互使用 `useSupabaseClient()`。
+  - 调用服务器 API 路由使用 `$fetch` (例如: `await $fetch('/api/notes/save', { method: 'POST', body: {...} })`)
+  - 客户端数据获取使用 `useAsyncData` 或 `useFetch` 以支持 SSR
+  - 直接数据库交互使用 `useSupabaseClient()` (仅在客户端简单读写场景)
 
 **Supabase 集成:**
 
@@ -66,13 +81,7 @@
   - 页面: kebab-case 或单个单词 (`index.vue`, `movie/[id].vue`)
   - API 路由: kebab-case (`server/api/user-profile.js`)
 - **变量/函数:** camelCase。
-- **常量:** UPPER_SNAKE_CASE (仅针对真正的常量)。
-
-**语言 & 注释:**
-
-- **注释:** 注释通常为 **中文** (例如 `// 获取全部笔记`)。修改现有注释块时请保持此风格。
-- **字符串:** 硬编码的 UI 字符串通常为中文。
-- **文档:** 保持主要文档（如本文件）使用中文。
+- **常量:** UPPER_SNAKE_CASE。
 
 ## 3. 架构 & 结构
 
@@ -86,18 +95,14 @@
 - `utils/`: 通用工具函数。
 - `public/`: 静态资源 (favicon, robots.txt)。
 
-## 4. 代理工作流规则
+## 4. 代理工作规则
 
-1.  **规范优先:** 在编写代码之前，阅读相邻文件以匹配确切的代码风格（分号、引号、间距）。使用 Prettier 保持一致性。
-2.  **无不必要的依赖:** 除非绝对必要并获得批准，否则不要添加 npm 包。
-3.  **Supabase:** 修改数据库查询时，确保处理客户端返回的 `error` 对象。
-4.  **Tailwind:** 使用实用类进行样式设置。除非必要，避免使用自定义 CSS。使用 v4 特性。
-5.  **安全:** 由于没有自动化测试，更改逻辑时要格外小心。仔细检查类型和空值检查。
-6.  **AI 交互:**
-    - 语言要求：所有交流、解释、回答以及代码注释必须严格使用**中文**。
-    - 代码质量：追求极致的代码洁癖和强迫症。必须使用最简洁、高效、优雅的代码实现需求，杜绝冗余。
-    - 服务器管理：代码修改或任务完成后，**禁止**主动启动开发服务器（如 `npm run dev`），除非用户明确要求。
-7.  **环境:** 注意 `.env` 文件中的配置，如密钥，开发时确保本地环境配置正确。
+- **规范优先:** 在编写代码之前，阅读相邻文件以匹配确切的代码风格（分号、引号、间距）。使用 Prettier 保持一致性。
+- **无不必要的依赖:** 除非绝对必要并获得批准，否则不要添加 npm 包。
+- **代码质量:** 追求极致的代码洁癖和强迫症。必须使用最简洁、高效、优雅的代码实现需求，杜绝冗余。
+- **Tailwind:** 使用实用类进行样式设置。除非必要，避免使用自定义 CSS。使用 v4 特性。
+- **语言要求:** 所有回答、注释、文档必须严格使用**中文**。
+- **服务器管理:** 代码修改或任务完成后，**禁止**主动启动开发服务器（如 `npm run dev`），除非用户明确要求。
 
 ## 5. 特定文件指南
 
@@ -109,11 +114,38 @@
   - 页面标题和元数据使用 `useSeoMeta`。
   - 路由参数通过 `useRoute()` 获取。
 
-## 6. 工具与库
+## 6. 错误处理模式
 
-- **Tailwind CSS v4:** 使用最新的 v4 语法和配置。
-- **Remixicon:** 图标库，直接在类名中使用（如 `ri-home-line`）。
-- **Markdown:** 使用 `marked` 库渲染 Markdown 内容。
-- **代码高亮:** 使用 `highlight.js`。
+**Composables 中:**
+
+```javascript
+const fetchData = async () => {
+  isFetching.value = true
+  try {
+    const { data, error } = await client.from('table').select()
+    if (error) throw error
+    return data
+  } catch (error) {
+    throw error
+  } finally {
+    isFetching.value = false
+  }
+}
+```
+
+**API 路由中:**
+
+```javascript
+export default defineEventHandler(async (event) => {
+  const { data, error } = await client.from('table').select()
+  if (error) throw error
+  return { success: true, data }
+})
+```
+
+**组件中处理异步错误:**
+
+- 使用 try-catch 包裹 composable 调用
+- 通过 loading 状态提供用户反馈
 
 请遵循以上指南以确保代码库的一致性和高质量。

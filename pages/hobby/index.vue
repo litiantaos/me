@@ -5,13 +5,14 @@
         <NuxtLink
           v-if="user && user?.app_metadata?.role === 'admin'"
           to="/hobby/add"
-          class="link-base"
-        >
-          Add
-        </NuxtLink>
+          class="link-base ri-add-large-line"
+        ></NuxtLink>
 
         <div class="link-base flex items-center">
-          <button class="ri-search-line" @click="handleSearchExpand"></button>
+          <button
+            class="ri-search-line active:opacity-100!"
+            @click="handleSearchExpand"
+          ></button>
           <input
             type="text"
             ref="searchInputRef"
@@ -103,10 +104,12 @@
 </template>
 <script setup>
 const user = useSupabaseUser()
+const route = useRoute()
+const router = useRouter()
 
 const { isFetching, hobbies, fetchHobbyRecords } = useHobby()
 
-const activeTab = ref('video')
+const activeTab = ref(route.query.tab === 'game' ? 'game' : 'video')
 
 // 搜索
 const isSearchExpand = ref(false)
@@ -172,6 +175,12 @@ const hobbiesByMonth = computed(() => {
       month,
       list: groups[month].sort((a, b) => new Date(b.date) - new Date(a.date)),
     }))
+})
+
+watch(activeTab, (newTab) => {
+  if (route.query.tab !== newTab) {
+    router.replace({ query: { ...route.query, tab: newTab } })
+  }
 })
 
 onMounted(async () => {

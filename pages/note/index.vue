@@ -2,7 +2,11 @@
   <UiLayout title="想法" :isLoading="isNotesFetching">
     <div class="space-y-10">
       <div class="flex gap-6">
-        <NuxtLink v-if="user" to="/note/new" class="link-base">New</NuxtLink>
+        <NuxtLink
+          v-if="user"
+          to="/note/new"
+          class="link-base ri-add-large-line"
+        ></NuxtLink>
         <NuxtLink to="/note/search" class="link-base ri-search-line"></NuxtLink>
         <NuxtLink
           to="/note/stats"

@@ -31,26 +31,23 @@
             </span>
           </h2>
 
-          <div class="flex items-center font-medium">
-            <div>
-              <span>
-                {{
-                  hobbyDetail.type === 'movie'
-                    ? 'Movie'
-                    : hobbyDetail.type === 'tv'
-                      ? 'TV'
-                      : hobbyDetail.type === 'game'
-                        ? 'Game'
-                        : 'Other'
-                }}
-              </span>
-            </div>
+          <div class="flex flex-wrap items-center gap-3 font-medium">
+            <span>
+              {{
+                hobbyDetail.type === 'movie'
+                  ? 'Movie'
+                  : hobbyDetail.type === 'tv'
+                    ? 'TV'
+                    : hobbyDetail.type === 'game'
+                      ? 'Game'
+                      : 'Other'
+              }}
+            </span>
 
-            <div>
-              <span class="mx-3 text-zinc-300">｜</span>
-              <span>
-                {{ formatDate(hobbyDetail.release_date, 'YYYY') }}
-              </span>
+            <span class="text-zinc-300 dark:text-zinc-600">｜</span>
+
+            <span>
+              {{ formatDate(hobbyDetail.release_date, 'YYYY') }}
               <span
                 v-if="
                   hobbyDetail.last_air_date &&
@@ -60,24 +57,24 @@
               >
                 - {{ formatDate(hobbyDetail.last_air_date, 'YYYY') }}
               </span>
-            </div>
+            </span>
 
-            <div v-if="hobbyDetail.developers" class="flex items-center">
-              <span class="mx-3 text-zinc-300">｜</span>
+            <template v-if="hobbyDetail.developers">
+              <span class="text-zinc-300 dark:text-zinc-600">｜</span>
               <span>{{ hobbyDetail.developers[0] }}</span>
-            </div>
+            </template>
 
-            <div v-if="hobbyDetail.score" class="flex items-center">
-              <span class="mx-3 text-zinc-300">｜</span>
-              <i class="ri-star-fill mr-2 text-yellow-500"></i>
+            <template v-if="hobbyDetail.score">
+              <span class="text-zinc-300 dark:text-zinc-600">｜</span>
+              <i class="ri-star-fill text-yellow-500"></i>
               <span>{{ hobbyDetail.score.toFixed(2) }}</span>
-            </div>
+            </template>
 
-            <div v-if="hobbyDetail.runtime" class="flex items-center">
-              <span class="mx-3 text-zinc-300">｜</span>
-              <i class="ri-timer-2-fill mr-2 text-blue-500"></i>
+            <template v-if="hobbyDetail.runtime">
+              <span class="text-zinc-300 dark:text-zinc-600">｜</span>
+              <i class="ri-timer-2-fill text-blue-500"></i>
               <span>{{ hobbyDetail.runtime }} min</span>
-            </div>
+            </template>
           </div>
 
           <div
