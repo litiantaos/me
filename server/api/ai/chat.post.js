@@ -6,7 +6,12 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const provider = AI_MODELS[model]?.provider
 
-  const response = await $fetch(
+  setResponseStatus(event, 200)
+  setHeader(event, 'Content-Type', 'text/event-stream')
+  setHeader(event, 'Cache-Control', 'no-cache')
+  setHeader(event, 'Connection', 'keep-alive')
+
+  const response = await fetch(
     'https://ai-gateway.vercel.sh/v1/chat/completions',
     {
       method: 'POST',
@@ -17,13 +22,10 @@ export default defineEventHandler(async (event) => {
       body: JSON.stringify({
         model: provider,
         messages,
-        stream: false,
+        stream: true,
       }),
     },
   )
 
-  return {
-    model: provider,
-    content: response.choices[0].message.content,
-  }
+  return sendStream(event, response.body)
 })

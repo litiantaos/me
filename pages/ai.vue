@@ -51,12 +51,14 @@
             </button>
 
             <button
-              class="btn-primary h-7! w-7! rounded-sm! text-xs"
-              :disabled="!input.trim() || isLoading"
-              @click="handleSubmit"
+              class="h-7! w-7! rounded-sm! text-xs"
+              :class="isLoading ? 'btn-base' : 'btn-primary'"
+              :disabled="!isLoading && !input.trim()"
+              @click="handleButtonClick"
             >
-              <UiLoader v-if="isLoading" size="xs" />
-              <i v-else class="ri-arrow-up-line"></i>
+              <i
+                :class="isLoading ? 'ri-stop-circle-line' : 'ri-arrow-up-line'"
+              ></i>
             </button>
 
             <UiModal
@@ -96,7 +98,7 @@
 </template>
 
 <script setup>
-const { modelType, messages, sendMessage } = useChat()
+const { modelType, messages, sendMessage, stopMessage } = useChat()
 
 const input = ref('')
 const inputRef = ref(null)
@@ -142,6 +144,16 @@ const scrollToLastUserMessage = async () => {
   }
 }
 
+// 按钮点击
+const handleButtonClick = () => {
+  if (isLoading.value) {
+    stopMessage()
+    isLoading.value = false
+  } else {
+    handleSubmit()
+  }
+}
+
 // 提交
 const handleSubmit = throttle(async () => {
   if (!input.value.trim()) return
@@ -167,7 +179,9 @@ const handleSubmit = throttle(async () => {
     // AI 回复后滚动到最后一条用户消息位置
     if (!errorMsg.value) await scrollToLastUserMessage()
   } catch (error) {
-    errorMsg.value = error.message
+    if (error.name !== 'AbortError') {
+      errorMsg.value = error.message
+    }
   } finally {
     isLoading.value = false
   }

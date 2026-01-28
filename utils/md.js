@@ -86,7 +86,15 @@ const plainTextRenderer = {
 
 // HTML 渲染实例
 const htmlMarked = new Marked()
-htmlMarked.use({ renderer: htmlRenderer })
+htmlMarked.use({
+  renderer: htmlRenderer,
+  hooks: {
+    preprocess(markdown) {
+      // 转义 HTML 标签
+      return markdown.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    },
+  },
+})
 
 // 纯文本渲染实例
 const plainTextMarked = new Marked()
