@@ -19,6 +19,17 @@ const htmlRenderer = {
       <pre><code class="hljs language-${language}">${highlighted}</code></pre>
     </div>`
   },
+  html({ text }) {
+    const whitelist = ['br', 'video', 'source', 'audio', 'iframe']
+    const tagRegex = new RegExp(
+      `^<\\/?(${whitelist.join('|')})(\\s+[^>]*)?>$`,
+      'i',
+    )
+
+    if (tagRegex.test(text.trim())) return text
+
+    return `<p>${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
+  },
 }
 
 // 纯文本渲染器配置
@@ -88,12 +99,6 @@ const plainTextRenderer = {
 const htmlMarked = new Marked()
 htmlMarked.use({
   renderer: htmlRenderer,
-  hooks: {
-    preprocess(markdown) {
-      // 转义 HTML 标签
-      return markdown.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    },
-  },
 })
 
 // 纯文本渲染实例
