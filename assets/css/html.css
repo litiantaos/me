@@ -20,7 +20,7 @@
   }
 
   p {
-    @apply my-2 text-justify leading-7 whitespace-pre-wrap;
+    @apply my-2 text-justify leading-7 wrap-break-word whitespace-pre-wrap;
   }
 
   a {
