@@ -1,11 +1,11 @@
 import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
+  const {
+    public: { siteUrl },
+  } = useRuntimeConfig()
 
   setResponseHeader(event, 'Content-Type', 'application/xml')
-
-  const baseUrl = config.public.siteUrl
 
   // 静态路由列表
   const routes = ['', '/life', '/poetry', '/note', '/chat']
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   // 添加所有静态路由
   for (const route of routes) {
     xml += '  <url>\n'
-    xml += `    <loc>${baseUrl}${route}</loc>\n`
+    xml += `    <loc>${siteUrl}${route}</loc>\n`
     xml += '    <changefreq>weekly</changefreq>\n'
     xml += '    <priority>0.8</priority>\n'
     xml += '  </url>\n'
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
       const lastmod = new Date(note.created_at).toISOString().split('T')[0]
 
       xml += '  <url>\n'
-      xml += `    <loc>${baseUrl}/note/${note.id}</loc>\n`
+      xml += `    <loc>${siteUrl}/note/${note.id}</loc>\n`
       xml += `    <lastmod>${lastmod}</lastmod>\n`
       xml += '    <changefreq>weekly</changefreq>\n'
       xml += '    <priority>0.6</priority>\n'

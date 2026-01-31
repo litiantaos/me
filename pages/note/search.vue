@@ -1,5 +1,5 @@
 <template>
-  <UiLayout title="搜索" :isLoading="isLoading">
+  <UiLayout title="搜索" :isLoading="isNotesFetching">
     <div class="w-full">
       <input
         ref="inputRef"
@@ -28,9 +28,10 @@
 const route = useRoute()
 const router = useRouter()
 
+const { isNotesFetching, searchNotes } = useNotes()
+
 const input = ref('')
 const inputRef = ref(null)
-const isLoading = ref(false)
 const searchResults = ref([])
 
 const handleSearch = (e) => {
@@ -40,34 +41,21 @@ const handleSearch = (e) => {
 
 // 提交
 const handleSubmit = throttle(async () => {
-  const q = input.value.trim()
-  if (!q) return
+  const query = input.value.trim()
+  if (!query) return
 
   router.replace({
-    query: { q },
+    query: { query },
   })
 
-  isLoading.value = true
-
-  try {
-    const response = await $fetch('/api/notes/search', {
-      method: 'POST',
-      body: { query: q },
-    })
-
-    searchResults.value = response.results
-  } catch (error) {
-    throw error
-  } finally {
-    isLoading.value = false
-  }
+  searchResults.value = await searchNotes(query)
 })
 
 onMounted(() => {
-  const { q } = route.query
+  const { query } = route.query
 
-  if (q) {
-    input.value = q
+  if (query) {
+    input.value = query
     handleSubmit()
   }
 

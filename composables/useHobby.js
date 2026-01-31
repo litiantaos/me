@@ -3,7 +3,6 @@ export const useHobby = () => {
   const user = useSupabaseUser()
 
   const hobbies = useState('hobbies', () => [])
-
   const isFetching = useState('fetching', () => false)
   const isSearching = useState('searching', () => false)
   const isAdding = useState('adding', () => false)

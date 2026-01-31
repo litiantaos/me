@@ -1,6 +1,7 @@
 export default defineEventHandler((event) => {
-  const config = useRuntimeConfig()
-  const siteUrl = config.public.siteUrl
+  const {
+    public: { siteUrl },
+  } = useRuntimeConfig()
 
   setResponseHeader(event, 'Content-Type', 'text/plain')
 

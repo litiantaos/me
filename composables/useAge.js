@@ -1,6 +1,7 @@
 export const useAge = () => {
-  const config = useRuntimeConfig()
-  const birthDate = config.public.birthDate || '1998-01-01'
+  const {
+    public: { birthDate },
+  } = useRuntimeConfig()
 
   const currentAge = computed(() => {
     const today = new Date()

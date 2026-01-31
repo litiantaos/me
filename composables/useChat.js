@@ -3,41 +3,38 @@ export const useChat = (defaultPrompt = '') => {
   const messages = ref([])
   const abortController = ref(null)
 
+  let queue = ''
+  let isTyping = false
+
+  const typeWriter = () => {
+    if (queue.length > 0) {
+      const step = queue.length < 20 ? 1 : Math.ceil(queue.length / 30)
+
+      const chunk = queue.slice(0, step)
+
+      const currentMsg = messages.value[messages.value.length - 1]
+      if (currentMsg) {
+        currentMsg.content += chunk
+      }
+
+      queue = queue.slice(step)
+      requestAnimationFrame(typeWriter)
+    } else {
+      isTyping = false
+    }
+  }
+
   const sendMessage = async (content) => {
     abortController.value = new AbortController()
     messages.value.push({ role: 'user', content })
 
-    let assistantIndex = -1
-    const pendingQueue = []
-    let isStreaming = false
-
-    // 平滑输出函数
-    const processQueue = () => {
-      if (pendingQueue.length === 0) {
-        isStreaming = false
-        return
-      }
-
-      isStreaming = true
-      // 动态调整每次输出的字符数，队列越长输出越快，避免堆积
-      const count = Math.max(1, Math.floor(pendingQueue.length / 60))
-      const chunk = pendingQueue.splice(0, count).join('')
-
-      if (assistantIndex === -1) {
-        assistantIndex = messages.value.length
-        messages.value.push({ role: 'assistant', content: chunk })
-      } else {
-        messages.value[assistantIndex].content += chunk
-      }
-
-      requestAnimationFrame(processQueue)
-    }
+    queue = ''
+    isTyping = false
 
     try {
-      const response = await fetch('/api/ai/chat', {
+      const stream = await $fetch('/api/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           model: modelType.value,
           messages: [
             ...(defaultPrompt
@@ -45,13 +42,16 @@ export const useChat = (defaultPrompt = '') => {
               : []),
             ...messages.value,
           ],
-        }),
+        },
+        responseType: 'stream',
         signal: abortController.value.signal,
       })
 
-      const reader = response.body.getReader()
+      const reader = stream.getReader()
       const decoder = new TextDecoder()
+
       let buffer = ''
+      let hasResponseStarted = false
 
       while (true) {
         const { done, value } = await reader.read()
@@ -60,27 +60,41 @@ export const useChat = (defaultPrompt = '') => {
         const chunk = decoder.decode(value, { stream: true })
         buffer += chunk
         const lines = buffer.split('\n')
-
-        buffer = lines.pop() ?? ''
+        buffer = lines.pop()
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6)
-            if (data === '[DONE]') continue
+            if (data === '[DONE]') {
+              break
+            } else if (data.trim()) {
+              const parsed = JSON.parse(data)
+              const content = parsed.choices?.[0]?.delta?.content
+              if (content) {
+                if (!hasResponseStarted) {
+                  hasResponseStarted = true
+                  messages.value.push({ role: 'assistant', content: '' })
+                }
 
-            const json = JSON.parse(data)
-            const delta = json.choices?.[0]?.delta?.content
-            if (delta) {
-              pendingQueue.push(...delta.split(''))
-              if (!isStreaming) processQueue()
+                queue += content
+
+                if (!isTyping) {
+                  isTyping = true
+                  typeWriter()
+                }
+              }
             }
           }
         }
       }
     } catch (error) {
-      if (error.name !== 'AbortError' && assistantIndex !== -1) {
+      queue = ''
+      isTyping = false
+
+      if (error.name !== 'AbortError' && hasResponseStarted) {
         messages.value.pop()
       }
+
       throw error
     } finally {
       abortController.value = null
@@ -90,7 +104,11 @@ export const useChat = (defaultPrompt = '') => {
   const stopMessage = () => {
     if (abortController.value) {
       abortController.value.abort()
+      abortController.value = null
     }
+
+    isTyping = false
+    queue = ''
   }
 
   return {

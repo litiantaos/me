@@ -78,7 +78,11 @@
 
 <script setup>
 const client = useSupabaseClient()
-const config = useRuntimeConfig()
+const {
+  public: {
+    supabase: { url: supabaseUrl },
+  },
+} = useRuntimeConfig()
 
 const props = defineProps({
   setIsLoading: Function,
@@ -107,7 +111,7 @@ const fetchFiles = async () => {
     files.value = data.map((file) => {
       return {
         ...file,
-        url: `${config.public.supabase.url}/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
+        url: `${supabaseUrl}/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
       }
     })
   } catch (err) {

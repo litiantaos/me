@@ -84,18 +84,65 @@ export const useNotes = () => {
   }
 
   // 保存笔记
-  const saveNote = async (content, noteId = null) => {
+  const saveNote = async (content, noteId) => {
     isSaving.value = true
 
     try {
-      await $fetch('/api/notes/save', {
+      const embedding = await $fetch('/api/ai/embedding', {
         method: 'POST',
-        body: { content, noteId },
+        body: { content },
       })
+
+      if (noteId) {
+        // 更新
+        const { error } = await client
+          .from('notes')
+          .update({ content, embedding })
+          .eq('id', noteId)
+          .eq('user_id', user.value.sub)
+
+        if (error) throw error
+      } else {
+        // 新建
+        const { error } = await client
+          .from('notes')
+          .insert({ content, embedding, user_id: user.value.sub })
+
+        if (error) throw error
+      }
     } catch (error) {
       throw error
     } finally {
       isSaving.value = false
+    }
+  }
+
+  // 搜索笔记
+  const searchNotes = async (query) => {
+    isNotesFetching.value = true
+
+    try {
+      const embedding = await $fetch('/api/ai/embedding', {
+        method: 'POST',
+        body: { content: query },
+      })
+
+      const { data, error } = await client.rpc('hybrid_search_notes', {
+        query_text: query,
+        query_embedding: embedding,
+        match_count: 20,
+        full_text_weight: 1.0, // 全文搜索权重
+        semantic_weight: 1.0, // 语义搜索权重
+        rrf_k: 50, // RRF 平滑常数
+      })
+
+      if (error) throw error
+
+      return data
+    } catch (error) {
+      throw error
+    } finally {
+      isNotesFetching.value = false
     }
   }
 
@@ -104,9 +151,13 @@ export const useNotes = () => {
     isDeleting.value = true
 
     try {
-      await $fetch(`/api/notes/${noteId}`, {
-        method: 'DELETE',
-      })
+      const { error } = await client
+        .from('notes')
+        .delete()
+        .eq('id', noteId)
+        .eq('user_id', user.value.sub)
+
+      if (error) throw error
 
       if (notes.value.length > 0) {
         notes.value = notes.value.filter((note) => note.id !== noteId)
@@ -130,6 +181,7 @@ export const useNotes = () => {
     fetchNote,
     fetchNotesData,
     saveNote,
+    searchNotes,
     deleteNote,
   }
 }

@@ -2,9 +2,7 @@ let accessToken = null
 let tokenExpiry = 0
 
 const getAccessToken = async () => {
-  const config = useRuntimeConfig()
-  const clientId = config.igdbClientId
-  const clientSecret = config.igdbClientSecret
+  const { igdbClientId, igdbClientSecret } = useRuntimeConfig()
 
   if (accessToken && Date.now() < tokenExpiry - 60000) {
     return accessToken
@@ -13,8 +11,8 @@ const getAccessToken = async () => {
   const response = await $fetch('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
     params: {
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: igdbClientId,
+      client_secret: igdbClientSecret,
       grant_type: 'client_credentials',
     },
   })
@@ -27,12 +25,12 @@ const getAccessToken = async () => {
 
 export const fetchIgdb = async (endpoint, body) => {
   const token = await getAccessToken()
-  const config = useRuntimeConfig()
+  const { igdbClientId } = useRuntimeConfig()
 
   return $fetch(`https://api.igdb.com/v4${endpoint}`, {
     method: 'POST',
     headers: {
-      'Client-ID': config.igdbClientId,
+      'Client-ID': igdbClientId,
       Authorization: `Bearer ${token}`,
       'Content-Type': 'text/plain',
     },
