@@ -31,6 +31,8 @@ export const useChat = (defaultPrompt = '') => {
     queue = ''
     isTyping = false
 
+    let hasResponseStarted = false
+
     try {
       const stream = await $fetch('/api/ai/chat', {
         method: 'POST',
@@ -51,7 +53,6 @@ export const useChat = (defaultPrompt = '') => {
       const decoder = new TextDecoder()
 
       let buffer = ''
-      let hasResponseStarted = false
 
       while (true) {
         const { done, value } = await reader.read()

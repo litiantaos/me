@@ -25,7 +25,7 @@
 
       <!-- 输入区域 -->
       <div
-        class="sticky bottom-0 space-y-4 bg-linear-to-b from-transparent via-white via-20% to-white pt-8 pb-4 dark:via-zinc-800 dark:to-zinc-800"
+        class="sticky bottom-0 space-y-4 bg-linear-to-b from-transparent via-white via-[32px] to-white pt-8 pb-4 dark:via-zinc-800 dark:to-zinc-800"
       >
         <UiMessage type="error" :text="errorMsg" />
 
@@ -41,7 +41,7 @@
             @keydown.enter="handleKeydown"
           ></textarea>
 
-          <div class="flex items-center justify-between px-2 pb-2">
+          <div class="flex items-center gap-2 px-2 pb-2">
             <button
               class="btn-base h-7! w-auto! gap-2 rounded-sm! px-2 text-xs"
               @click="isModalShow = true"
@@ -49,6 +49,15 @@
               <span>{{ AI_MODELS[modelType].name }}</span>
               <i class="ri-expand-up-down-line"></i>
             </button>
+
+            <div
+              v-if="credits"
+              class="flex h-7 items-center rounded-sm bg-zinc-100 px-2 text-xs dark:bg-zinc-700"
+            >
+              $ {{ Number(credits.balance).toFixed(2) }}
+            </div>
+
+            <div class="flex-1"></div>
 
             <button
               class="h-7! w-7! rounded-sm! text-xs"
@@ -98,6 +107,8 @@
 </template>
 
 <script setup>
+const user = useSupabaseUser()
+
 const { modelType, messages, sendMessage, stopMessage } = useChat()
 
 const input = ref('')
@@ -106,6 +117,8 @@ const isLoading = ref(false)
 const isModalShow = ref(false)
 const messageElements = ref([])
 const errorMsg = ref('')
+
+const credits = ref(null)
 
 // 输入框自适应高度
 watch(input, async () => {
@@ -187,8 +200,21 @@ const handleSubmit = throttle(async () => {
   }
 })
 
+const getCredits = async () => {
+  if (user.value?.app_metadata?.role !== 'admin') return null
+
+  try {
+    credits.value = await $fetch('/api/ai/credits', {
+      method: 'GET',
+    })
+  } catch (error) {
+    console.error('获取 AI Credits 失败', error)
+  }
+}
+
 onMounted(() => {
   inputRef.value?.focus()
+  getCredits()
 })
 
 useSeoMeta({ title: 'AI' })

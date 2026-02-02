@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const { model, messages } = await readBody(event)
   const { aiGatewayApiKey } = useRuntimeConfig()
 
-  const stream = await $fetch(
+  const response = await $fetch(
     'https://ai-gateway.vercel.sh/v1/chat/completions',
     {
       method: 'POST',
@@ -20,5 +20,5 @@ export default defineEventHandler(async (event) => {
     },
   )
 
-  return sendStream(event, stream)
+  return sendStream(event, response)
 })

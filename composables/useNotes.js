@@ -15,26 +15,22 @@ export const useNotes = () => {
   const fetchNotes = async () => {
     isNotesFetching.value = true
 
-    try {
-      const from = page.value * pageSize
-      const to = from + pageSize - 1
+    const from = page.value * pageSize
+    const to = from + pageSize - 1
 
-      const { data, error } = await client
-        .from('notes')
-        .select('id, content, user_id, created_at, updated_at')
-        .order('created_at', { ascending: false })
-        .range(from, to)
+    const { data, error } = await client
+      .from('notes')
+      .select('id, content, user_id, created_at, updated_at')
+      .order('created_at', { ascending: false })
+      .range(from, to)
 
-      if (error) throw error
+    if (error) throw error
 
-      notes.value = [...notes.value, ...data]
-      hasMoreNotes.value = data.length === pageSize
-      page.value++
-    } catch (error) {
-      throw error
-    } finally {
-      isNotesFetching.value = false
-    }
+    notes.value = [...notes.value, ...data]
+    hasMoreNotes.value = data.length === pageSize
+    page.value++
+
+    isNotesFetching.value = false
   }
 
   // 刷新笔记列表
@@ -49,37 +45,30 @@ export const useNotes = () => {
   const fetchNote = async (noteId) => {
     isNoteFetching.value = true
 
-    try {
-      const { data, error } = await client
-        .from('notes')
-        .select('id, content, user_id, created_at, updated_at')
-        .eq('id', noteId)
-        .single()
+    const { data, error } = await client
+      .from('notes')
+      .select('id, content, user_id, created_at, updated_at')
+      .eq('id', noteId)
+      .single()
 
-      if (error) throw error
-      return data
-    } catch (error) {
-      throw error
-    } finally {
-      isNoteFetching.value = false
-    }
+    if (error) throw error
+
+    isNoteFetching.value = false
+
+    return data
   }
 
   // 获取所有笔记指定字段数据
   const fetchNotesData = async (fields = 'created_at') => {
-    try {
-      const { data, error } = await client
-        .from('notes')
-        .select(fields)
-        .eq('user_id', user.value.sub)
-        .order('created_at', { ascending: true })
+    const { data, error } = await client
+      .from('notes')
+      .select(fields)
+      .eq('user_id', user.value.sub)
+      .order('created_at', { ascending: true })
 
-      if (error) throw error
+    if (error) throw error
 
-      return data
-    } catch (error) {
-      throw error
-    }
+    return data
   }
 
   // 保存笔记
@@ -145,23 +134,19 @@ export const useNotes = () => {
   const deleteNote = async (noteId) => {
     isDeleting.value = true
 
-    try {
-      const { error } = await client
-        .from('notes')
-        .delete()
-        .eq('id', noteId)
-        .eq('user_id', user.value.sub)
+    const { error } = await client
+      .from('notes')
+      .delete()
+      .eq('id', noteId)
+      .eq('user_id', user.value.sub)
 
-      if (error) throw error
+    if (error) throw error
 
-      if (notes.value.length > 0) {
-        notes.value = notes.value.filter((note) => note.id !== noteId)
-      }
-    } catch (error) {
-      throw error
-    } finally {
-      isDeleting.value = false
+    if (notes.value.length > 0) {
+      notes.value = notes.value.filter((note) => note.id !== noteId)
     }
+
+    isDeleting.value = false
   }
 
   return {
