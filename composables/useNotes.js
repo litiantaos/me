@@ -9,7 +9,6 @@ export const useNotes = () => {
 
   const isNotesFetching = useState('notesFetching', () => false)
   const isNoteFetching = useState('noteFetching', () => false)
-  const isSaving = useState('noteSaving', () => false)
   const isDeleting = useState('noteDeleting', () => false)
 
   // 获取笔记列表
@@ -85,8 +84,6 @@ export const useNotes = () => {
 
   // 保存笔记
   const saveNote = async (content, noteId) => {
-    isSaving.value = true
-
     try {
       const embedding = await $fetch('/api/ai/embedding', {
         method: 'POST',
@@ -112,8 +109,6 @@ export const useNotes = () => {
       }
     } catch (error) {
       throw error
-    } finally {
-      isSaving.value = false
     }
   }
 
@@ -174,7 +169,6 @@ export const useNotes = () => {
     hasMoreNotes,
     isNotesFetching,
     isNoteFetching,
-    isSaving,
     isDeleting,
     fetchNotes,
     refreshNotes,

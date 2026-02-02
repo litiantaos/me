@@ -10,6 +10,8 @@
       ref="textareaRef"
     ></textarea>
 
+    <UiMessage v-if="errorMsg" type="error" :text="errorMsg" />
+
     <div class="sticky bottom-0 flex gap-3 bg-white py-4 dark:bg-zinc-800">
       <button class="ri-ai-generate btn-base" @click="handleChat"></button>
 
@@ -50,11 +52,12 @@ import FileLibrary from '@/components/note/FileLibrary.vue'
 const route = useRoute()
 const router = useRouter()
 
-const { isNoteFetching, isSaving, fetchNote, saveNote, refreshNotes } =
-  useNotes()
+const { isNoteFetching, fetchNote, saveNote, refreshNotes } = useNotes()
 
 const input = ref('')
 const textareaRef = ref(null)
+const isSaving = ref(false)
+const errorMsg = ref('')
 
 // 判断是否为编辑模式
 const isEditMode = computed(() => {
@@ -71,7 +74,13 @@ const fetchEditingNote = async () => {
 
 // 保存笔记
 const handleSubmit = throttle(async () => {
+  isSaving.value = true
+  errorMsg.value = ''
+
   try {
+    const processedContent = await processContentWithDimensions(input.value)
+    input.value = processedContent
+
     await saveNote(input.value, isEditMode.value ? route.query.id : null)
     await refreshNotes()
 
@@ -82,7 +91,9 @@ const handleSubmit = throttle(async () => {
       router.push(`/note`)
     }
   } catch (error) {
-    console.error(isEditMode.value ? '更新失败' : '保存失败', error)
+    errorMsg.value = isEditMode.value ? '更新失败' : '保存失败'
+  } finally {
+    isSaving.value = false
   }
 })
 

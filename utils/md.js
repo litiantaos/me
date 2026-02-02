@@ -20,7 +20,7 @@ const htmlRenderer = {
     </div>`
   },
   html({ text }) {
-    const whitelist = ['br', 'video', 'source', 'audio', 'iframe']
+    const whitelist = ['img', 'video', 'audio', 'br', 'iframe']
     const tagRegex = new RegExp(
       `^<\\/?(${whitelist.join('|')})(\\s+[^>]*)?>$`,
       'i',
