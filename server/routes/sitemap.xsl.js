@@ -1,7 +1,8 @@
-export default defineEventHandler((event) => {
-  setResponseHeader(event, 'Content-Type', 'text/xsl')
+export default defineCachedEventHandler(
+  (event) => {
+    setResponseHeader(event, 'Content-Type', 'text/xsl')
 
-  return /*html*/ `<?xml version="1.0" encoding="UTF-8"?>
+    return /*html*/ `<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0" 
                 xmlns:html="http://www.w3.org/TR/REC-html40"
                 xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -72,4 +73,9 @@ export default defineEventHandler((event) => {
     </html>
   </xsl:template>
 </xsl:stylesheet>`
-})
+  },
+  {
+    maxAge: 60 * 60 * 24, // 1天缓存
+    name: 'sitemap-xsl',
+  },
+)

@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-const { currentAge } = useAge()
+const { currentAge } = useProfile()
 const {
   public: { name, email, github },
 } = useRuntimeConfig()

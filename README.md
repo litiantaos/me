@@ -32,14 +32,13 @@ npm run check     # 检查依赖更新
 
 ### 初始化数据库
 
-1. 进入 [Supabase Dashboard](https://supabase.com/dashboard) 的 SQL Editor。
-2. 打开项目中的 `supabase/schema.sql` 文件，复制全部内容。
-3. 在 SQL Editor 中粘贴并运行，以创建所有必要的表、索引和函数。
+1. 进入 [Supabase Dashboard](https://supabase.com/dashboard)。
+2. 在 SQL Editor 中粘贴 `schema.sql` 内容并运行，以创建所有必要的表、索引和函数。
 
 ### 核心表结构
 
 - `notes`: 笔记表，支持向量搜索。
-- `hobbies`: 兴趣爱好记录表。
+- `hobbies`: 爱好记录表。
 - `places`: 足迹记录表。
 
 ### 核心函数
@@ -48,6 +47,6 @@ npm run check     # 检查依赖更新
 
 ## 部署
 
-- 在 Vercel 创建项目并导入 GitHub 仓库
-- 根据 `.env.example` 配置环境变量
-- 推送 GitHub 自动触发部署
+1. 进入 [Vercel](https://vercel.com) 创建项目并导入 GitHub 仓库以部署。
+2. 根据 `.env.example` 配置环境变量。
+3. 推送 GitHub 触发自动部署。

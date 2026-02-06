@@ -45,47 +45,47 @@
 </template>
 
 <script setup>
-const { birthDate, currentAge } = useAge()
+const { currentAge } = useProfile()
+const {
+  public: { birthDate },
+} = useRuntimeConfig()
+
 const totalLifeYears = 88
 
-// 缓存日期对象
-const today = new Date()
-const birthDateObj = new Date(birthDate)
-const birthYear = birthDateObj.getFullYear()
-const birthMonth = birthDateObj.getMonth() + 1
-const currentYear = today.getFullYear()
-const currentMonth = today.getMonth() + 1
+const now = new Date()
+const currentYear = now.getFullYear()
+const currentMonth = now.getMonth() + 1
+const currentTotalMonths = currentYear * 12 + currentMonth
 
-// 计算年份列表
+const birthday = computed(() => parseLocalDate(birthDate))
+const birthYear = computed(() => birthday.value?.getFullYear() ?? currentYear)
+const birthMonth = computed(() => (birthday.value?.getMonth() ?? -1) + 1)
+const birthTotalMonths = computed(() => birthYear.value * 12 + birthMonth.value)
+
 const years = computed(() =>
-  Array.from({ length: totalLifeYears }, (_, i) => birthYear + i),
+  Array.from({ length: totalLifeYears }, (_, i) => birthYear.value + i),
 )
 
-// 判断月份是否已经过去
-const isMonthPassed = (year, month) => {
-  // 如果是出生年，只有出生月及之后的月份才计算
-  if (year === birthYear && month < birthMonth) return false
-
-  return year < currentYear || (year === currentYear && month <= currentMonth)
-}
-
-// 计算已过去的天数
 const passedDays = computed(() =>
-  Math.floor((today - birthDateObj) / (1000 * 60 * 60 * 24)),
+  birthday.value ? Math.floor((now - birthday.value) / 86400000) : 0,
 )
 
-// 计算生命进度百分比
 const lifeProgressPercentage = computed(() => {
-  const passedMonths =
-    (currentYear - birthYear) * 12 + (currentMonth - birthMonth)
-  const percentage = (passedMonths / (totalLifeYears * 12)) * 100
-  return Math.min(Math.round(percentage * 10) / 10, 100)
+  if (!birthday.value) return 0
+  const totalDays = totalLifeYears * 365.25
+  return Math.min(((passedDays.value / totalDays) * 100).toFixed(1), 100)
 })
+
+const isMonthPassed = (year, month) => {
+  if (!birthday.value) return false
+  const cellValue = year * 12 + month
+  return cellValue >= birthTotalMonths.value && cellValue <= currentTotalMonths
+}
 
 const description = '努力灿烂的活到 88 岁，看看那时世界的样子。'
 
 useSeoMeta({
   title: '人生',
-  description: '人生时间格，' + description,
+  description: `人生时间格，${description}`,
 })
 </script>

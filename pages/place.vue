@@ -176,4 +176,9 @@ const handleSelect = async (feature) => {
 onMounted(() => {
   fetchPlaces()
 })
+
+useSeoMeta({
+  title: '足迹',
+  description: '记录去过的城市。',
+})
 </script>

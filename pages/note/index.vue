@@ -70,6 +70,6 @@ onUnmounted(() => {
 
 useSeoMeta({
   title: '随写，我的精神角落',
-  description: '记录生活，记录想法。',
+  description: '记录想法，记录生活。',
 })
 </script>

@@ -1,11 +1,12 @@
-export const useAge = () => {
+export const useProfile = () => {
   const {
     public: { birthDate },
   } = useRuntimeConfig()
 
   const currentAge = computed(() => {
     const today = new Date()
-    const birthDateObj = new Date(birthDate)
+    const birthDateObj = parseLocalDate(birthDate)
+    if (!birthDateObj) return 0
 
     let age = today.getFullYear() - birthDateObj.getFullYear()
     const monthDiff = today.getMonth() - birthDateObj.getMonth()
@@ -21,7 +22,6 @@ export const useAge = () => {
   })
 
   return {
-    birthDate,
     currentAge,
   }
 }

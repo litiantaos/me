@@ -191,5 +191,6 @@ onMounted(async () => {
 
 useSeoMeta({
   title: '爱好',
+  description: '记录看过的电影与剧集、玩过的游戏等。',
 })
 </script>

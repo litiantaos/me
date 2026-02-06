@@ -62,7 +62,7 @@ const { data, pending: isLoading } = await useLazyAsyncData(async () => {
   }
 })
 
-useHead({
+useSeoMeta({
   title: '笔记统计',
 })
 </script>

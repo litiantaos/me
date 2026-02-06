@@ -3,11 +3,9 @@ export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
   if (!date) return ''
 
   const d = date instanceof Date ? date : new Date(date)
-
   if (isNaN(d.getTime())) return ''
 
   const padZero = (num) => String(num).padStart(2, '0')
-
   const formatMap = {
     YYYY: () => d.getFullYear(),
     MM: () => padZero(d.getMonth() + 1),
@@ -20,7 +18,17 @@ export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => formatMap[match]())
 }
 
-// 防抖函数
+// 解析本地日期，避免 new Date('YYYY-MM-DD') 导致 UTC 偏移
+export const parseLocalDate = (dateString) => {
+  if (!dateString) return null
+  const [year, month, day] = String(dateString)
+    .slice(0, 10)
+    .split('-')
+    .map(Number)
+  return new Date(year, month - 1, day)
+}
+
+// 节流函数
 export const throttle = (fn, delay = 2000) => {
   let lastTime = 0
 
@@ -31,6 +39,19 @@ export const throttle = (fn, delay = 2000) => {
       lastTime = now
       return fn.apply(this, args)
     }
+  }
+}
+
+// 防抖函数
+export const debounce = (fn, delay = 500) => {
+  let timer = null
+
+  return function (...args) {
+    if (timer) clearTimeout(timer)
+
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
   }
 }
 

@@ -105,4 +105,8 @@ const handleSubmit = async () => {
     isLoading.value = false
   }
 }
+
+useSeoMeta({
+  title: () => (isLogin.value ? '登录' : '注册'),
+})
 </script>

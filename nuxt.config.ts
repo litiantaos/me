@@ -15,11 +15,7 @@ export default defineNuxtConfig({
         },
         {
           name: 'description',
-          content: `${process.env.NAME}的个人网站，记录生活与想法。`,
-        },
-        {
-          name: 'robots',
-          content: 'index, follow',
+          content: `${process.env.NUXT_PUBLIC_NAME}的个人网站，记录想法与生活。`,
         },
       ],
       link: [
@@ -27,10 +23,6 @@ export default defineNuxtConfig({
           rel: 'icon',
           type: 'image/x-icon',
           href: '/favicon.ico',
-        },
-        {
-          rel: 'canonical',
-          href: process.env.SITE_URL,
         },
       ],
     },
@@ -49,7 +41,7 @@ export default defineNuxtConfig({
     types: false,
     redirectOptions: {
       login: '/login',
-      callback: '/',
+      callback: '/login',
       include: ['/note/new(/*)?', '/hobby/add(/*)?'],
     },
   },

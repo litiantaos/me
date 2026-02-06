@@ -59,6 +59,20 @@ const textareaRef = ref(null)
 const isSaving = ref(false)
 const errorMsg = ref('')
 
+// 自动保存草稿
+const autoSave = debounce((val) => {
+  if (!val) return
+  localStorage.setItem('note-draft', val)
+}, 5000)
+
+watch(input, (newVal) => {
+  if (newVal) {
+    autoSave(newVal)
+  } else {
+    localStorage.removeItem('note-draft')
+  }
+})
+
 // 判断是否为编辑模式
 const isEditMode = computed(() => {
   return route.query.id ? true : false
@@ -84,10 +98,11 @@ const handleSubmit = throttle(async () => {
     await saveNote(input.value, isEditMode.value ? route.query.id : null)
     await refreshNotes()
 
+    localStorage.removeItem('note-draft')
+
     if (isEditMode.value) {
       router.push(`/note/${route.query.id}`)
     } else {
-      sessionStorage.removeItem('note-draft-content')
       router.push(`/note`)
     }
   } catch (error) {
@@ -106,16 +121,10 @@ const modalState = reactive({
 })
 
 const handleChat = () => {
-  if (input.value.trim()) {
-    sessionStorage.setItem('note-draft-content', input.value)
-  }
   navigateTo('/ai')
 }
 
 const handleSearch = () => {
-  if (input.value.trim()) {
-    sessionStorage.setItem('note-draft-content', input.value)
-  }
   navigateTo('/note/search')
 }
 
@@ -156,14 +165,12 @@ const handleModalClose = () => {
 }
 
 onMounted(async () => {
-  // 编辑
   if (isEditMode.value) {
     await fetchEditingNote()
   } else {
-    // 新建
-    const savedContent = sessionStorage.getItem('note-draft-content')
-    if (savedContent) {
-      input.value = savedContent
+    const draft = localStorage.getItem('note-draft')
+    if (draft) {
+      input.value = draft
     }
   }
 
