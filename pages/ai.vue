@@ -4,22 +4,156 @@
       <!-- 消息列表 -->
       <div v-if="messages.length > 0" class="w-full space-y-4">
         <div
-          v-for="(message, index) in messages"
-          :key="index"
+          v-for="message in messages"
+          :key="message.id"
           ref="messageElements"
           :class="[
             'flex w-full',
             message.role === 'user' ? 'justify-end' : 'justify-start',
           ]"
         >
+          <!-- 用户消息 -->
           <UiMarkdown
-            :md="message.content"
-            :class="
-              message.role === 'user'
-                ? 'max-w-4/5 rounded-md bg-zinc-100 px-3 dark:bg-zinc-700'
-                : 'w-full'
-            "
+            v-if="message.role === 'user'"
+            :md="message.displayText"
+            class="max-w-4/5 rounded-md bg-zinc-100 px-3 dark:bg-zinc-700"
           />
+
+          <!-- AI 消息 -->
+          <div v-else class="w-full space-y-4">
+            <Transition appear name="fade">
+              <div
+                v-if="
+                  message.parts.some(
+                    (p) =>
+                      p.type === 'reasoning' || p.type === 'tool-webSearch',
+                  )
+                "
+                class="rounded-md border border-zinc-200 text-xs text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
+              >
+                <button
+                  class="flex w-full items-center justify-between gap-2 px-3 py-2.5 hover:text-zinc-500 dark:hover:text-zinc-400"
+                  @click="toggleThinking(message.id)"
+                >
+                  <span
+                    class="flex items-center gap-2"
+                    :class="
+                      isLoading &&
+                      message === messages[messages.length - 1] &&
+                      !message.parts.some((p) => p.type === 'text')
+                        ? 'animate-pulse text-blue-400'
+                        : ''
+                    "
+                  >
+                    <i class="ri-brain-line text-sm"></i>
+                    <span>
+                      {{
+                        isLoading &&
+                        message === messages[messages.length - 1] &&
+                        !message.parts.some((p) => p.type === 'text')
+                          ? '思考中…'
+                          : '思考过程'
+                      }}
+                    </span>
+                  </span>
+                  <i
+                    class="ri-arrow-down-s-line text-sm transition-transform"
+                    :class="
+                      expandedThinking.has(message.id) ? 'rotate-180' : ''
+                    "
+                  ></i>
+                </button>
+
+                <div
+                  class="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                  :class="
+                    expandedThinking.has(message.id)
+                      ? 'grid-rows-[1fr]'
+                      : 'grid-rows-[0fr]'
+                  "
+                >
+                  <div
+                    class="overflow-hidden border-t transition-colors duration-300"
+                    :class="
+                      expandedThinking.has(message.id)
+                        ? 'border-zinc-200 dark:border-zinc-700'
+                        : 'border-transparent'
+                    "
+                  >
+                    <div class="space-y-3 px-3 py-2.5">
+                      <template v-for="(part, i) in message.parts" :key="i">
+                        <p
+                          v-if="part.type === 'reasoning'"
+                          class="leading-relaxed whitespace-pre-wrap"
+                        >
+                          {{ part.text }}
+                        </p>
+
+                        <div
+                          v-else-if="part.type === 'tool-webSearch'"
+                          class="space-y-2"
+                        >
+                          <!-- 搜索状态行 -->
+                          <div class="flex items-center gap-1.5">
+                            <i
+                              class="text-sm"
+                              :class="
+                                part.state === 'output-available'
+                                  ? 'ri-check-line text-green-500'
+                                  : 'ri-loader-4-line animate-spin'
+                              "
+                            ></i>
+                            <span>
+                              {{
+                                part.state === 'output-available'
+                                  ? `已搜索「${part.input?.query}」`
+                                  : `正在搜索「${part.input?.query ?? '...'}」`
+                              }}
+                            </span>
+                          </div>
+                          <!-- 搜索结果卡片 -->
+                          <div
+                            v-if="
+                              part.state === 'output-available' &&
+                              Array.isArray(part.output) &&
+                              part.output.length
+                            "
+                            class="grid grid-cols-2 gap-2"
+                          >
+                            <a
+                              v-for="(result, ri) in part.output"
+                              :key="ri"
+                              :href="result.url"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="group flex flex-col gap-0.5 rounded-sm border border-zinc-200 px-2 py-1.5 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:bg-zinc-700/30"
+                            >
+                              <span
+                                class="truncate font-medium text-zinc-600 group-hover:text-zinc-800 dark:text-zinc-400 dark:group-hover:text-zinc-300"
+                              >
+                                {{ result.title }}
+                              </span>
+                              <span
+                                class="truncate text-zinc-400 dark:text-zinc-600"
+                              >
+                                {{ getDomain(result.url) }}
+                              </span>
+                            </a>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+
+            <UiMarkdown
+              v-if="message.parts.some((p) => p.type === 'text')"
+              :md="message.displayText"
+              class="w-full"
+            />
+          </div>
         </div>
       </div>
 
@@ -109,14 +243,56 @@
 <script setup>
 const user = useSupabaseUser()
 
-const { modelType, messages, sendMessage, stopMessage } = useChat()
+const { modelType, messages, status, chatError, sendMessage, stopMessage } =
+  useChat()
+
+// 思考块展开状态
+const expandedThinking = reactive(new Set())
+const toggleThinking = (id) => {
+  if (expandedThinking.has(id)) {
+    expandedThinking.delete(id)
+  } else {
+    expandedThinking.add(id)
+  }
+}
+
+// 提取域名
+const getDomain = (url) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
+
+const isLoading = computed(
+  () => status.value === 'submitted' || status.value === 'streaming',
+)
 
 const input = ref('')
 const inputRef = ref(null)
-const isLoading = ref(false)
 const isModalShow = ref(false)
 const messageElements = ref([])
 const errorMsg = ref('')
+
+// 监听 AI SDK 错误
+watch(chatError, (err) => {
+  if (err) errorMsg.value = err.message
+})
+
+// 新消息时自动展开最新思考块（每条消息只处理一次，避免流式更新覆盖用户操作）
+const seenMessages = new Set()
+watch(
+  messages,
+  (val) => {
+    const last = val[val.length - 1]
+    if (last && last.role === 'assistant' && !seenMessages.has(last.id)) {
+      seenMessages.add(last.id)
+      expandedThinking.add(last.id)
+    }
+  },
+  { deep: false },
+)
 
 const credits = ref(null)
 
@@ -143,7 +319,7 @@ const handleKeydown = (e) => {
 const scrollToLastUserMessage = async () => {
   await nextTick()
 
-  const lastUserMessageIndex = messages.value.findLastIndex(
+  const lastUserMessageIndex = [...messages.value].findLastIndex(
     (m) => m.role === 'user',
   )
   if (lastUserMessageIndex !== -1) {
@@ -161,7 +337,6 @@ const scrollToLastUserMessage = async () => {
 const handleButtonClick = () => {
   if (isLoading.value) {
     stopMessage()
-    isLoading.value = false
   } else {
     handleSubmit()
   }
@@ -169,35 +344,29 @@ const handleButtonClick = () => {
 
 // 提交
 const handleSubmit = throttle(async () => {
-  if (!input.value.trim()) return
+  if (!input.value.trim() || isLoading.value) return
 
   errorMsg.value = ''
-  isLoading.value = true
 
-  try {
-    const sendPromise = sendMessage(input.value)
+  const text = input.value
+  input.value = ''
 
-    input.value = ''
+  // 先触发发送，用户消息会被同步加入列表
+  const promise = sendMessage(text)
 
-    // 滚动到底部显示用户消息
-    await nextTick()
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    })
+  // 等用户消息渲染并完成浏览器布局后再滚动到底部
+  await nextTick()
+  await new Promise((resolve) => requestAnimationFrame(resolve))
+  window.scrollTo({
+    top: document.documentElement.scrollHeight,
+    behavior: 'smooth',
+  })
 
-    // 等待 AI 回复完成
-    await sendPromise
+  // 等待 AI 回复完成
+  await promise
 
-    // AI 回复后滚动到最后一条用户消息位置
-    if (!errorMsg.value) await scrollToLastUserMessage()
-  } catch (error) {
-    if (error.name !== 'AbortError') {
-      errorMsg.value = error.message
-    }
-  } finally {
-    isLoading.value = false
-  }
+  // AI 回复后滚动到最后一条用户消息位置
+  if (!chatError.value) await scrollToLastUserMessage()
 })
 
 const getCredits = async () => {

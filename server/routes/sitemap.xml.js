@@ -5,7 +5,7 @@ const routes = ['', '/life', '/poetry', '/hobby', '/note']
 export default defineCachedEventHandler(
   async (event) => {
     const client = await serverSupabaseClient(event)
-    const siteUrl = getRequestURL(event).origin
+    const siteUrl = useRuntimeConfig(event).public.siteUrl
 
     setResponseHeader(event, 'Content-Type', 'application/xml')
 
@@ -30,14 +30,14 @@ export default defineCachedEventHandler(
       // 获取所有笔记 ID
       const { data: notes, error } = await client
         .from('notes')
-        .select('id, created_at')
-        .order('created_at', { ascending: false })
+        .select('id, updated_at')
+        .order('updated_at', { ascending: false })
 
       if (error) throw error
 
       // 添加笔记动态路由
       for (const note of notes) {
-        const lastmod = new Date(note.created_at).toISOString().split('T')[0]
+        const lastmod = new Date(note.updated_at).toISOString().split('T')[0]
 
         xml.push(
           '  <url>',

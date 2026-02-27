@@ -1,121 +1,93 @@
+import { Chat } from '@ai-sdk/vue'
+import { DefaultChatTransport } from 'ai'
+
 export const useChat = (defaultPrompt = '') => {
   const modelType = ref(Object.keys(AI_MODELS)[0])
-  const messages = ref([])
-  const abortController = ref(null)
 
-  let queue = ''
-  let isTyping = false
+  const chat = new Chat({
+    transport: new DefaultChatTransport({
+      api: '/api/ai/chat',
+      body: () => ({
+        model: modelType.value,
+        ...(defaultPrompt ? { systemPrompt: defaultPrompt } : {}),
+      }),
+    }),
+  })
 
-  const typeWriter = () => {
-    if (queue.length > 0) {
-      const step = queue.length < 20 ? 1 : Math.ceil(queue.length / 30)
+  // 打字机效果
+  const typedTexts = ref({}) // messageId -> 已显示文本
+  const queues = {} // messageId -> 待显示文本
+  const typing = new Set()
 
-      const chunk = queue.slice(0, step)
+  const getFullText = (msg) =>
+    msg.parts
+      .filter((p) => p.type === 'text')
+      .map((p) => p.text)
+      .join('')
 
-      const currentMsg = messages.value[messages.value.length - 1]
-      if (currentMsg) {
-        currentMsg.content += chunk
-      }
-
-      queue = queue.slice(step)
-      requestAnimationFrame(typeWriter)
-    } else {
-      isTyping = false
+  const typeWriter = (id) => {
+    const pending = queues[id]
+    if (!pending?.length) {
+      typing.delete(id)
+      return
     }
+    const step = pending.length < 20 ? 1 : Math.ceil(pending.length / 30)
+    typedTexts.value[id] = (typedTexts.value[id] ?? '') + pending.slice(0, step)
+    queues[id] = pending.slice(step)
+    requestAnimationFrame(() => typeWriter(id))
   }
 
-  const sendMessage = async (content) => {
-    abortController.value = new AbortController()
-    messages.value.push({ role: 'user', content })
-
-    queue = ''
-    isTyping = false
-
-    let hasResponseStarted = false
-
-    try {
-      const stream = await $fetch('/api/ai/chat', {
-        method: 'POST',
-        body: {
-          model: modelType.value,
-          messages: [
-            ...(defaultPrompt
-              ? [{ role: 'system', content: defaultPrompt }]
-              : []),
-            ...messages.value,
-          ],
-        },
-        responseType: 'stream',
-        signal: abortController.value.signal,
-      })
-
-      const reader = stream.getReader()
-      const decoder = new TextDecoder()
-
-      let buffer = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        const chunk = decoder.decode(value, { stream: true })
-        buffer += chunk
-        const lines = buffer.split('\n')
-        buffer = lines.pop()
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6)
-            if (data === '[DONE]') {
-              break
-            } else if (data.trim()) {
-              const parsed = JSON.parse(data)
-              const content = parsed.choices?.[0]?.delta?.content
-              if (content) {
-                if (!hasResponseStarted) {
-                  hasResponseStarted = true
-                  messages.value.push({ role: 'assistant', content: '' })
-                }
-
-                queue += content
-
-                if (!isTyping) {
-                  isTyping = true
-                  typeWriter()
-                }
-              }
-            }
-          }
+  // 流式传输时逐字追加队列
+  watch(
+    () => chat.messages,
+    (msgs) => {
+      if (chat.status !== 'streaming') return
+      msgs.forEach((msg) => {
+        if (msg.role !== 'assistant') return
+        const full = getFullText(msg)
+        const shown = typedTexts.value[msg.id] ?? ''
+        const queued = queues[msg.id] ?? ''
+        const newText = full.slice(shown.length + queued.length)
+        if (!newText) return
+        queues[msg.id] = queued + newText
+        if (!typing.has(msg.id)) {
+          typing.add(msg.id)
+          requestAnimationFrame(() => typeWriter(msg.id))
         }
-      }
-    } catch (error) {
-      queue = ''
-      isTyping = false
+      })
+    },
+    { deep: true },
+  )
 
-      if (error.name !== 'AbortError' && hasResponseStarted) {
-        messages.value.pop()
-      }
+  // 流结束后立即补全剩余文本
+  watch(
+    () => chat.status,
+    (status) => {
+      if (status !== 'ready' && status !== 'error') return
+      chat.messages.forEach((msg) => {
+        if (msg.role !== 'assistant') return
+        typedTexts.value[msg.id] = getFullText(msg)
+        queues[msg.id] = ''
+      })
+    },
+  )
 
-      throw error
-    } finally {
-      abortController.value = null
-    }
-  }
-
-  const stopMessage = () => {
-    if (abortController.value) {
-      abortController.value.abort()
-      abortController.value = null
-    }
-
-    isTyping = false
-    queue = ''
-  }
+  const messages = computed(() =>
+    chat.messages.map((msg) => ({
+      ...msg,
+      displayText:
+        msg.role === 'user'
+          ? getFullText(msg)
+          : (typedTexts.value[msg.id] ?? getFullText(msg)),
+    })),
+  )
 
   return {
     modelType,
     messages,
-    sendMessage,
-    stopMessage,
+    status: computed(() => chat.status),
+    chatError: computed(() => chat.error),
+    sendMessage: (content) => chat.sendMessage({ text: content }),
+    stopMessage: () => chat.stop(),
   }
 }

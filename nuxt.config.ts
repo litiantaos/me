@@ -48,6 +48,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     aiGatewayApiKey: '',
+    tavilyApiKey: '',
     tmdbApiKey: '',
     igdbClientId: '',
     igdbClientSecret: '',

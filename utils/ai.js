@@ -1,23 +1,18 @@
 export const AI_MODELS = {
-  'gemini-2.5-flash-lite': {
-    name: 'Gemini 2.5 Flash Lite',
-    provider: 'google/gemini-2.5-flash-lite',
+  'deepseek-v3.2-thinking': {
+    name: 'DeepSeek 3.2 Thinking',
+    provider: 'deepseek/deepseek-v3.2-thinking',
+    logo: 'ri-deepseek-fill',
+  },
+  'gemini-3.1-pro-preview': {
+    name: 'Gemini 3.1 Pro Preview',
+    provider: 'google/gemini-3.1-pro-preview',
     logo: 'ri-gemini-fill',
   },
-  'gemini-3-pro-preview': {
-    name: 'Gemini 3 Pro Preview',
-    provider: 'google/gemini-3-pro-preview',
-    logo: 'ri-gemini-fill',
-  },
-  'claude-sonnet-4.5': {
-    name: 'Claude Sonnet 4.5',
-    provider: 'anthropic/claude-sonnet-4.5',
+  'claude-sonnet-4.6': {
+    name: 'Claude Sonnet 4.6',
+    provider: 'anthropic/claude-sonnet-4.6',
     logo: 'ri-claude-fill',
-  },
-  'gpt-5-nano': {
-    name: 'GPT 5 Nano',
-    provider: 'openai/gpt-5-nano',
-    logo: 'ri-openai-fill',
   },
   'gpt-5.2': {
     name: 'GPT 5.2',
@@ -29,29 +24,14 @@ export const AI_MODELS = {
     provider: 'xai/grok-4.1-fast-reasoning',
     logo: 'ri-grok-ai-fill',
   },
-  'deepseek-v3.2': {
-    name: 'DeepSeek 3.2',
-    provider: 'deepseek/deepseek-v3.2',
-    logo: 'ri-deepseek-fill',
-  },
-  'qwen3-max-thinking': {
-    name: 'Qwen3 Max Thinking',
-    provider: 'alibaba/qwen3-max-thinking',
+  'qwen3.5-plus': {
+    name: 'Qwen3.5 Plus',
+    provider: 'alibaba/qwen3.5-plus',
     logo: 'ri-qwen-ai-fill',
   },
-  'glm-4.7': {
-    name: 'GLM 4.7',
-    provider: 'zai/glm-4.7',
-    logo: 'ri-zhipu-ai-fill',
-  },
-  'minimax-m2.1': {
-    name: 'Minimax M2.1',
-    provider: 'minimax/minimax-m2.1',
+  'minimax-m2.5': {
+    name: 'Minimax M2.5',
+    provider: 'minimax/minimax-m2.5',
     logo: 'ri-brain-3-fill',
-  },
-  'kimi-k2.5': {
-    name: 'Kimi K2.5',
-    provider: 'moonshotai/kimi-k2.5',
-    logo: 'ri-brain-4-fill',
   },
 }

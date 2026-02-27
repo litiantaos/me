@@ -1,17 +1,12 @@
 export default defineCachedEventHandler(
   (event) => {
-    const siteUrl = getRequestURL(event).origin
+    const siteUrl = useRuntimeConfig(event).public.siteUrl
 
     setResponseHeader(event, 'Content-Type', 'text/plain')
 
     const rules = [
       'User-Agent: *',
       '',
-      'Allow: /',
-      'Allow: /note/',
-      'Allow: /life/',
-      'Allow: /poetry/',
-      'Allow: /hobby/',
       'Disallow: /login/',
       'Disallow: /note/new/',
       'Disallow: /hobby/add/',
