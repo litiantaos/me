@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     igdbClientId: '',
     igdbClientSecret: '',
     mapboxToken: '',
+    noteApiToken: '',
 
     public: {
       name: '',
