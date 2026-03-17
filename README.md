@@ -11,12 +11,8 @@
 
 ## 编辑器
 
-推荐使用 VS Code，安装以下插件：
-
-- Vue (Official)
-- Tailwind CSS IntelliSense
-- Prettier
-- Iconify IntelliSense
+- Zed
+- VS Code (Vue, Tailwind CSS IntelliSense, Prettier, Iconify IntelliSense)
 
 ## 开始
 

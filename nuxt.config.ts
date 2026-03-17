@@ -33,9 +33,21 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('highlight.js')) return 'highlight'
+            if (id.includes('node_modules/marked')) return 'markdown'
+            if (id.includes('@ai-sdk') || id.includes('node_modules/ai/'))
+              return 'ai-sdk'
+          },
+        },
+      },
+    },
   },
 
-  modules: ['@nuxtjs/supabase'],
+  modules: ['@nuxtjs/supabase', '@vercel/analytics', '@vercel/speed-insights'],
 
   supabase: {
     types: false,

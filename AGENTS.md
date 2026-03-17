@@ -24,11 +24,7 @@
 
 **格式:**
 
-- **缩进:** 2 空格
-- **分号:** **禁用** (依赖 ASI)
-- **引号:** 单引号 `'`
-- **行宽:** Prettier 默认 (80字符软限制)
-- **尾随逗号:** ES5 (对象/数组多行时)
+- **代码格式化:** 使用项目根目录的 `.prettierrc` 配置文件，其他保持 Prettier 默认。
 
 **导入/导出:**
 
@@ -49,12 +45,12 @@
 
 **Vue/Nuxt 模式:**
 
-- **组件:** `<script setup>` 语法。Props 定义用 `defineProps`。
+- **组件:** `<script setup>` 语法。Props 定义用 `defineProps`，双向绑定优先使用 Vue 3.4+ 的 `defineModel()`。
+- **路由导航:** 必须使用 `<NuxtLink to="...">`，避免使用原生 `<a>` 标签。
 - **状态:** 使用 `useState` 进行跨组件共享。局部状态用 `ref`/`reactive`。
 - **数据获取:**
   - 服务端/SSR: `$fetch` 或 `useAsyncData`
   - 客户端交互: `$fetch`
-  - Supabase: `useSupabaseClient()` (客户端读写), 服务端 API 处理敏感逻辑。
 - **样式:** 优先使用 Tailwind Utility Classes。
   - 避免 `<style scoped>` 除非绝对必要。
   - 动态类: `:class="['base-class', condition && 'active-class']"`
@@ -73,20 +69,34 @@
 - `assets/css/` - 全局样式 (`main.css` 含 Tailwind 指令)
 - `utils/` - 通用工具函数
 
-## 4. 代理行为准则 (Agent Behavior)
+## 4. 代理行为准则
 
 1.  **中文沟通:** 所有输出、注释、Git 提交信息必须使用**中文**。
 2.  **极简主义:** 代码力求简洁、高效。避免过度工程化。
-3.  **依赖限制:** **严禁**擅自添加 npm 依赖。仅使用 `package.json` 中已有的库。
-4.  **安全:** 不要在代码中硬编码敏感信息。使用 `runtimeConfig`。
+3.  **依赖限制:** **严禁**擅自添加 npm 依赖。仅使用 `package.json` 中已有的库。**不要**假设存在现成库。
+4.  **安全:** 不要在代码中硬编码敏感信息。使用 `useRuntimeConfig()`（客户端仅可读 public 字段，私钥必须仅在服务端调用）。
 5.  **UI/UX:** 遵循现有的设计语言 (Tailwind, Remixicon)。保持视觉一致性。
+6.  **修改前确认:** 在编辑已有文件之前，必须先读取或检索文件内容，**禁止**臆测代码结构或直接覆盖整个文件。
 
 ## 5. 特定库使用指南
 
 - **Tailwind v4:** 直接在 CSS 中使用 `@theme`, `@utility` 等新特性 (参考 `assets/css/main.css`)。
 - **Icons:** 使用 Remixicon 类名 (如 `<i class="ri-home-line" />`)。
-- **Supabase:**
+- **Supabase (客户端使用):**
   ```javascript
   const client = useSupabaseClient()
   const { data, error } = await client.from('posts').select('*')
   ```
+- **Supabase (服务端 server/api/ 使用):**
+  **禁止**使用 `useSupabaseClient`，必须通过传入 `event` 获取 server client。
+  ```javascript
+  import { serverSupabaseClient } from '#supabase/server'
+  export default defineEventHandler(async (event) => {
+    const client = await serverSupabaseClient(event)
+    const { data } = await client.from('posts').select('*')
+  })
+  ```
+- **Nitro 服务端 API 规范:**
+  - GET 参数: `getQuery(event)`
+  - POST 载荷: `readBody(event)`
+  - 抛出错误: `throw createError({ statusCode: 400, statusMessage: '...' })`
