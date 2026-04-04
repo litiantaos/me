@@ -2,13 +2,15 @@
   <UiLayout :hasHeader="false">
     <div class="mt-[25vh]">
       <img
-        src="/images/me.jpg"
-        alt="avatar"
+        src="/images/me.webp"
+        :alt="`${name}头像`"
         class="h-12 w-12 rounded-full object-cover"
       />
 
-      <h1 class="mt-10 text-3xl font-bold">Hello!</h1>
-      <h2 class="mt-2 text-xl font-bold">我是{{ name }}。</h2>
+      <h1>
+        <span class="mt-10 block text-3xl font-bold">Hello!</span>
+        <span class="mt-2 block text-xl font-bold">我是{{ name }}。</span>
+      </h1>
 
       <div class="mt-10 space-y-4 text-justify leading-7">
         <p>
@@ -46,4 +48,8 @@ const { currentAge } = useProfile()
 const {
   public: { name, email, github },
 } = useRuntimeConfig()
+
+useSeoMeta({
+  title: name,
+})
 </script>

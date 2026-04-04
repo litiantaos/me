@@ -11,7 +11,7 @@
         class="relative flex h-full items-center gap-4 p-4"
         :class="[titleAlign, { 'mx-auto max-w-2xl': !isFullPage }]"
       >
-        <h1 class="flex items-center gap-4 font-bold select-none">
+        <div class="flex items-center gap-4 font-bold select-none">
           <button v-if="hasUiTitle" class="text-2xl" @click="handleBack">
             <span class="text-blue-500 italic">Taos</span>
             <span>Life</span>
@@ -25,7 +25,7 @@
           >
             {{ title }}
           </div>
-        </h1>
+        </div>
 
         <Transition name="fade">
           <UiLoader v-if="isLoading" />

@@ -11,19 +11,19 @@
     "check": "npx npm-check-updates --interactive --format group"
   },
   "dependencies": {
-    "@ai-sdk/vue": "^3.0.116",
+    "@ai-sdk/vue": "^3.0.146",
     "@nuxtjs/supabase": "^2.0.4",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.2.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "ai": "^6.0.116",
+    "ai": "^6.0.146",
     "highlight.js": "^11.11.1",
-    "marked": "^17.0.4",
+    "marked": "^17.0.5",
     "nuxt": "^4.4.2",
     "remixicon": "^4.9.1",
-    "tailwindcss": "^4.2.1",
-    "vue": "^3.5.30",
-    "vue-router": "^5.0.3",
+    "tailwindcss": "^4.2.2",
+    "vue": "^3.5.32",
+    "vue-router": "^5.0.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {

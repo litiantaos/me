@@ -82,21 +82,19 @@
 
 - **Tailwind v4:** 直接在 CSS 中使用 `@theme`, `@utility` 等新特性 (参考 `assets/css/main.css`)。
 - **Icons:** 使用 Remixicon 类名 (如 `<i class="ri-home-line" />`)。
-- **Supabase (客户端使用):**
+- **Supabase:**
   ```javascript
+  // 客户端
   const client = useSupabaseClient()
-  const { data, error } = await client.from('posts').select('*')
-  ```
-- **Supabase (服务端 server/api/ 使用):**
-  **禁止**使用 `useSupabaseClient`，必须通过传入 `event` 获取 server client。
-  ```javascript
+  const { data, error } = await client.from('notes').select('*')
+  
+  // 服务端 server/api/
   import { serverSupabaseClient } from '#supabase/server'
   export default defineEventHandler(async (event) => {
+    const query = getQuery(event)
+    const body = await readBody(event)
+    
     const client = await serverSupabaseClient(event)
-    const { data } = await client.from('posts').select('*')
+    const { data } = await client.from('notes').select('*')
   })
   ```
-- **Nitro 服务端 API 规范:**
-  - GET 参数: `getQuery(event)`
-  - POST 载荷: `readBody(event)`
-  - 抛出错误: `throw createError({ statusCode: 400, statusMessage: '...' })`

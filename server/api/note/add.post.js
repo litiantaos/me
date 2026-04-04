@@ -1,3 +1,8 @@
+// POST /api/note/add
+// Authorization: Bearer <NOTE_API_TOKEN>
+// Body: { content: string, user_id: string }
+// Returns: { id, content, created_at }
+
 import { timingSafeEqual, createHash } from 'node:crypto'
 import { serverSupabaseServiceRole } from '#supabase/server'
 

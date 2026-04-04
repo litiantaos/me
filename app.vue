@@ -3,9 +3,20 @@
 </template>
 
 <script setup>
+const route = useRoute()
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
+
 useHead({
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk}｜TaosLife` : 'TaosLife'
   },
+  link: () => [
+    {
+      rel: 'canonical',
+      href: siteUrl + route.path,
+    },
+  ],
 })
 </script>

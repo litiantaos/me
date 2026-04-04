@@ -14,24 +14,14 @@ export const AI_MODELS = {
     provider: 'anthropic/claude-sonnet-4.6',
     logo: 'ri-claude-fill',
   },
-  'gpt-5.2': {
-    name: 'GPT 5.2',
-    provider: 'openai/gpt-5.2',
+  'gpt-5.4': {
+    name: 'GPT 5.4',
+    provider: 'openai/gpt-5.4',
     logo: 'ri-openai-fill',
   },
   'grok-4.1-fast-reasoning': {
     name: 'Grok 4.1 Fast Reasoning',
     provider: 'xai/grok-4.1-fast-reasoning',
     logo: 'ri-grok-ai-fill',
-  },
-  'qwen3.5-plus': {
-    name: 'Qwen3.5 Plus',
-    provider: 'alibaba/qwen3.5-plus',
-    logo: 'ri-qwen-ai-fill',
-  },
-  'minimax-m2.5': {
-    name: 'Minimax M2.5',
-    provider: 'minimax/minimax-m2.5',
-    logo: 'ri-brain-3-fill',
   },
 }
