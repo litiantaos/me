@@ -27,6 +27,10 @@ export default defineNuxtConfig({
           type: 'image/x-icon',
           href: '/favicon.ico',
         },
+        {
+          rel: 'apple-touch-icon',
+          href: '/apple-touch-icon.png',
+        },
       ],
     },
     pageTransition: { name: 'move-up', mode: 'out-in' },

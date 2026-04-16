@@ -132,6 +132,10 @@ const plainTextRenderer = {
   list({ items }) {
     return items.map((item) => this.parser.parse(item.tokens)).join('') + ' '
   },
+  // 复选框返回文本
+  checkbox({ checked }) {
+    return checked ? '[x] ' : '[ ] '
+  },
 }
 
 // HTML 渲染实例

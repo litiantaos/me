@@ -29,15 +29,23 @@
 
   ul,
   ol {
-    @apply my-6 ml-6;
+    @apply my-6 list-inside;
   }
 
   ul {
     @apply list-disc;
+
+    li::marker {
+      content: '\2022\00a0\00a0\00a0';
+    }
   }
 
   ol {
     @apply list-decimal;
+
+    li::marker {
+      content: counter(list-item) '.\00a0\00a0\00a0';
+    }
   }
 
   li {

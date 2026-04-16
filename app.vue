@@ -19,4 +19,8 @@ useHead({
     },
   ],
 })
+
+useSeoMeta({
+  ogImage: () => siteUrl + '/images/card.png',
+})
 </script>

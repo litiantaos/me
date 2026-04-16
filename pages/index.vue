@@ -8,7 +8,7 @@
       />
 
       <h1>
-        <span class="mt-10 block text-3xl font-bold">Hello!</span>
+        <span class="mt-10 block text-3xl font-bold">Hello! </span>
         <span class="mt-2 block text-xl font-bold">我是{{ name }}。</span>
       </h1>
 
