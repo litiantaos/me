@@ -11,24 +11,23 @@
     "check": "npx npm-check-updates --interactive --format group"
   },
   "dependencies": {
-    "@ai-sdk/vue": "^3.0.168",
-    "@nuxtjs/supabase": "^2.0.5",
-    "@tailwindcss/vite": "^4.2.2",
+    "@ai-sdk/vue": "^4.0.79",
+    "@nuxtjs/supabase": "^2.0.10",
+    "@tailwindcss/vite": "^4.3.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "ai": "^6.0.168",
-    "highlight.js": "^11.11.1",
+    "ai": "^7.0.79",
+    "highlight.js": "^11.12.0",
     "html-to-image": "^1.11.13",
-    "marked": "^18.0.1",
-    "nuxt": "^4.4.2",
+    "marked": "^18.0.11",
+    "nuxt": "^4.5.2",
     "remixicon": "^4.9.1",
-    "tailwindcss": "^4.2.2",
-    "vue": "^3.5.32",
-    "vue-router": "^5.0.4",
-    "zod": "^4.3.6"
+    "tailwindcss": "^4.3.3",
+    "vue": "^3.5.41",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.7.2"
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1"
   }
 }
