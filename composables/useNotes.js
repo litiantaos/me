@@ -11,29 +11,30 @@ export const useNotes = () => {
   const isNoteFetching = useState('noteFetching', () => false)
   const isDeleting = useState('noteDeleting', () => false)
 
-  // 获取笔记列表
+  // 分页追加：滚动加载时连续调用，refreshNotes 负责重置分页状态
   const fetchNotes = async () => {
     isNotesFetching.value = true
 
-    const from = page.value * pageSize
-    const to = from + pageSize - 1
+    try {
+      const from = page.value * pageSize
+      const to = from + pageSize - 1
 
-    const { data, error } = await client
-      .from('notes')
-      .select('id, content, user_id, created_at, updated_at')
-      .order('created_at', { ascending: false })
-      .range(from, to)
+      const { data, error } = await client
+        .from('notes')
+        .select('id, content, user_id, created_at, updated_at')
+        .order('created_at', { ascending: false })
+        .range(from, to)
 
-    if (error) throw error
+      if (error) throw error
 
-    notes.value = [...notes.value, ...data]
-    hasMoreNotes.value = data.length === pageSize
-    page.value++
-
-    isNotesFetching.value = false
+      notes.value = [...notes.value, ...data]
+      hasMoreNotes.value = data.length === pageSize
+      page.value++
+    } finally {
+      isNotesFetching.value = false
+    }
   }
 
-  // 刷新笔记列表
   const refreshNotes = async () => {
     notes.value = []
     hasMoreNotes.value = true
@@ -41,25 +42,29 @@ export const useNotes = () => {
     await fetchNotes()
   }
 
-  // 获取单个笔记
   const fetchNote = async (noteId) => {
     isNoteFetching.value = true
 
-    const { data, error } = await client
-      .from('notes')
-      .select('id, content, user_id, created_at, updated_at')
-      .eq('id', noteId)
-      .single()
+    try {
+      const { data, error } = await client
+        .from('notes')
+        .select('id, content, user_id, created_at, updated_at')
+        .eq('id', noteId)
+        .single()
 
-    if (error) throw error
+      if (error) throw error
 
-    isNoteFetching.value = false
-
-    return data
+      return data
+    } finally {
+      isNoteFetching.value = false
+    }
   }
 
   // 获取所有笔记指定字段数据
   const fetchNotesData = async (fields = 'created_at') => {
+    // 匿名访问时无 user，直接返回空列表避免 TypeError
+    if (!user.value) return []
+
     const { data, error } = await client
       .from('notes')
       .select(fields)
@@ -71,37 +76,29 @@ export const useNotes = () => {
     return data
   }
 
-  // 保存笔记
   const saveNote = async (content, noteId) => {
-    try {
-      const embedding = await $fetch('/api/ai/embedding', {
-        method: 'POST',
-        body: { content },
-      })
+    const embedding = await $fetch('/api/ai/embedding', {
+      method: 'POST',
+      body: { content },
+    })
 
-      if (noteId) {
-        // 更新
-        const { error } = await client
-          .from('notes')
-          .update({ content, embedding })
-          .eq('id', noteId)
-          .eq('user_id', user.value.sub)
+    if (noteId) {
+      const { error } = await client
+        .from('notes')
+        .update({ content, embedding })
+        .eq('id', noteId)
+        .eq('user_id', user.value.sub)
 
-        if (error) throw error
-      } else {
-        // 新建
-        const { error } = await client
-          .from('notes')
-          .insert({ content, embedding, user_id: user.value.sub })
+      if (error) throw error
+    } else {
+      const { error } = await client
+        .from('notes')
+        .insert({ content, embedding, user_id: user.value.sub })
 
-        if (error) throw error
-      }
-    } catch (error) {
-      throw error
+      if (error) throw error
     }
   }
 
-  // 搜索笔记
   const searchNotes = async (query) => {
     isNotesFetching.value = true
 
@@ -123,30 +120,29 @@ export const useNotes = () => {
       if (error) throw error
 
       return data
-    } catch (error) {
-      throw error
     } finally {
       isNotesFetching.value = false
     }
   }
 
-  // 删除笔记
   const deleteNote = async (noteId) => {
     isDeleting.value = true
 
-    const { error } = await client
-      .from('notes')
-      .delete()
-      .eq('id', noteId)
-      .eq('user_id', user.value.sub)
+    try {
+      const { error } = await client
+        .from('notes')
+        .delete()
+        .eq('id', noteId)
+        .eq('user_id', user.value.sub)
 
-    if (error) throw error
+      if (error) throw error
 
-    if (notes.value.length > 0) {
-      notes.value = notes.value.filter((note) => note.id !== noteId)
+      if (notes.value.length > 0) {
+        notes.value = notes.value.filter((note) => note.id !== noteId)
+      }
+    } finally {
+      isDeleting.value = false
     }
-
-    isDeleting.value = false
   }
 
   return {

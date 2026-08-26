@@ -7,9 +7,25 @@ import {
   jsonSchema,
 } from 'ai'
 import { AI_MODELS } from '~/utils/ai'
+import { serverSupabaseUser } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: '未登录' })
+  }
+  checkRateLimit(`ai:chat:${user.sub}`, 10, 60000)
+
   const { messages, model, systemPrompt } = await readBody(event)
+
+  // SDK 7 的 UIMessage 以 parts 承载内容，content-only 形态会在转换层抛错，此处直接 400
+  if (
+    !Array.isArray(messages) ||
+    !messages.length ||
+    !messages.every((m) => m?.role && Array.isArray(m.parts) && m.parts.length)
+  ) {
+    throw createError({ statusCode: 400, statusMessage: 'messages 格式不合法' })
+  }
   const { aiGatewayApiKey, tavilyApiKey } = useRuntimeConfig()
 
   const provider =

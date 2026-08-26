@@ -16,15 +16,23 @@ export default defineEventHandler(async (event) => {
 
   // 搜索
   if (path === 'search') {
-    let searchCondition = `search "${term}";`
+    if (typeof term !== 'string' || !term.trim()) {
+      throw createError({ statusCode: 400, statusMessage: 'term 不能为空' })
+    }
+    // 剔除引号避免注入 Apicalypse 查询语法
+    const keyword = term.replace(/"/g, '').trim()
+    let searchCondition = `search "${keyword}";`
 
     // 中文模糊匹配
-    if (/[\u4e00-\u9fa5]/.test(term)) {
+    if (/[\u4e00-\u9fa5]/.test(keyword)) {
       const [games, alts] = await Promise.all([
-        fetchIgdb('/games', `fields id; where name ~ *"${term}"*; limit 20;`),
+        fetchIgdb(
+          '/games',
+          `fields id; where name ~ *"${keyword}"*; limit 20;`,
+        ),
         fetchIgdb(
           '/alternative_names',
-          `fields game; where name ~ *"${term}"*; limit 20;`,
+          `fields game; where name ~ *"${keyword}"*; limit 20;`,
         ),
       ])
 

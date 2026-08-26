@@ -16,10 +16,6 @@ export default defineNuxtConfig({
           content:
             'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
         },
-        {
-          name: 'description',
-          content: `${process.env.NUXT_PUBLIC_NAME}的个人网站，记录想法与生活。`,
-        },
       ],
       link: [
         {

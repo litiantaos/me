@@ -1,3 +1,5 @@
+import { escapeAttrText, isSafeMediaSrc } from './md.js'
+
 // 获取图片尺寸
 export const getImageDimensions = (src) => {
   return new Promise((resolve) => {
@@ -41,10 +43,12 @@ export const processContentWithDimensions = async (content) => {
     const [fullMatch, alt, urlRaw] = match
     const src = urlRaw.split(' ')[0]
     if (!src) continue
+    // 非法协议直接丢弃该图
+    if (!isSafeMediaSrc(src, true)) continue
 
     const dims = await getDims(src, 'image')
     if (dims) {
-      const imgTag = `<img src="${src}" alt="${alt}" width="${dims.width}" height="${dims.height}" loading="lazy" />`
+      const imgTag = `<img src="${escapeAttrText(src)}" alt="${escapeAttrText(alt)}" width="${dims.width}" height="${dims.height}" loading="lazy" />`
       processed = processed.split(fullMatch).join(imgTag)
     }
   }

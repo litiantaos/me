@@ -15,7 +15,6 @@ export default defineCachedEventHandler(
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
 
-    // 添加所有静态路由
     for (const route of routes) {
       xml.push(
         '  <url>',
@@ -27,7 +26,6 @@ export default defineCachedEventHandler(
     }
 
     try {
-      // 获取所有笔记 ID
       const { data: notes, error } = await client
         .from('notes')
         .select('id, updated_at')
@@ -35,7 +33,6 @@ export default defineCachedEventHandler(
 
       if (error) throw error
 
-      // 添加笔记动态路由
       for (const note of notes) {
         const lastmod = new Date(note.updated_at).toISOString().split('T')[0]
 

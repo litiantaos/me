@@ -10,6 +10,7 @@
             <div class="flex flex-1 items-center justify-end">
               <button
                 class="ri-arrow-down-s-line text-lg"
+                aria-label="关闭"
                 @click="close"
               ></button>
             </div>

@@ -1,5 +1,6 @@
 let accessToken = null
 let tokenExpiry = 0
+let pendingTokenRequest = null
 
 const getAccessToken = async () => {
   const { igdbClientId, igdbClientSecret } = useRuntimeConfig()
@@ -8,17 +9,23 @@ const getAccessToken = async () => {
     return accessToken
   }
 
-  const response = await $fetch('https://id.twitch.tv/oauth2/token', {
-    method: 'POST',
-    params: {
-      client_id: igdbClientId,
-      client_secret: igdbClientSecret,
-      grant_type: 'client_credentials',
-    },
-  })
+  // 单飞：并发请求共享同一次刷新，失败后清空以便重试
+  if (!pendingTokenRequest) {
+    pendingTokenRequest = $fetch('https://id.twitch.tv/oauth2/token', {
+      method: 'POST',
+      params: {
+        client_id: igdbClientId,
+        client_secret: igdbClientSecret,
+        grant_type: 'client_credentials',
+      },
+    }).finally(() => {
+      pendingTokenRequest = null
+    })
+  }
 
+  const response = await pendingTokenRequest
   accessToken = response.access_token
-  tokenExpiry = Date.now() + response.expires_in * 1000 // 秒转毫秒
+  tokenExpiry = Date.now() + response.expires_in * 1000
 
   return accessToken
 }

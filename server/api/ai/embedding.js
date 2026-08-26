@@ -1,18 +1,20 @@
+import { serverSupabaseUser } from '#supabase/server'
+
 export default defineEventHandler(async (event) => {
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: '未登录' })
+  }
+  checkRateLimit(`ai:embedding:${user.sub}`, 30, 60000)
+
   const { content } = await readBody(event)
-  const { aiGatewayApiKey } = useRuntimeConfig()
+  if (
+    typeof content !== 'string' ||
+    !content.trim() ||
+    content.length > 100000
+  ) {
+    throw createError({ statusCode: 400, statusMessage: 'content 不合法' })
+  }
 
-  const response = await $fetch('https://ai-gateway.vercel.sh/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${aiGatewayApiKey}`,
-    },
-    body: {
-      model: 'openai/text-embedding-3-small',
-      input: content,
-      dimensions: 512,
-    },
-  })
-
-  return response.data[0].embedding
+  return generateEmbedding(content)
 })

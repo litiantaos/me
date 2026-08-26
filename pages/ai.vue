@@ -164,7 +164,7 @@
         <UiMessage type="error" :text="errorMsg" />
 
         <div
-          class="rounded-md border border-zinc-300 bg-white transition-all duration-300 focus-within:border-blue-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-rose-500/20 focus-within:ring-blue-400/20 dark:border-zinc-600 dark:bg-zinc-800"
+          class="rounded-md border border-zinc-300 bg-white transition-all duration-300 focus-within:border-blue-400! focus-within:shadow-md focus-within:ring-3 focus-within:shadow-blue-500/20 focus-within:ring-blue-400/20 dark:border-zinc-600 dark:bg-zinc-800"
         >
           <textarea
             ref="inputRef"

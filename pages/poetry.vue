@@ -14,11 +14,9 @@
       </p>
 
       <p class="mt-10 space-x-2">
-        <span
-          class="link-base cursor-pointer font-medium"
-          @click="toggleShiciShow"
-          >《{{ shici.origin?.title }}》</span
-        >
+        <button class="link-base font-medium" @click="toggleShiciShow">
+          《{{ shici.origin?.title }}》
+        </button>
         <span>{{ shici.origin?.dynasty }}</span>
         <span>{{ shici.origin?.author }}</span>
       </p>
@@ -28,7 +26,7 @@
           <p
             v-for="p in shici.origin?.content"
             :key="p"
-            v-html="p.replace(/。/g, '。<br>')"
+            v-html="escapeHtml(p).replace(/。/g, '。<br>')"
           ></p>
         </div>
       </Transition>
@@ -39,6 +37,10 @@
 <script setup>
 const { shici, fetchShici } = useShici()
 const isShiciShow = ref(false)
+
+// 转义 HTML 特殊字符，防止第三方 API 内容注入
+const escapeHtml = (str) =>
+  String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 const toggleShiciShow = () => {
   if (window.scrollY > 0) {

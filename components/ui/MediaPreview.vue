@@ -89,5 +89,8 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('click', openPreview)
   window.removeEventListener('keydown', handleEsc)
+
+  // 预览开启时卸载组件，需复位滚动锁
+  document.body.style.overflow = ''
 })
 </script>

@@ -40,11 +40,48 @@ hljs.registerLanguage('c', cpp)
 hljs.registerLanguage('yaml', yaml)
 hljs.registerLanguage('plaintext', plaintext)
 
+// 属性值编码：防止引号截断造成属性逃逸
+export const escapeAttrValue = (value) =>
+  String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+
+// 文本类属性 HTML 实体转义
+export const escapeAttrText = (value) =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+
+// 链接协议白名单：http/https/mailto；相对路径与锚点默认放行
+const isSafeHref = (href) => {
+  const value = String(href ?? '')
+    .trim()
+    .toLowerCase()
+  if (/^[a-z][a-z0-9+.-]*:/.test(value)) return /^(https?|mailto):/.test(value)
+  return true
+}
+
+// 媒体地址校验：仅 http/https，img 额外允许 data:image/
+export const isSafeMediaSrc = (src, allowDataImage = false) => {
+  const value = String(src ?? '')
+    .trim()
+    .toLowerCase()
+  if (/^https?:\/\//.test(value)) return true
+  return allowDataImage && value.startsWith('data:image/')
+}
+
 // HTML 渲染器配置
 const htmlRenderer = {
   link({ href, tokens }) {
     const text = this.parser.parseInline(tokens)
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
+    // 危险协议（javascript:/data:/vbscript: 等）仅保留链接文本
+    if (!isSafeHref(href)) return text
+    return `<a href="${escapeAttrValue(href)}" target="_blank" rel="noopener noreferrer">${text}</a>`
+  },
+  image({ href, title, text }) {
+    if (!isSafeMediaSrc(href, true)) return text || ''
+    const titleAttr = title ? ` title="${escapeAttrText(title)}"` : ''
+    return `<img src="${escapeAttrValue(href)}" alt="${escapeAttrText(text || '')}"${titleAttr} loading="lazy" />`
   },
   code({ text, lang }) {
     const language = hljs.getLanguage(lang) ? lang : 'plaintext'
@@ -59,16 +96,84 @@ const htmlRenderer = {
     </div>`
   },
   html({ text }) {
-    const whitelist = ['img', 'video', 'audio', 'br', 'iframe']
-    const tagRegex = new RegExp(
-      `^<\\/?(${whitelist.join('|')})(\\s+[^>]*)?>$`,
-      'i',
-    )
-
-    if (tagRegex.test(text.trim())) return text
-
-    return `<p>${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
+    return rebuildSafeHtml(text)
   },
+}
+
+// 允许的 HTML 标签及对应属性白名单
+const ALLOWED_TAGS = {
+  img: ['src', 'alt', 'title', 'width', 'height'],
+  video: ['src', 'controls', 'width', 'height'],
+  audio: ['src', 'controls', 'width', 'height'],
+  br: [],
+}
+
+// 匹配单个完整标签：<name attrs...>、</name>、<name attrs... />
+const TAG_RE =
+  /<\s*(\/?)\s*([a-zA-Z][a-zA-Z0-9]*)((?:"[^"]*"|'[^']*'|[^"'<>])*)>/
+
+// 解析属性字符串为键值对（支持双引号/单引号/无引号/布尔属性）
+const parseAttrs = (raw) => {
+  const attrs = {}
+  const attrRe =
+    /([a-zA-Z][\w-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g
+  let match
+  while ((match = attrRe.exec(raw))) {
+    attrs[match[1].toLowerCase()] = match[2] ?? match[3] ?? match[4] ?? ''
+  }
+  return attrs
+}
+
+// 按白名单重建单个标签，非白名单标签返回空字符串
+const rebuildTag = (rawTag) => {
+  const match = rawTag.match(TAG_RE)
+  if (!match) return ''
+
+  const [, slash, rawName, rawAttrs = ''] = match
+  const name = rawName.toLowerCase()
+  const allowed = ALLOWED_TAGS[name]
+  if (!allowed) return ''
+
+  // 闭合标签仅放行 video/audio
+  if (slash) return name === 'video' || name === 'audio' ? `</${name}>` : ''
+  if (name === 'br') return '<br>'
+
+  const attrs = parseAttrs(rawAttrs)
+  const parts = [`<${name}`]
+  for (const attr of allowed) {
+    if (!(attr in attrs)) continue
+    if (attr === 'src') {
+      if (!isSafeMediaSrc(attrs.src, name === 'img')) continue
+      parts.push(` src="${escapeAttrValue(attrs.src)}"`)
+    } else if (attr === 'controls') {
+      parts.push(' controls')
+    } else {
+      parts.push(` ${attr}="${escapeAttrText(attrs[attr])}"`)
+    }
+  }
+  parts.push(name === 'img' ? ' />' : '>')
+  const tag = parts.join('')
+  // video/audio 自闭合时补结束标签（HTML5 中 "/" 会被忽略）
+  return /\/\s*>$/.test(rawTag) && name !== 'img' ? `${tag}</${name}>` : tag
+}
+
+// 重建白名单标签并剔除危险属性；标签外的裸尖括号转义防走私；无任何白名单标签时整段丢弃
+const rebuildSafeHtml = (text) => {
+  let result = ''
+  let hasSafeTag = false
+  let last = 0
+  const escapeAngle = (value) =>
+    value.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+  for (const match of text.matchAll(new RegExp(TAG_RE.source, 'g'))) {
+    if (ALLOWED_TAGS[match[2].toLowerCase()]) hasSafeTag = true
+    result += escapeAngle(text.slice(last, match.index))
+    result += rebuildTag(match[0])
+    last = match.index + match[0].length
+  }
+  result += escapeAngle(text.slice(last))
+
+  return hasSafeTag ? result : ''
 }
 
 // 纯文本渲染器配置

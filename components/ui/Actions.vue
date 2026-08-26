@@ -20,21 +20,25 @@
       <button
         class="ri-more-line btn h-full! flex-1 rounded-none!"
         :class="customClass.hover"
+        aria-label="更多操作"
         @click="handleBtnOpen"
       ></button>
       <button
         class="ri-edit-line btn h-full! flex-1 rounded-none!"
         :class="customClass.hover"
+        aria-label="编辑"
         @click="$emit('edit')"
       ></button>
       <button
         class="ri-delete-bin-7-line btn h-full! flex-1 rounded-none! text-red-500 dark:text-red-400"
         :class="customClass.hover"
+        aria-label="删除"
         @click="handleDeleteConfirm"
       ></button>
       <button
         class="btn h-full! flex-1 rounded-none! text-blue-500"
         :class="customClass.hover"
+        aria-label="确认删除"
         @click="$emit('delete')"
         :disabled="isDeleting"
       >

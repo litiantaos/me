@@ -12,17 +12,19 @@
       v-if="totalPages > 1"
       class="flex h-2 w-full items-center justify-center gap-2"
     >
-      <div
+      <button
         v-for="(_, index) in totalPages"
         :key="index"
-        @click="scrollToPage(index)"
+        class="h-full cursor-pointer rounded-full transition-all duration-300"
         :class="[
-          'h-full cursor-pointer rounded-full transition-all duration-300',
           currentPage === index
             ? 'w-10 bg-zinc-400 dark:bg-zinc-500'
             : 'w-2 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600',
         ]"
-      ></div>
+        :aria-label="`第 ${index + 1} 页`"
+        :aria-current="currentPage === index ? 'page' : undefined"
+        @click="scrollToPage(index)"
+      ></button>
     </div>
   </div>
 </template>

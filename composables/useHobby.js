@@ -11,16 +11,19 @@ export const useHobby = () => {
   const fetchHobbyRecords = async () => {
     isFetching.value = true
 
-    const { data, error } = await client
-      .from('hobbies')
-      .select('*')
-      .order('date', { ascending: false })
-      .order('created_at', { ascending: false })
+    try {
+      const { data, error } = await client
+        .from('hobbies')
+        .select('*')
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false })
 
-    if (error) throw error
+      if (error) throw error
 
-    hobbies.value = data
-    isFetching.value = false
+      hobbies.value = data
+    } finally {
+      isFetching.value = false
+    }
   }
 
   const fetchHobbyRecordsByHobbyId = async (hobbyId) => {
@@ -38,46 +41,48 @@ export const useHobby = () => {
   const addHobbyRecord = async (record, recordId) => {
     isAdding.value = true
 
-    if (recordId) {
-      // 更新
-      const { error } = await client
-        .from('hobbies')
-        .update({
-          date: record.date,
-          channel: record.channel,
-          rating: record.rating,
+    try {
+      if (recordId) {
+        const { error } = await client
+          .from('hobbies')
+          .update({
+            date: record.date,
+            channel: record.channel,
+            rating: record.rating,
+          })
+          .eq('id', recordId)
+          .eq('user_id', user.value.sub)
+
+        if (error) throw error
+      } else {
+        const { error } = await client.from('hobbies').insert({
+          user_id: user.value.sub,
+          ...record,
         })
-        .eq('id', recordId)
-        .eq('user_id', user.value.sub)
 
-      if (error) throw error
-    } else {
-      // 新增
-      const { error } = await client.from('hobbies').insert({
-        user_id: user.value.sub,
-        ...record,
-      })
-
-      if (error) throw error
+        if (error) throw error
+      }
+    } finally {
+      isAdding.value = false
     }
 
-    isAdding.value = false
-
-    fetchHobbyRecords()
+    fetchHobbyRecords().catch(() => {})
   }
 
   const deleteHobbyRecord = async (recordId) => {
     isDeleting.value = true
 
-    const { error } = await client
-      .from('hobbies')
-      .delete()
-      .eq('id', recordId)
-      .eq('user_id', user.value.sub)
+    try {
+      const { error } = await client
+        .from('hobbies')
+        .delete()
+        .eq('id', recordId)
+        .eq('user_id', user.value.sub)
 
-    if (error) throw error
-
-    isDeleting.value = false
+      if (error) throw error
+    } finally {
+      isDeleting.value = false
+    }
   }
 
   const searchHobbies = async (type = 'video', query) => {
@@ -85,10 +90,14 @@ export const useHobby = () => {
 
     try {
       if (type === 'game') {
-        return await $fetch(`/api/igdb/search?term=${query}`)
+        return await $fetch(
+          `/api/igdb/search?term=${encodeURIComponent(query ?? '')}`,
+        )
       }
 
-      const { results } = await $fetch(`/api/tmdb/search/multi?query=${query}`)
+      const { results } = await $fetch(
+        `/api/tmdb/search/multi?query=${encodeURIComponent(query ?? '')}`,
+      )
       return results
     } catch (error) {
       console.error('搜索失败', error)
@@ -99,14 +108,12 @@ export const useHobby = () => {
   }
 
   const fetchHobbyDetail = (type, id) => {
-    try {
-      if (type === 'game') {
-        return $fetch(`/api/igdb/${id}`)
-      }
-      return $fetch(`/api/tmdb/${type}/${id}`)
-    } catch (error) {
-      console.error('获取失败', error)
+    if (type === 'game') {
+      return $fetch(`/api/igdb/${encodeURIComponent(id)}`)
     }
+    return $fetch(
+      `/api/tmdb/${encodeURIComponent(type)}/${encodeURIComponent(id)}`,
+    )
   }
 
   const fetchHobbyCredits = async (type, id) => {

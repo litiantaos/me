@@ -15,6 +15,8 @@ export const useShici = () => {
       return response.data
     } catch (error) {
       console.error('获取诗词 Token 失败', error)
+      // 抛出语义化错误，避免 undefined 被拼进下游 URL
+      throw new Error('Token 获取失败')
     }
   }
 

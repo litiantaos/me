@@ -98,19 +98,21 @@ watch(
 const fetchPlaces = async () => {
   isLoading.value = true
 
-  const { data, error } = await client
-    .from('places')
-    .select('*')
-    .order('priority')
+  try {
+    const { data, error } = await client
+      .from('places')
+      .select('*')
+      .order('priority')
 
-  if (error) {
+    if (error) throw error
+
+    cities.value = data
+  } catch (error) {
     console.error('获取城市失败', error)
-    return
+    errorMsg.value = '获取城市失败'
+  } finally {
+    isLoading.value = false
   }
-
-  cities.value = data
-
-  isLoading.value = false
 }
 
 // 搜索城市

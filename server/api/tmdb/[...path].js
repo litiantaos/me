@@ -4,8 +4,11 @@ export default defineEventHandler(async (event) => {
 
   const { tmdbApiKey } = useRuntimeConfig()
 
-  // 图片代理
+  // 图片路径仅允许 尺寸/文件名.扩展名，拒绝 ".." 等路径注入
   if (path.startsWith('img/')) {
+    if (!/^img\/[a-z0-9]+\/[a-z0-9_-]+\.[a-z0-9]+$/i.test(path)) {
+      throw createError({ statusCode: 400, statusMessage: '路径不合法' })
+    }
     setResponseHeader(
       event,
       'Cache-Control',
@@ -17,13 +20,11 @@ export default defineEventHandler(async (event) => {
     )
   }
 
-  // 统一 Fetch 方法
   const fetchTmdb = (endpoint, params = {}) =>
     $fetch(`https://api.themoviedb.org/3/${endpoint}`, {
       query: { api_key: tmdbApiKey, language: 'zh-CN', ...params },
     })
 
-  // 搜索
   if (path === 'search/multi') {
     const { results = [] } = await fetchTmdb(path, { query: query.query })
     return {
@@ -40,11 +41,8 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // 详情
-  if (
-    (path.startsWith('movie/') || path.startsWith('tv/')) &&
-    !path.endsWith('/credits')
-  ) {
+  // 详情仅放行 {type}/{数字id}，防止 ".." 逃出 /3/ 前缀
+  if (/^(movie|tv)\/\d+$/.test(path)) {
     const data = await fetchTmdb(path)
     const isMovie = path.startsWith('movie/')
 
@@ -71,6 +69,17 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // 其他
-  return fetchTmdb(path, query)
+  // 兜底仅放行演员表请求，正则白名单同时天然拒绝 ".." 等路径注入
+  if (!/^(movie|tv)\/\d+\/credits$/.test(path)) {
+    throw createError({ statusCode: 400, statusMessage: '路径不合法' })
+  }
+
+  const SAFE_QUERY_KEYS = ['query', 'language', 'page', 'include_adult']
+  const safeQuery = Object.fromEntries(
+    SAFE_QUERY_KEYS.filter((key) => key in query).map((key) => [
+      key,
+      query[key],
+    ]),
+  )
+  return fetchTmdb(path, safeQuery)
 })

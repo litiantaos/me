@@ -14,6 +14,7 @@
       <div class="flex">
         <button
           class="ri-add-line btn-base h-7! w-7!"
+          aria-label="上传文件"
           @click="openFileUpload"
         ></button>
         <input
@@ -29,14 +30,15 @@
     <ul v-if="files.length > 0" class="space-y-3">
       <li v-for="file in files" :key="file.name" class="py-3">
         <div class="flex items-baseline gap-3">
-          <div
-            class="cursor-pointer truncate font-medium transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
+          <button
+            class="cursor-pointer truncate text-left font-medium transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400"
             @click="togglePreview(file)"
           >
             {{ file.name }}
-          </div>
+          </button>
           <button
             class="ri-file-copy-line text-zinc-400 hover:text-blue-500 dark:hover:text-blue-400"
+            aria-label="复制链接"
             @click="copyText(file.url)"
           ></button>
         </div>
@@ -49,6 +51,7 @@
           <button
             v-if="file.showPreview"
             class="ri-delete-bin-7-line ml-2 hover:text-red-500 dark:hover:text-red-400"
+            aria-label="删除文件"
             @click="deleteFile(file)"
           ></button>
         </div>
@@ -111,7 +114,7 @@ const fetchFiles = async () => {
     files.value = data.map((file) => {
       return {
         ...file,
-        url: `${supabaseUrl}/storage/v1/object/public/main/${activeTab.value}/${file.name}`,
+        url: `${supabaseUrl}/storage/v1/object/public/main/${activeTab.value}/${encodeURIComponent(file.name)}`,
       }
     })
   } catch (err) {

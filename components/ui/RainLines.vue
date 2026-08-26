@@ -3,10 +3,10 @@
     class="absolute -top-[50vh] left-1/2 h-[200vh] w-[200vw] -translate-x-1/2 rotate-15 overflow-hidden"
   >
     <div
-      v-for="n in 50"
+      v-for="(style, n) in lines"
       :key="n"
       class="rain-line bg-black dark:bg-white"
-      :style="getRandomStyle()"
+      :style="style"
     ></div>
   </div>
 </template>
@@ -27,6 +27,9 @@ const getRandomStyle = () => {
     '--opacity': opacity,
   }
 }
+
+// 初始化时一次性生成，避免每次渲染重新随机
+const lines = Array.from({ length: 50 }, () => getRandomStyle())
 </script>
 
 <style scoped>

@@ -26,15 +26,26 @@ export default defineEventHandler(async (event) => {
 
   // 解析请求体
   const body = await readBody(event)
-  const content = body?.content?.trim()
-  const userId = body?.user_id?.trim()
+
+  if (typeof body?.content !== 'string') {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'content 必须为字符串',
+    })
+  }
+  const content = body.content.trim()
 
   if (!content) {
     throw createError({ statusCode: 400, statusMessage: '内容不能为空' })
   }
 
-  if (!userId) {
-    throw createError({ statusCode: 400, statusMessage: 'user_id 不能为空' })
+  const userId = typeof body.user_id === 'string' ? body.user_id.trim() : ''
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      userId,
+    )
+  ) {
+    throw createError({ statusCode: 400, statusMessage: 'user_id 格式不合法' })
   }
 
   if (content.length > 100000) {
@@ -47,13 +58,8 @@ export default defineEventHandler(async (event) => {
   // 生成语义向量（失败不阻断发布）
   let embedding = null
   try {
-    embedding = await $fetch('/api/ai/embedding', {
-      method: 'POST',
-      body: { content },
-    })
-  } catch {
-    // embedding 生成失败时跳过，不影响笔记发布
-  }
+    embedding = await generateEmbedding(content)
+  } catch {}
 
   // 写入 Supabase 数据库
   const client = serverSupabaseServiceRole(event)
@@ -64,7 +70,7 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (error) {
-    throw createError({ statusCode: 500, statusMessage: error.message })
+    throw createError({ statusCode: 500, statusMessage: '保存失败' })
   }
 
   return data

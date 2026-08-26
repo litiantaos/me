@@ -13,15 +13,35 @@
     <UiMessage v-if="errorMsg" type="error" :text="errorMsg" />
 
     <div class="sticky bottom-0 flex gap-3 bg-white py-4 dark:bg-zinc-800">
-      <button class="ri-ai-generate btn-base" @click="handleChat"></button>
+      <button
+        class="ri-ai-generate btn-base"
+        aria-label="AI 对话"
+        @click="handleChat"
+      ></button>
 
-      <button class="ri-search-line btn-base" @click="handleSearch"></button>
+      <button
+        class="ri-search-line btn-base"
+        aria-label="搜索"
+        @click="handleSearch"
+      ></button>
 
-      <button class="ri-sticky-note-line btn-base" @click="handleDoc"></button>
+      <button
+        class="ri-sticky-note-line btn-base"
+        aria-label="Markdown 文档"
+        @click="handleDoc"
+      ></button>
 
-      <button class="ri-folder-line btn-base" @click="handleLibrary"></button>
+      <button
+        class="ri-folder-line btn-base"
+        aria-label="资源库"
+        @click="handleLibrary"
+      ></button>
 
-      <button class="ri-stacked-view btn-base" @click="handlePreview"></button>
+      <button
+        class="ri-stacked-view btn-base"
+        aria-label="预览"
+        @click="handlePreview"
+      ></button>
 
       <button
         v-if="input.trim()"
@@ -66,6 +86,9 @@ const autoSave = debounce((val) => {
 }, 5000)
 
 watch(input, (newVal) => {
+  // 编辑模式不写草稿，避免污染全局草稿键
+  if (isEditMode.value) return
+
   if (newVal) {
     autoSave(newVal)
   } else {

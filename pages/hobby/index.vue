@@ -11,6 +11,7 @@
         <div class="link-base flex items-center">
           <button
             class="ri-search-line active:opacity-100!"
+            aria-label="搜索"
             @click="handleSearchExpand"
           ></button>
           <input

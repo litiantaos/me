@@ -87,13 +87,13 @@
   // 客户端
   const client = useSupabaseClient()
   const { data, error } = await client.from('notes').select('*')
-  
+
   // 服务端 server/api/
   import { serverSupabaseClient } from '#supabase/server'
   export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const body = await readBody(event)
-    
+
     const client = await serverSupabaseClient(event)
     const { data } = await client.from('notes').select('*')
   })

@@ -18,14 +18,15 @@ export const formatDate = (date, format = 'YYYY-MM-DD HH:mm') => {
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => formatMap[match]())
 }
 
-// 解析本地日期，避免 new Date('YYYY-MM-DD') 导致 UTC 偏移
+// 解析本地日期，避免 new Date('YYYY-MM-DD') 导致 UTC 偏移；畸形输入返回 null 而非 Invalid Date
 export const parseLocalDate = (dateString) => {
   if (!dateString) return null
   const [year, month, day] = String(dateString)
     .slice(0, 10)
     .split('-')
     .map(Number)
-  return new Date(year, month - 1, day)
+  const d = new Date(year, month - 1, day)
+  return Number.isNaN(d.getTime()) ? null : d
 }
 
 // 节流函数

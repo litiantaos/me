@@ -5,23 +5,29 @@
     class="mt-[30vh]"
   >
     <form class="w-full space-y-6" @submit.prevent="handleSubmit">
-      <input
-        id="email"
-        v-model="email"
-        type="email"
-        placeholder="邮箱"
-        required
-        class="input-base w-full"
-      />
+      <div>
+        <label for="email" class="sr-only">邮箱</label>
+        <input
+          id="email"
+          v-model="email"
+          type="email"
+          placeholder="邮箱"
+          required
+          class="input-base w-full"
+        />
+      </div>
 
-      <input
-        id="password"
-        v-model="password"
-        type="password"
-        placeholder="密码"
-        required
-        class="input-base w-full"
-      />
+      <div>
+        <label for="password" class="sr-only">密码</label>
+        <input
+          id="password"
+          v-model="password"
+          type="password"
+          placeholder="密码"
+          required
+          class="input-base w-full"
+        />
+      </div>
 
       <UiMessage :type="message?.type" :text="message?.text" />
 

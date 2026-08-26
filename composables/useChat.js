@@ -67,7 +67,9 @@ export const useChat = (defaultPrompt = '') => {
       chat.messages.forEach((msg) => {
         if (msg.role !== 'assistant') return
         typedTexts.value[msg.id] = getFullText(msg)
-        queues[msg.id] = ''
+        // 清理已完成的打字队列，避免键随会话无限累积
+        delete queues[msg.id]
+        typing.delete(msg.id)
       })
     },
   )

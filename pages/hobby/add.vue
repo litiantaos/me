@@ -4,6 +4,8 @@
     :isLoading="isSearching"
   >
     <div class="space-y-4">
+      <UiMessage v-if="errorMsg" type="error" :text="errorMsg" />
+
       <UiTabs
         v-if="!isEditMode"
         v-model="searchType"
@@ -32,10 +34,10 @@
 
       <div v-if="searchResults.length > 0" class="space-y-2">
         <TransitionGroup name="list">
-          <div
+          <button
             v-for="item in searchResults"
             :key="item.id"
-            class="flex items-center gap-2 rounded-md border border-zinc-200 p-2 transition-colors duration-300 dark:border-zinc-600"
+            class="flex w-full items-center gap-2 rounded-md border border-zinc-200 p-2 text-left transition-colors duration-300 dark:border-zinc-600"
             :class="
               selectedItem
                 ? 'cursor-default bg-zinc-50 dark:bg-zinc-700/30'
@@ -86,7 +88,7 @@
                 {{ item.overview }}
               </p>
             </div>
-          </div>
+          </button>
         </TransitionGroup>
       </div>
 
@@ -172,13 +174,21 @@
 const route = useRoute()
 const router = useRouter()
 
-const { isSearching, isAdding, searchHobbies, addHobbyRecord } = useHobby()
+const {
+  hobbies,
+  isSearching,
+  isAdding,
+  searchHobbies,
+  fetchHobbyRecords,
+  addHobbyRecord,
+} = useHobby()
 
 const inputRef = ref(null)
 const searchQuery = ref('')
 const searchResults = ref([])
 const searchType = ref('video')
 const selectedItem = ref(null)
+const errorMsg = ref('')
 
 const hobbyRecordData = ref({
   date: formatDate(new Date(), 'YYYY-MM-DD'),
@@ -205,6 +215,35 @@ const fetchEditingHobbyRecord = async () => {
     }
 
     editingHobbyData.value = null
+    return
+  }
+
+  // 刷新/直达：编辑状态丢失时按记录 id 回查恢复
+  try {
+    if (hobbies.value.length === 0) await fetchHobbyRecords()
+
+    // query.id 为字符串，id 为数字，需统一类型比较
+    const record = hobbies.value.find(
+      (r) => String(r.id) === String(route.query.id),
+    )
+    if (!record) throw new Error('未找到该记录')
+
+    selectItem({
+      id: record.hobby_id,
+      type: record.type,
+      title: record.title,
+      poster: record.poster,
+    })
+
+    hobbyRecordData.value = {
+      date: record.date,
+      channel: record.channel,
+      rating: record.rating,
+    }
+  } catch (error) {
+    console.error('恢复编辑记录失败', error)
+    errorMsg.value = '未找到该记录，正在返回列表'
+    setTimeout(() => navigateTo('/hobby'), 1500)
   }
 }
 
@@ -261,8 +300,10 @@ const validateDate = (dateStr) => {
 const handleSubmit = throttle(async () => {
   if (!selectedItem.value) return
 
+  errorMsg.value = ''
+
   if (!validateDate(hobbyRecordData.value.date)) {
-    alert('日期无效')
+    errorMsg.value = '日期无效'
     return
   }
 
@@ -281,7 +322,8 @@ const handleSubmit = throttle(async () => {
 
     router.push(`/hobby/${data.type}/${data.hobby_id}`)
   } catch (error) {
-    console.error('添加记录失败', error)
+    console.error('保存记录失败', error)
+    errorMsg.value = '保存失败，请重试'
   }
 })
 

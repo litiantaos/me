@@ -9,7 +9,7 @@
           ? 'text-blue-500 dark:text-blue-400'
           : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200',
       ]"
-      @click="$emit('update:modelValue', tab.value)"
+      @click="modelValue = tab.value"
     >
       <i v-if="tab.icon" :class="tab.icon"></i>
       <span class="text-xs font-medium">{{ tab.label }}</span>
@@ -18,16 +18,15 @@
 </template>
 
 <script setup>
+const modelValue = defineModel({
+  type: String,
+  required: true,
+})
+
 defineProps({
-  modelValue: {
-    type: String,
-    required: true,
-  },
   tabs: {
     type: Array, // [{ label: 'Name', value: 'val', icon: 'ri-...' }]
     required: true,
   },
 })
-
-defineEmits(['update:modelValue'])
 </script>

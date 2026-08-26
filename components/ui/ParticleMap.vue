@@ -149,6 +149,8 @@ const loadPixelData = async () => {
       ctx.drawImage(img, 0, 0, 800, 400)
       resolve((cachedPixels = ctx.getImageData(0, 0, 800, 400).data))
     }
+    // 加载失败时 reject，避免 Promise 悬挂
+    img.onerror = () => reject(new Error('地图图片加载失败'))
   })
 }
 
@@ -167,6 +169,8 @@ const initWebGL = () => {
   canvasRef.value.addEventListener('webglcontextlost', (e) => {
     e.preventDefault()
     cancelAnimationFrame(engine.animId)
+    // 置空以便上下文恢复后重启渲染循环
+    engine.animId = null
     engine.gl = null
   })
   canvasRef.value.addEventListener('webglcontextrestored', () => {

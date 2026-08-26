@@ -1,5 +1,7 @@
 <template>
   <UiLayout :isLoading="isLoading">
+    <UiMessage v-if="errorMsg" type="error" :text="errorMsg" />
+
     <div v-if="hobbyDetail" class="space-y-6">
       <!-- 影视详情 -->
       <div class="flex flex-col gap-6 sm:flex-row">
@@ -136,8 +138,11 @@
               {{ type === 'game' ? '玩过' : '看过' }}
             </div>
             <div class="space-x-1 text-blue-500 dark:text-blue-400">
-              <i :class="hobbyChannelMap[type]?.[record.channel].icon"></i>
-              <span>{{ hobbyChannelMap[type]?.[record.channel].text }}</span>
+              <template v-if="hobbyChannelMap[type]?.[record.channel]">
+                <i :class="hobbyChannelMap[type]?.[record.channel]?.icon"></i>
+                <span>{{ hobbyChannelMap[type]?.[record.channel]?.text }}</span>
+              </template>
+              <span v-else>{{ record.channel }}</span>
             </div>
           </div>
         </div>
@@ -257,6 +262,8 @@ const {
 
 const { type, id } = route.params
 
+const errorMsg = ref('')
+
 const { data: hobbyDetail, pending: isLoading } = await useLazyAsyncData(
   async () => {
     const [detail, credits, records] = await Promise.all([
@@ -297,14 +304,23 @@ const handleEdit = (id) => {
 }
 
 const handleDelete = async (id) => {
-  await deleteHobbyRecord(id)
+  try {
+    await deleteHobbyRecord(id)
 
-  hobbies.value = hobbies.value.filter((item) => item.id !== id)
+    hobbies.value = hobbies.value.filter((item) => item.id !== id)
 
-  triggerRef(hobbies)
+    triggerRef(hobbies)
 
-  if (hobbyDetail.value.records.length === 0) {
-    router.push('/hobby')
+    hobbyDetail.value.records = hobbyDetail.value.records.filter(
+      (r) => r.id !== id,
+    )
+
+    if (hobbyDetail.value.records.length === 0) {
+      router.push('/hobby')
+    }
+  } catch (error) {
+    console.error('删除记录失败', error)
+    errorMsg.value = '删除记录失败'
   }
 }
 
