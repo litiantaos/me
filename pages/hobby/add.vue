@@ -34,9 +34,12 @@
 
       <div v-if="searchResults.length > 0" class="space-y-2">
         <TransitionGroup name="list">
-          <button
+          <!-- div + role="button"：内部含 NuxtLink，不能用 button（交互元素嵌套非法） -->
+          <div
             v-for="item in searchResults"
             :key="item.id"
+            role="button"
+            tabindex="0"
             class="flex w-full items-center gap-2 rounded-md border border-zinc-200 p-2 text-left transition-colors duration-300 dark:border-zinc-600"
             :class="
               selectedItem
@@ -44,6 +47,8 @@
                 : 'cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700/30'
             "
             @click="selectItem(item)"
+            @keydown.enter.prevent="selectItem(item)"
+            @keydown.space.prevent="selectItem(item)"
           >
             <div
               class="h-24 w-16 flex-none overflow-hidden rounded-sm bg-zinc-100 dark:bg-zinc-700"
@@ -88,7 +93,7 @@
                 {{ item.overview }}
               </p>
             </div>
-          </button>
+          </div>
         </TransitionGroup>
       </div>
 

@@ -19,8 +19,8 @@ export default defineEventHandler(async (event) => {
     if (typeof term !== 'string' || !term.trim()) {
       throw createError({ statusCode: 400, statusMessage: 'term 不能为空' })
     }
-    // 剔除引号避免注入 Apicalypse 查询语法
-    const keyword = term.replace(/"/g, '').trim()
+    // 剔除引号与反斜杠，避免注入或转义 Apicalypse 查询语法
+    const keyword = term.replace(/["\\]/g, '').trim()
     let searchCondition = `search "${keyword}";`
 
     // 中文模糊匹配

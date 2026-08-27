@@ -54,7 +54,9 @@ export const escapeAttrText = (value) =>
 
 // 链接协议白名单：http/https/mailto；相对路径与锚点默认放行
 const isSafeHref = (href) => {
+  // 浏览器解析 URL 前会剥离 TAB/换行，校验前需同步剥离，否则 java\tscript: 可绕过协议白名单
   const value = String(href ?? '')
+    .replace(/[\t\n\r]/g, '')
     .trim()
     .toLowerCase()
   if (/^[a-z][a-z0-9+.-]*:/.test(value)) return /^(https?|mailto):/.test(value)
@@ -64,6 +66,7 @@ const isSafeHref = (href) => {
 // 媒体地址校验：仅 http/https，img 额外允许 data:image/
 export const isSafeMediaSrc = (src, allowDataImage = false) => {
   const value = String(src ?? '')
+    .replace(/[\t\n\r]/g, '')
     .trim()
     .toLowerCase()
   if (/^https?:\/\//.test(value)) return true
@@ -102,7 +105,7 @@ const htmlRenderer = {
 
 // 允许的 HTML 标签及对应属性白名单
 const ALLOWED_TAGS = {
-  img: ['src', 'alt', 'title', 'width', 'height'],
+  img: ['src', 'alt', 'title', 'width', 'height', 'loading'],
   video: ['src', 'controls', 'width', 'height'],
   audio: ['src', 'controls', 'width', 'height'],
   br: [],
@@ -147,6 +150,11 @@ const rebuildTag = (rawTag) => {
       parts.push(` src="${escapeAttrValue(attrs.src)}"`)
     } else if (attr === 'controls') {
       parts.push(' controls')
+    } else if (attr === 'loading') {
+      // 仅放行字面量 lazy/eager，其余值丢弃
+      if (['lazy', 'eager'].includes(attrs.loading)) {
+        parts.push(` loading="${attrs.loading}"`)
+      }
     } else {
       parts.push(` ${attr}="${escapeAttrText(attrs[attr])}"`)
     }
