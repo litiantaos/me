@@ -1,27 +1,27 @@
 export const AI_MODELS = {
-  'deepseek-v3.2-thinking': {
-    name: 'DeepSeek 3.2 Thinking',
-    provider: 'deepseek/deepseek-v3.2-thinking',
+  'deepseek-v4-pro': {
+    name: 'DeepSeek V4 Pro',
+    provider: 'deepseek/deepseek-v4-pro',
     logo: 'ri-deepseek-fill',
   },
-  'gemini-3.1-pro-preview': {
-    name: 'Gemini 3.1 Pro Preview',
-    provider: 'google/gemini-3.1-pro-preview',
+  'gemini-3.8-flash': {
+    name: 'Gemini 3.8 Flash',
+    provider: 'google/gemini-3.8-flash',
     logo: 'ri-gemini-fill',
   },
-  'claude-sonnet-4.6': {
-    name: 'Claude Sonnet 4.6',
-    provider: 'anthropic/claude-sonnet-4.6',
+  'claude-sonnet-5': {
+    name: 'Claude Sonnet 5',
+    provider: 'anthropic/claude-sonnet-5',
     logo: 'ri-claude-fill',
   },
-  'gpt-5.4': {
-    name: 'GPT 5.4',
-    provider: 'openai/gpt-5.4',
+  'gpt-6-astra': {
+    name: 'GPT 6 Astra',
+    provider: 'openai/gpt-6-astra',
     logo: 'ri-openai-fill',
   },
-  'grok-4.1-fast-reasoning': {
-    name: 'Grok 4.1 Fast Reasoning',
-    provider: 'xai/grok-4.1-fast-reasoning',
+  'grok-4.6': {
+    name: 'Grok 4.6',
+    provider: 'spacexai/grok-4.6',
     logo: 'ri-grok-ai-fill',
   },
 }
