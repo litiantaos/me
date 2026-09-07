@@ -22,6 +22,12 @@
         </p>
 
         <p>
+          我做了一个风格极简但功能强大的效率启动器产品叫
+          <a href="https://voidnix.app" target="_blank" class="link-base">Voidnix</a>
+          ，它很好的参与了我日常工作中几乎所有的场景，你应该也会喜欢它。
+        </p>
+
+        <p>
           我今年
           <NuxtLink to="/life" class="link-base">{{ currentAge }}岁</NuxtLink>
           ，性格内敛，不喜社交，极少在网络上发布内容或与人互动，这种状态使我产生了一种空虚与不安，作为社恐的救赎，我建立了这个独特的精神角落来记录自己的
