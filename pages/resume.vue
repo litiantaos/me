@@ -46,7 +46,7 @@
             <!-- 边框与偏移衬块都置于容器：img 的 grayscale 滤镜会连带去色；
                  衬块用硬阴影实现（绘制于边框外侧，不遮挡边框） -->
             <div
-              class="relative mb-3 w-fit rounded-lg border border-zinc-400 shadow-[10px_10px_0_0_#e4e4e7b3] md:absolute md:top-1.5 md:right-2.5 md:mb-0 dark:border-zinc-500 dark:shadow-[10px_10px_0_0_#52525b80]"
+              class="relative mt-1 mb-5 ml-4 w-fit rounded-lg border border-zinc-400 shadow-[10px_10px_0_0_#e4e4e7b3] md:absolute md:top-1.5 md:right-2.5 md:mt-0 md:mb-0 md:ml-0 dark:border-zinc-500 dark:shadow-[10px_10px_0_0_#52525b80] print:absolute print:top-1.5 print:right-2.5 print:m-0"
             >
               <img
                 src="/images/me.webp"
@@ -56,7 +56,7 @@
             </div>
 
             <div
-              class="grid grid-cols-[3.5rem_1fr] gap-x-2 gap-y-1 pl-4 md:pr-[7.5rem]"
+              class="grid grid-cols-[3.5rem_1fr] gap-x-2 gap-y-1 pl-4 md:pr-[7.5rem] print:pr-[7.5rem]"
             >
               <span class="text-zinc-400 dark:text-zinc-500">姓名</span>
               <span class="font-bold text-zinc-800 dark:text-zinc-100">
@@ -562,8 +562,14 @@ useSeoMeta({
   }
 }
 
-/* 打印兜底：入场态依赖屏幕动画填充，打印/导出 PDF 时直接呈现最终态，避免整页空白 */
+/* 打印兜底：入场态依赖屏幕动画填充，打印/导出 PDF 时直接呈现最终态，避免整页空白；
+   打印默认丢弃背景图形，而终端线条（轨道竖线/分隔线/纹理/色块）均为背景绘制，exact 强制原样输出 */
 @media print {
+  .term-scan {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .term-step {
     opacity: 1;
     animation: none;

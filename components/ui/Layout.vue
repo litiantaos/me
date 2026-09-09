@@ -2,7 +2,7 @@
   <div>
     <header
       v-if="hasHeader"
-      class="top-0 right-0 left-0 z-50 h-24"
+      class="top-0 right-0 left-0 z-50 h-24 print:hidden"
       :class="isFullPage ? 'fixed' : 'sticky'"
     >
       <UiBlurBlock />
