@@ -23,3 +23,6 @@ logs
 .env.*
 !.env.example
 supabase/.temp/
+
+# Local resume data
+data/resume.local.js

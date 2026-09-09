@@ -8,7 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "check": "npx npm-check-updates --interactive --format group"
+    "check": "npx npm-check-updates --interactive --format group",
+    "resume:push": "node --env-file=.env scripts/resume-push.mjs"
   },
   "dependencies": {
     "@ai-sdk/vue": "^4.0.79",

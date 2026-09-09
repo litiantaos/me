@@ -388,6 +388,32 @@ CREATE POLICY update_owner ON public.notes FOR UPDATE TO authenticated USING (((
 
 
 --
+-- Name: resume; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.resume (
+    id text NOT NULL,
+    data jsonb NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: resume resume_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.resume
+    ADD CONSTRAINT resume_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: resume; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.resume ENABLE ROW LEVEL SECURITY;
+
+
+--
 -- PostgreSQL database dump complete
 --
 

@@ -10,6 +10,9 @@ export default defineCachedEventHandler(
       'Disallow: /login/',
       'Disallow: /note/new/',
       'Disallow: /hobby/add/',
+      // 简历页与数据接口不对爬虫开放（页面本身可正常访问）
+      'Disallow: /resume',
+      'Disallow: /api/',
       '',
       `Sitemap: ${siteUrl}/sitemap.xml`,
     ]

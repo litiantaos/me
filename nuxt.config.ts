@@ -34,6 +34,13 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // 简历页不做访问控制（本人或分享的链接可正常打开），仅以响应头告知爬虫不要索引
+  routeRules: {
+    '/resume': {
+      headers: { 'X-Robots-Tag': 'noindex, nofollow, noarchive' },
+    },
+  },
+
   vite: {
     plugins: [tailwindcss()],
     build: {
