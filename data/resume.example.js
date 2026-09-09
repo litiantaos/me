@@ -17,7 +17,6 @@ export default {
       { url: 'https://xxx.app', icon: 'ri-macbook-line' },
     ],
   },
-  summary: '多个从 0 到 1 项目经验 · 独立完成网站与小程序的设计与开发',
   strengths: [
     {
       tag: '懂产品',

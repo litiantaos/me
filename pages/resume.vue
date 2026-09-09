@@ -64,8 +64,6 @@
               </span>
               <span class="text-zinc-400 dark:text-zinc-500">意向</span>
               <span>{{ basics.intention }}</span>
-              <span class="text-zinc-400 dark:text-zinc-500">简介</span>
-              <span>{{ summary }}</span>
               <span class="text-zinc-400 dark:text-zinc-500">背景</span>
               <!-- 性别/籍贯仅线上展示：打印/导出 PDF 的投递版省略，减少无关筛选因素 -->
               <span>
@@ -304,14 +302,15 @@
         </div>
       </section>
 
-      <!-- 完成统计：轻量会话收尾（价值句已上移至基本信息「简介」行） -->
+      <!-- 完成统计：轻量会话收尾 -->
       <p
         class="term-hr term-step flex items-center gap-2.5 text-xs text-zinc-400 dark:text-zinc-500"
         :style="{ animationDelay: at(summaryAt) }"
       >
         <i class="ri-check-line text-green-500"></i>
         <span
-          >简历就绪 · {{ jobs.length }} 段经历 ·
+          >简历就绪 · {{ strengths.length }} 项优势 ·
+          {{ (basics.links ?? []).length }} 个作品 · {{ jobs.length }} 段经历 ·
           {{ achievements.length }} 项荣誉</span
         >
       </p>
@@ -335,7 +334,6 @@ const resumeFiles = import.meta.glob('../data/resume.*.js')
 // 数据结构缺失时整体回退而非渲染报错
 const isResume = (data) =>
   data?.basics?.host &&
-  data?.summary &&
   Array.isArray(data.strengths) &&
   Array.isArray(data.jobs) &&
   Array.isArray(data.achievements)
@@ -352,8 +350,7 @@ const candidates = [
   toValue(cloudResume),
   (await resumeFiles['../data/resume.example.js']()).default,
 ]
-const { basics, summary, strengths, jobs, achievements } =
-  candidates.find(isResume)
+const { basics, strengths, jobs, achievements } = candidates.find(isResume)
 
 // 手机号防爬虫：线上默认掩码展示，点击展开为 tel 链接；打印时直接完整呈现
 const showPhone = ref(false)
@@ -368,7 +365,7 @@ const withProtocol = (url) =>
   /^https?:\/\//.test(url) ? url : `https://${url}`
 const prettyUrl = (url) => url.replace(/^https?:\/\//, '')
 
-// 转义 HTML 后将 [[内容]] 标记渲染为高亮，突出关键成果数字
+// 转义 HTML 后将 [[内容]] 标记渲染为加粗高亮，突出关键成果数字或条目小标题
 const escapeHtml = (str) =>
   String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const highlight = (text) =>

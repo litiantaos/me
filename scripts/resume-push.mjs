@@ -2,7 +2,6 @@
 // 用法：npm run resume:push（由 package.json 注入 --env-file=.env）
 const required = (data) =>
   data?.basics?.host &&
-  data?.summary &&
   Array.isArray(data.strengths) &&
   Array.isArray(data.jobs) &&
   Array.isArray(data.achievements)
@@ -11,7 +10,7 @@ const { default: data } = await import('../data/resume.local.js')
 
 if (!required(data)) {
   console.error(
-    '简历数据结构不完整（basics/summary/strengths/jobs/achievements），中止推送',
+    '简历数据结构不完整（basics/strengths/jobs/achievements），中止推送',
   )
   process.exit(1)
 }
