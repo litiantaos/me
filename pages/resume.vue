@@ -4,14 +4,17 @@
     <div
       class="term-scan space-y-6 font-mono text-[13px] leading-6 text-zinc-600 tabular-nums dark:text-zinc-300"
     >
-      <!-- 命令行 -->
-      <p class="whitespace-nowrap">
+      <!-- 命令行：窄屏放不下整行时命令整体换行，提示符名字始终可见 -->
+      <p class="flex flex-wrap items-baseline gap-x-1.5">
         <span class="font-semibold text-green-600 dark:text-green-400"
-          ><span class="hidden sm:inline">{{ basics.host }}@resume</span
-          ><span class="text-zinc-400 dark:text-zinc-500">:~</span></span
+          >{{ basics.host }}@world<span class="text-zinc-400 dark:text-zinc-500"
+            >:~</span
+          ></span
         >
         <span class="text-zinc-400 dark:text-zinc-500">$</span>
-        <span class="ml-1.5 font-semibold text-zinc-800 dark:text-zinc-100">
+        <span
+          class="font-semibold whitespace-nowrap text-zinc-800 dark:text-zinc-100"
+        >
           <span class="term-type" :style="{ '--term-steps': command.length }">{{
             command
           }}</span
