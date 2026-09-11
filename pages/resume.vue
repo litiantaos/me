@@ -7,11 +7,11 @@
       <!-- 命令行：窄屏放不下整行时命令整体换行，提示符名字始终可见 -->
       <p class="flex flex-wrap items-baseline gap-x-1.5">
         <span class="font-semibold text-green-600 dark:text-green-400"
-          >{{ basics.host }}@world<span class="text-zinc-400 dark:text-zinc-500"
+          >{{ basics.host }}@world<span class="text-zinc-500 dark:text-zinc-400"
             >:~</span
           ></span
         >
-        <span class="text-zinc-400 dark:text-zinc-500">$</span>
+        <span class="text-zinc-500 dark:text-zinc-400">$</span>
         <span
           class="font-semibold whitespace-nowrap text-zinc-800 dark:text-zinc-100"
         >
@@ -19,7 +19,7 @@
             command
           }}</span
           ><span
-            class="term-cursor inline-block h-3.5 w-1.5 translate-y-[2px] bg-blue-500 dark:bg-blue-400"
+            class="term-cursor inline-block h-3.5 w-1.5 translate-y-0.5 bg-blue-500 dark:bg-blue-400"
           ></span>
         </span>
       </p>
@@ -39,7 +39,7 @@
             ><span class="text-zinc-500 dark:text-zinc-400">(ltt.profile)</span>
           </span>
           <span
-            class="hidden shrink-0 text-xs text-zinc-400 sm:inline dark:text-zinc-500"
+            class="hidden shrink-0 text-xs text-zinc-500 sm:inline dark:text-zinc-400"
             >8 lines · 0.1s</span
           >
         </p>
@@ -59,35 +59,31 @@
             </div>
 
             <div
-              class="grid grid-cols-[3.5rem_1fr] gap-x-2 gap-y-1 pl-4 md:pr-[7.5rem] print:pr-[7.5rem]"
+              class="grid grid-cols-[3.5rem_1fr] gap-x-2 gap-y-1 pl-4 md:pr-30 print:pr-30"
             >
-              <span class="text-zinc-400 dark:text-zinc-500">姓名</span>
+              <span class="text-zinc-500 dark:text-zinc-400">姓名</span>
               <span class="font-bold text-zinc-800 dark:text-zinc-100">
                 {{ name }}
               </span>
-              <span class="text-zinc-400 dark:text-zinc-500">意向</span>
+              <span class="text-zinc-500 dark:text-zinc-400">意向</span>
               <span>{{ basics.intention }}</span>
-              <span class="text-zinc-400 dark:text-zinc-500">背景</span>
-              <!-- 性别/籍贯仅线上展示：打印/导出 PDF 的投递版省略，减少无关筛选因素 -->
+              <span class="text-zinc-500 dark:text-zinc-400">背景</span>
+              <!-- 性别仅线上展示：打印/导出 PDF 的投递版省略，减少无关筛选因素 -->
               <span>
                 <span v-if="basics.gender" class="print:hidden"
                   >{{ basics.gender }} · </span
-                >{{ currentAge }} 岁<template v-if="basics.hometown"
-                  ><span class="print:hidden">
-                    · {{ basics.hometown }}</span
-                  ></template
-                ></span
+                >{{ currentAge }} 岁</span
               >
-              <span class="text-zinc-400 dark:text-zinc-500">教育</span>
+              <span class="text-zinc-500 dark:text-zinc-400">教育</span>
               <span>{{ basics.degree }} · {{ basics.school }}</span>
-              <span class="text-zinc-400 dark:text-zinc-500">联系</span>
+              <span class="text-zinc-500 dark:text-zinc-400">联系</span>
               <span class="flex flex-wrap gap-x-3">
                 <a
                   :href="`mailto:${email}`"
                   class="underline-offset-2 transition-colors hover:underline"
                   >{{ email }}</a
                 >
-                <span class="text-zinc-400 dark:text-zinc-500">·</span>
+                <span class="text-zinc-500 dark:text-zinc-400">·</span>
                 <!-- 手机号默认掩码防爬虫，点击展开；打印/导出 PDF 投递时直接呈现完整号码 -->
                 <button
                   v-if="!showPhone"
@@ -125,7 +121,7 @@
             ><span class="text-zinc-500 dark:text-zinc-400">(strengths)</span>
           </span>
           <span
-            class="hidden shrink-0 text-xs text-zinc-400 sm:inline dark:text-zinc-500"
+            class="hidden shrink-0 text-xs text-zinc-500 sm:inline dark:text-zinc-400"
             >{{ strengths.length }} items · 0.3s</span
           >
         </p>
@@ -166,7 +162,7 @@
             ><span class="text-zinc-500 dark:text-zinc-400">(ls works/)</span>
           </span>
           <span
-            class="hidden shrink-0 text-xs text-zinc-400 sm:inline dark:text-zinc-500"
+            class="hidden shrink-0 text-xs text-zinc-500 sm:inline dark:text-zinc-400"
             >{{ (basics.links ?? []).length }} items · 0.4s</span
           >
         </p>
@@ -184,12 +180,19 @@
             :style="{ animationDelay: at(worksAt + 0.08 + i * 0.1) }"
           >
             <span class="term-dot text-blue-500 dark:text-blue-400"></span>
+            <!-- 标题为主，完整链接徽章跟后（与经历条目「标题 + 徽章」同构） -->
+            <span
+              v-if="link.title"
+              class="mr-2 font-semibold text-zinc-800 dark:text-zinc-100"
+              >{{ link.title }}</span
+            >
             <span
               class="group inline-flex items-center gap-1 rounded-md border border-zinc-200 px-1.5 py-0.5 text-xs text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
             >
+              <!-- translate-y 补偿 remixicon 字形基线偏上（同其官方 .ri-lg 的 vertical-align 修正思路） -->
               <i
                 :class="link.icon || 'ri-link'"
-                class="text-[11px] leading-none text-zinc-400 dark:text-zinc-500"
+                class="translate-y-[0.5px] text-[11px] leading-4 text-zinc-500 dark:text-zinc-400"
               ></i>
               {{ prettyUrl(link.url) }}
             </span>
@@ -214,7 +217,7 @@
             >
           </span>
           <span
-            class="hidden shrink-0 text-xs text-zinc-400 sm:inline dark:text-zinc-500"
+            class="hidden shrink-0 text-xs text-zinc-500 sm:inline dark:text-zinc-400"
             >{{ jobs.length }} entries · 0.6s</span
           >
         </p>
@@ -239,7 +242,7 @@
               >
                 {{ job.role }}
               </span>
-              <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
+              <span class="ml-auto text-xs text-zinc-500 dark:text-zinc-400">
                 {{ job.period }}
               </span>
             </div>
@@ -273,41 +276,32 @@
             >
           </span>
           <span
-            class="hidden shrink-0 text-xs text-zinc-400 sm:inline dark:text-zinc-500"
-            >total {{ achievements.length }} · 0.2s</span
+            class="hidden shrink-0 text-xs text-zinc-500 sm:inline dark:text-zinc-400"
+            >{{ achievements.length }} honors · 0.2s</span
           >
         </p>
 
         <div
-          class="term-rail term-step mt-2.5"
-          :style="{ animationDelay: at(achTotalAt) }"
+          class="term-rail term-step mt-2.5 space-y-2.5"
+          :style="{ animationDelay: at(achAt) }"
         >
           <p
-            class="term-step pl-4 text-xs text-zinc-400 dark:text-zinc-500"
-            :style="{ animationDelay: at(achTotalAt) }"
+            v-for="(item, i) in achievements"
+            :key="item.text"
+            class="term-row term-step pr-2 pl-4 text-justify"
+            :style="{ animationDelay: at(achAt + i * 0.07) }"
           >
-            total {{ achievements.length }}
+            <span class="term-dot text-blue-500 dark:text-blue-400"></span>
+            <span class="mr-1.5 text-xs text-zinc-500 dark:text-zinc-400"
+              >{{ item.period }} ·</span
+            ><span v-html="highlight(item.text)"></span>
           </p>
-
-          <div class="mt-2 space-y-2.5">
-            <p
-              v-for="(item, i) in achievements"
-              :key="item.text"
-              class="term-row term-step pr-2 pl-4 text-justify"
-              :style="{ animationDelay: at(achAt + i * 0.07) }"
-            >
-              <span class="term-dot text-blue-500 dark:text-blue-400"></span>
-              <span class="mr-1.5 text-xs text-zinc-400 dark:text-zinc-500"
-                >{{ item.period }} ·</span
-              ><span v-html="highlight(item.text)"></span>
-            </p>
-          </div>
         </div>
       </section>
 
       <!-- 完成统计：轻量会话收尾 -->
       <p
-        class="term-hr term-step flex items-center gap-2.5 text-xs text-zinc-400 dark:text-zinc-500"
+        class="term-hr term-step flex items-center gap-2.5 text-xs text-zinc-500 dark:text-zinc-400"
         :style="{ animationDelay: at(summaryAt) }"
       >
         <i class="ri-check-line text-green-500"></i>
@@ -330,9 +324,13 @@ const {
 // 命令文本：字符数经 --term-steps 驱动下方样式中 term-type 的打字步数
 const command = 'agent profile --inspect'
 
-// 数据优先级：本机 data/resume.local.js（已 gitignore，便于本地修改预览）→ 云端 Supabase → 内置示例兜底；
+// 数据优先级：本机 data/resume.local.js（已 gitignore）→ 云端 Supabase → 内置示例兜底；
+// local 仅开发模式参与——生产构建时整条被 tree-shake，个人信息不进产物，云端更新始终生效；
 // glob 仅匹配实际存在的文件，local 缺失时自动跳过；local 改好后执行 npm run resume:push 同步云端
-const resumeFiles = import.meta.glob('../data/resume.*.js')
+const localFiles = import.meta.dev
+  ? import.meta.glob('../data/resume.local.js')
+  : {}
+const exampleFile = import.meta.glob('../data/resume.example.js')
 
 // 数据结构缺失时整体回退而非渲染报错
 const isResume = (data) =>
@@ -341,9 +339,9 @@ const isResume = (data) =>
   Array.isArray(data.jobs) &&
   Array.isArray(data.achievements)
 
-const localResume =
-  resumeFiles['../data/resume.local.js'] &&
-  (await resumeFiles['../data/resume.local.js']()).default
+const localResume = localFiles['../data/resume.local.js']
+  ? (await localFiles['../data/resume.local.js']()).default
+  : null
 
 const { data: cloudResume } = await useAsyncData('resume', () =>
   $fetch('/api/resume').catch(() => null),
@@ -351,9 +349,26 @@ const { data: cloudResume } = await useAsyncData('resume', () =>
 const candidates = [
   localResume,
   toValue(cloudResume),
-  (await resumeFiles['../data/resume.example.js']()).default,
+  (await exampleFile['../data/resume.example.js']()).default,
 ]
-const { basics, strengths, jobs, achievements } = candidates.find(isResume)
+
+// 全部数据源失效时给出明确错误页，避免解构 undefined 崩成半页
+const sourceNames = ['本机 local', '云端 Supabase', '内置示例']
+const hit = candidates.findIndex(isResume)
+if (hit === -1) {
+  throw createError({ statusCode: 500, statusMessage: '简历数据结构异常' })
+}
+// dev 下提示当前生效数据源：local 正常生效为预期行为仅记 info；
+// 仅当 local 被读取却校验失败而回退时才升为 warn，避免改坏数据后静默回退无感
+if (import.meta.dev) {
+  const localBroken = localResume && hit !== 0
+  const log = localBroken ? console.warn : console.info
+  log(
+    `[resume] 当前数据源：${sourceNames[hit]}${localBroken ? '（local 结构异常已跳过）' : ''}`,
+  )
+}
+
+const { basics, strengths, jobs, achievements } = candidates[hit]
 
 // 手机号防爬虫：线上默认掩码展示，点击展开为 tel 链接；打印时直接完整呈现
 const showPhone = ref(false)
@@ -384,8 +399,7 @@ const worksAt = worksTitleAt + 0.08
 const jobsTitleAt = worksAt + (basics.links?.length ?? 0) * 0.1 + 0.15
 const jobsAt = jobsTitleAt + 0.08
 const achTitleAt = jobsAt + jobs.length * 0.15 + 0.2
-const achTotalAt = achTitleAt + 0.08
-const achAt = achTitleAt + 0.15
+const achAt = achTitleAt + 0.08
 const summaryAt = achAt + achievements.length * 0.07 + 0.25
 
 useSeoMeta({
@@ -568,14 +582,24 @@ useSeoMeta({
 /* 打印兜底：入场态依赖屏幕动画填充，打印/导出 PDF 时直接呈现最终态，避免整页空白；
    打印默认丢弃背景图形，而终端线条（轨道竖线/分隔线/纹理/色块）均为背景绘制，exact 强制原样输出 */
 @media print {
+  @page {
+    margin: 12mm;
+  }
+
   .term-scan {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
+  /* 条目不跨页截断，区块标题不与其内容分离 */
   .term-step {
     opacity: 1;
     animation: none;
+    break-inside: avoid;
+  }
+
+  .term-scan section > p {
+    break-after: avoid;
   }
 
   .term-type {

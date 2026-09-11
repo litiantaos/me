@@ -7,14 +7,16 @@ export default {
     intention: '产品经理 · N 年经验',
     gender: '男',
     degree: '本科',
-    // 可选：背景行末尾展示的籍贯
-    hometown: '某某省某某市',
     school: '某某大学 · 某某专业 · 2016.09 – 2020.07',
     phone: '13800000000',
-    // 可选：信息区「作品」行展示的徽章链接，完整展示 url（icon 为 Remixicon 类名，缺省 ri-link）
+    // 可选：信息区「作品」行展示的链接条目（icon 为 Remixicon 类名，缺省 ri-link；title 为条目标题，可选，缺省仅显示链接徽章）
     links: [
       { url: 'https://github.com/username', icon: 'ri-github-line' },
-      { url: 'https://xxx.app', icon: 'ri-macbook-line' },
+      {
+        url: 'https://xxx.app',
+        icon: 'ri-macbook-line',
+        title: '某某 App · 一句话说明',
+      },
     ],
   },
   strengths: [
