@@ -24,9 +24,11 @@
         </p>
 
         <p>
-          我做了一个风格极简但功能强大的效率启动器产品叫
-          <a href="https://voidnix.app" target="_blank" class="link-base">Voidnix</a>
-          ，它很好的参与了我日常工作中几乎所有的场景，你应该也会喜欢它。
+          我做了一个风格极简但功能强大的 macOS 效率启动应用叫
+          <a href="https://voidnix.app" target="_blank" class="link-base"
+            >Voidnix</a
+          >
+          ，它如影随形的深入到了我日常工作中的大多数场景，如果你感兴趣，可以试试它。
         </p>
 
         <p>
