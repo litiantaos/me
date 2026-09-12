@@ -1,6 +1,6 @@
 import { serverSupabaseClient } from '#supabase/server'
 
-const routes = ['', '/life', '/poetry', '/hobby', '/note']
+const routes = ['', '/life', '/poetry', '/hobby', '/note', '/dudu']
 
 export default defineCachedEventHandler(
   async (event) => {

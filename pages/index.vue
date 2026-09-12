@@ -18,7 +18,9 @@
           <NuxtLink to="/ai" class="link-base">新东西</NuxtLink>
           ，偶尔写写
           <a :href="github" target="_blank" class="link-base">代码</a>
-          。
+          ，还有一只叫
+          <NuxtLink to="/dudu" class="link-base">嘟嘟</NuxtLink>
+          的布偶猫。
         </p>
 
         <p>
