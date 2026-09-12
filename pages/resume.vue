@@ -229,7 +229,7 @@
           <div
             v-for="(job, j) in jobs"
             :key="job.company"
-            class="term-step relative py-1 pl-4"
+            class="term-job term-step relative py-1 pl-4"
             :style="{ animationDelay: at(jobsAt + j * 0.15) }"
           >
             <span class="term-dot text-blue-500 dark:text-blue-400"></span>
@@ -595,6 +595,25 @@ useSeoMeta({
   .term-step {
     opacity: 1;
     animation: none;
+    break-inside: avoid;
+  }
+
+  /* 列表容器整体允许跨页：仅条目级不截断，
+     避免整个板块（如职业经历）因当前页放不下被整体推至下页留白 */
+  .term-rail.term-step {
+    break-inside: auto;
+  }
+
+  /* 经历条目内部允许在职责之间分页：公司行不与首条职责分离，单条职责不截断 */
+  .term-job {
+    break-inside: auto;
+  }
+
+  .term-job > div:first-child {
+    break-after: avoid;
+  }
+
+  .term-job p {
     break-inside: avoid;
   }
 
