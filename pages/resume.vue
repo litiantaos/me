@@ -80,25 +80,41 @@
               <span class="flex flex-wrap gap-x-3">
                 <a
                   :href="`mailto:${email}`"
-                  class="underline-offset-2 transition-colors hover:underline"
-                  >{{ email }}</a
-                >
+                  class="group inline-flex items-center"
+                  ><span
+                    class="underline-offset-2 transition-colors group-hover:underline"
+                    >{{ email }}</span
+                  ><i
+                    class="ri-arrow-right-up-line ml-0.5 text-[11px] leading-none text-zinc-400 dark:text-zinc-500 print:hidden"
+                  ></i
+                ></a>
                 <span class="text-zinc-500 dark:text-zinc-400">·</span>
                 <!-- 手机号默认掩码防爬虫，点击展开；打印/导出 PDF 投递时直接呈现完整号码 -->
                 <button
                   v-if="!showPhone"
                   type="button"
-                  class="cursor-pointer underline-offset-2 transition-colors hover:underline print:hidden"
+                  class="group inline-flex cursor-pointer items-center print:hidden"
                   @click="showPhone = true"
                 >
-                  {{ maskedPhone }}
+                  <span
+                    class="underline-offset-2 transition-colors group-hover:underline"
+                    >{{ maskedPhone }}</span
+                  >
+                  <i
+                    class="ri-arrow-right-up-line ml-0.5 text-[11px] leading-none text-zinc-400 dark:text-zinc-500"
+                  ></i>
                 </button>
                 <a
                   v-else
                   :href="`tel:${basics.phone}`"
-                  class="underline-offset-2 transition-colors hover:underline print:hidden"
-                  >{{ basics.phone }}</a
-                >
+                  class="group inline-flex items-center print:hidden"
+                  ><span
+                    class="underline-offset-2 transition-colors group-hover:underline"
+                    >{{ basics.phone }}</span
+                  ><i
+                    class="ri-arrow-right-up-line ml-0.5 text-[11px] leading-none text-zinc-400 dark:text-zinc-500"
+                  ></i
+                ></a>
                 <span class="hidden print:inline">{{ basics.phone }}</span>
               </span>
             </div>
@@ -171,32 +187,41 @@
           class="term-rail term-step mt-2.5 space-y-2"
           :style="{ animationDelay: at(worksAt) }"
         >
-          <a
+          <div
             v-for="(link, i) in basics.links ?? []"
             :key="link.url"
-            :href="withProtocol(link.url)"
-            target="_blank"
             class="term-step relative block py-1 pr-2 pl-4"
             :style="{ animationDelay: at(worksAt + 0.08 + i * 0.1) }"
           >
             <span class="term-dot text-blue-500 dark:text-blue-400"></span>
-            <!-- 标题为主，完整链接徽章跟后（与经历条目「标题 + 徽章」同构） -->
-            <span
-              v-if="link.title"
-              class="mr-2 font-semibold text-zinc-800 dark:text-zinc-100"
-              >{{ link.title }}</span
-            >
-            <span
-              class="group inline-flex items-center gap-1 rounded-md border border-zinc-200 px-1.5 py-0.5 text-xs text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
-            >
-              <!-- translate-y 补偿 remixicon 字形基线偏上（同其官方 .ri-lg 的 vertical-align 修正思路） -->
-              <i
-                :class="link.icon || 'ri-link'"
-                class="translate-y-[0.5px] text-[11px] leading-4 text-zinc-500 dark:text-zinc-400"
-              ></i>
-              {{ prettyUrl(link.url) }}
+            <!-- 标题为主，完整链接徽章跟后（与经历条目「标题 + 徽章」同构）；
+                 仅徽章本身可点击跳转，避免整条目命中 -->
+            <span class="flex flex-wrap items-baseline gap-x-2">
+              <span
+                v-if="link.title"
+                class="font-semibold text-zinc-800 dark:text-zinc-100"
+                >{{ link.title }}</span
+              >
+              <a
+                :href="withProtocol(link.url)"
+                target="_blank"
+                class="group inline-flex items-center gap-1 rounded-md border border-zinc-200 px-1.5 py-0.5 text-xs text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
+              >
+                <!-- translate-y 补偿 remixicon 字形基线偏上（同其官方 .ri-lg 的 vertical-align 修正思路） -->
+                <i
+                  :class="link.icon || 'ri-link'"
+                  class="translate-y-[0.5px] text-[11px] leading-4 text-zinc-500 dark:text-zinc-400"
+                ></i>
+                {{ prettyUrl(link.url) }}
+              </a>
             </span>
-          </a>
+            <!-- 一句话核心说明：定位与亮点，缺省不占位；文本样式与经历职责行一致 -->
+            <span
+              v-if="link.desc"
+              class="mt-1.5 block py-0.5 text-justify"
+              v-html="highlight(link.desc)"
+            ></span>
+          </div>
         </div>
       </section>
 

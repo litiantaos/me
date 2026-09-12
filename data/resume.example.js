@@ -9,13 +9,14 @@ export default {
     degree: '本科',
     school: '某某大学 · 某某专业 · 2016.09 – 2020.07',
     phone: '13800000000',
-    // 可选：信息区「作品」行展示的链接条目（icon 为 Remixicon 类名，缺省 ri-link；title 为条目标题，可选，缺省仅显示链接徽章）
+    // 可选：信息区「作品」行展示的链接条目（icon 为 Remixicon 类名，缺省 ri-link；title 为条目标题，desc 为一句话核心说明，均可选，缺省仅显示链接徽章）
     links: [
       { url: 'https://github.com/username', icon: 'ri-github-line' },
       {
         url: 'https://xxx.app',
         icon: 'ri-macbook-line',
-        title: '某某 App · 一句话说明',
+        title: '某某 App',
+        desc: '技术栈 + 核心功能的一句话说明',
       },
     ],
   },
