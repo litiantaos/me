@@ -1,6 +1,8 @@
 # TaosLife
 
-个人网站，记录想法。支持 Markdown、语义搜索、AI 对话、SEO。简洁、轻快、优雅。
+![TaosLife](public/images/card.png)
+
+个人网站，记录想法与生活。支持 Markdown 笔记、语义搜索、爱好（电影/游戏）、足迹地图、人生时间线。简洁、轻快、优雅。
 
 ## 技术栈
 
@@ -22,13 +24,24 @@ npm run dev       # 开发服务器
 npm run check     # 检查依赖更新
 ```
 
+## 笔记 API
+
+Token 鉴权的开放接口，可接入快捷指令等外部工具快速记笔记（自动生成语义向量）。
+
+```bash
+curl -X POST <SITE_URL>/api/note/add \
+  -H "Authorization: Bearer <NUXT_NOTE_API_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"content": "想法", "user_id": "<Supabase 用户 UUID>"}'
+```
+
 ## Supabase 配置
 
 完整数据库结构定义见 `supabase/schema.sql`。
 
 ### 初始化数据库
 
-1. 进入 [Supabase Dashboard](https://supabase.com/dashboard)。
+1. 进入 [Supabase Dashboard](https://supabase.com/dashboard)，在 Database → Extensions 中启用 `pgroonga` 和 `vector` 扩展。
 2. 在 SQL Editor 中粘贴 `schema.sql` 内容并运行，以创建所有必要的表、索引和函数。
 
 ### 核心表结构
